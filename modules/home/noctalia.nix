@@ -13,7 +13,7 @@
     plugins = [
       "screentoolkit"
       "clipper"
-      "ai-assistant-panel"
+      "assistant-panel"
       "mpd"
     ];
   };
