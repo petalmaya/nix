@@ -88,7 +88,7 @@
         "${modifier}+l" = "exec swaylock --image ~/.lock.png --scaling fill --ring-color f6a6aa --key-hl-color 1c262c --text-color f2d7d8";
         "${modifier}+w" = "exec vivaldi";
         "${modifier}+e" = "exec foot -e yazi";
-        "${modifier}+m" = "exec foot -e ncmpcpp";
+        "${modifier}+m" = "exec foot -e rmpc";
         "${modifier}+n" = "exec mpv --player-operation-mode=pseudo-gui";
 
         "XF86AudioRaiseVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ +5%";

@@ -14,7 +14,7 @@
       "screentoolkit"
       "clipper"
       "assistant-panel"
-      "mpd"
+      "mpd-mpris"
     ];
   };
 }

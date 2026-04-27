@@ -307,6 +307,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_5": {
+      "locked": {
+        "lastModified": 1777077449,
+        "narHash": "sha256-AIiMJiqvGrN4HyLEbKAoCSRRYn0rnlW5VbKNIMIYqm4=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "a4bf06618f0b5ee50f14ed8f0da77d34ecc19160",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-25.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixvim": {
       "inputs": {
         "flake-parts": "flake-parts_2",
@@ -378,7 +394,8 @@
         "nixmacs": "nixmacs",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "noctalia-shell": "noctalia-shell"
+        "noctalia-shell": "noctalia-shell",
+        "tor-config": "tor-config"
       }
     },
     "systems": {
@@ -424,6 +441,24 @@
         "owner": "nix-systems",
         "repo": "default-linux",
         "type": "github"
+      }
+    },
+    "tor-config": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_5"
+      },
+      "locked": {
+        "lastModified": 1777256411,
+        "narHash": "sha256-/F3lWV+niHcN0a9IoKbJk7OMc2ixND3owU0W9PcQdYQ=",
+        "ref": "refs/heads/master",
+        "rev": "ca934979135058d1098db45ae972a9edbee12e80",
+        "revCount": 1,
+        "type": "git",
+        "url": "file:///home/alice/nix/.tor-config"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/alice/nix/.tor-config"
       }
     },
     "treefmt-nix": {

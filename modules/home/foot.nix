@@ -6,6 +6,7 @@
     settings = {
       main = {
         font = "Courier Prime:size=11";
+        shell = "${pkgs.zsh}/bin/zsh";
       };
       colors = {
         alpha = "0.8";

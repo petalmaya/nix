@@ -1,0 +1,53 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "#e0def4",
+          "style": "plain",
+          "template": "<#ea9a97>\u250f[</>{{ .UserName }}<#ea9a97>]</>",
+          "type": "session"
+        },
+        {
+          "foreground": "#e0def4",
+          "style": "plain",
+          "template": "<#ea9a97>[</>{{ .HEAD }}<#ea9a97>]</>",
+          "type": "git"
+        },
+        {
+          "foreground": "#e0def4",
+          "style": "plain",
+          "template": "<#ea9a97>[</>\uf0e7<#ea9a97>]</>",
+          "type": "root"
+        },
+        {
+          "foreground": "#e0def4",
+          "style": "plain",
+          "template": "<#ea9a97>[x</>{{ reason .Code }}<#ea9a97>]</>",
+          "type": "status"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#e0def4",
+          "options": {
+            "style": "full"
+          },
+          "style": "plain",
+          "template": "<#ea9a97>\u2516[</>{{ .Path }}<#ea9a97>]></>",
+          "type": "path"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 4
+}

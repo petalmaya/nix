@@ -30,6 +30,8 @@
     };
     # Noctalia Shell
     noctalia-shell.url = "github:noctalia-dev/noctalia-shell";
+    # Local Tor Config
+    tor-config.url = "git+file:///home/alice/nix/.tor-config";
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, avim, noctalia-shell, ... } @ inputs:
@@ -49,6 +51,7 @@
         ./hosts/${hostname}/hardware-configuration.nix
         ./hosts/${hostname}/configuration.nix
         inputs.nix-flatpak.nixosModules.nix-flatpak
+        inputs.tor-config.nixosModules.default
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;

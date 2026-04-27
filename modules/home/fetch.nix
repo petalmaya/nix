@@ -5,57 +5,44 @@
     enable = true;
     settings = {
       logo = {
-        source = "nixos_small";
+        source = ''
+   <<
+   __
+  |  |─╮
+  |__|─╯
+'';
         padding = {
-          right = 1;
+          right = 4;
         };
       };
       display = {
-        separator = "";
+        separator = "  ";
+        color = "white";
+        key = {
+            width = 3;
+        };
       };
       modules = [
         {
-          type = "title";
-          keyWidth = 10;
-        }
-        "break"
-        {
           type = "os";
-          key = "╭─󱄅 OS ";
-          keyColor = "34";
+          key = "OS ";
         }
         {
           type = "kernel";
-          key = "├─󰒋 Kernel ";
-          keyColor = "34";
+          key = "KER ";
         }
         {
           type = "packages";
-          key = "├─󰏖 Pkg";
-          keyColor = "34";
-        }
-        {
-          type = "wm";
-          key = "├─󱂬 WM ";
-          keyColor = "34";
+          key = "PKG ";
         }
         {
           type = "shell";
-          key = "├─󱆃 Sh ";
-          keyColor = "34";
+          key = "SH ";
         }
         {
-          type = "terminal";
-          key = "├─󰆍 Term ";
-          keyColor = "34";
+          type = "wm";
+          key = "WM ";
         }
-        {
-          type = "uptime";
-          key = "╰─󰅐 Up ";
-          keyColor = "34";
-        }
-        "break"
-        "colors"
       ];
     };
   };

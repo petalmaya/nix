@@ -12,11 +12,18 @@
     "${inputs.self}/modules/home/mako.nix"
     "${inputs.self}/modules/home/flatpak.nix"
     "${inputs.self}/modules/home/noctalia.nix"
+    "${inputs.self}/modules/home/zsh.nix"
   ];
 
-  services.flatpak.packages = [
-    "app.twintaillauncher.ttl"
-  ];
+  services.flatpak = {
+    packages = [
+      "app.twintaillauncher.ttl"
+      "com.github.taiko2k.tauonmb"
+    ];
+    overrides = {
+      "com.github.taiko2k.tauonmb".Context.filesystems = [ "host" ];
+    };
+  };
 
   home.username = "alice";
   home.homeDirectory = "/home/alice";
@@ -46,7 +53,7 @@
 
     # Media
     mpv
-    ncmpcpp
+    rmpc
     cava
     ffmpeg
     ffmpegthumbnailer
@@ -102,8 +109,8 @@
   };
 
   home.pointerCursor = {
-    name = "BreezeX-RosePine-Linux";
-    package = pkgs.rose-pine-cursor;
+    name = "capitaine-cursors";
+    package = pkgs.capitaine-cursors;
     size = 24;
     gtk.enable = true;
   };
@@ -111,6 +118,13 @@
   services.mpd = {
     enable = true;
     musicDirectory = "/home/alice/Music";
+    extraConfig = ''
+      audio_output {
+        type "pipewire"
+        name "My PipeWire Output"
+        mixer_type "software"
+      }
+    '';
   };
 
   # Add HM managed programs

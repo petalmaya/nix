@@ -70,6 +70,8 @@
     package = pkgs.swayfx;
   };
 
+  programs.zsh.enable = true;
+
   # Steam + services
   programs.steam.enable = true;
   services.gvfs.enable = true;
@@ -106,6 +108,7 @@
   users.users.alice = {
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
+    shell = pkgs.zsh;
   };
   users.users.lewis = {
     isNormalUser = true;
