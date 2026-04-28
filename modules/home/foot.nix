@@ -10,29 +10,29 @@
       };
       colors = {
         alpha = "0.8";
-        background = "191724";
-        foreground = "e0def4";
+        background = "2b3339";
+        foreground = "d3c6aa";
 
-        regular0 = "26233a"; # black (Overlay)
-        regular1 = "eb6f92"; # red (Love)
-        regular2 = "9ccfd8"; # green (Foam)
-        regular3 = "f6c177"; # yellow (Gold)
-        regular4 = "31748f"; # blue (Pine)
-        regular5 = "c4a7e7"; # magenta (Iris)
-        regular6 = "ebbcba"; # cyan (Rose)
-        regular7 = "e0def4"; # white (Text)
+        regular0 = "4b565c"; # black
+        regular1 = "e67e80"; # red
+        regular2 = "a7c080"; # green
+        regular3 = "dbbc7f"; # yellow
+        regular4 = "7fbbb3"; # blue
+        regular5 = "d699b6"; # magenta
+        regular6 = "83c092"; # cyan
+        regular7 = "d3c6aa"; # white
 
-        bright0 = "47435d"; # bright black (lighter Overlay)
-        bright1 = "ff98ba"; # bright red (lighter Love)
-        bright2 = "c5f9ff"; # bright green (lighter Foam)
-        bright3 = "ffeb9e"; # bright yellow (lighter Gold)
-        bright4 = "5b9ab7"; # bright blue (lighter Pine)
-        bright5 = "eed0ff"; # bright magenta (lighter Iris)
-        bright6 = "ffe5e3"; # bright cyan (lighter Rose)
-        bright7 = "fefcff"; # bright white (lighter Text)
+        bright0 = "5c6a72"; # bright black
+        bright1 = "f85552"; # bright red
+        bright2 = "8da101"; # bright green
+        bright3 = "dfa000"; # bright yellow
+        bright4 = "3a94c5"; # bright blue
+        bright5 = "df69ba"; # bright magenta
+        bright6 = "35a77c"; # bright cyan
+        bright7 = "dfddbd"; # bright white
 
-        flash = "f6c177"; # yellow (Gold)
-        cursor = "191724 e0def4";
+        flash = "dbbc7f"; # yellow
+        cursor = "2b3339 d3c6aa";
       };
     };
   };

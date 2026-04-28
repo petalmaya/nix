@@ -66,12 +66,12 @@
 
       # Theming
       colors = {
-        focused = { border = "#a7c080"; background = "#a7c080"; text = "#2b3339"; indicator = "#a7c080"; childBorder = "#a7c080"; };
-        focusedInactive = { border = "#3a454a"; background = "#3a454a"; text = "#d3c6aa"; indicator = "#3a454a"; childBorder = "#3a454a"; };
-        unfocused = { border = "#272e33"; background = "#272e33"; text = "#9da9a0"; indicator = "#272e33"; childBorder = "#272e33"; };
-        urgent = { border = "#e67e80"; background = "#e67e80"; text = "#d3c6aa"; indicator = "#e67e80"; childBorder = "#e67e80"; };
-        placeholder = { border = "#2b3339"; background = "#2b3339"; text = "#d3c6aa"; indicator = "#2b3339"; childBorder = "#2b3339"; };
-        background = "#2b3339";
+        focused = { border = "#ebbcba"; background = "#ebbcba"; text = "#191724"; indicator = "#ebbcba"; childBorder = "#ebbcba"; };
+        focusedInactive = { border = "#26233a"; background = "#26233a"; text = "#e0def4"; indicator = "#26233a"; childBorder = "#26233a"; };
+        unfocused = { border = "#1f1d2e"; background = "#1f1d2e"; text = "#908caa"; indicator = "#1f1d2e"; childBorder = "#1f1d2e"; };
+        urgent = { border = "#eb6f92"; background = "#eb6f92"; text = "#e0def4"; indicator = "#eb6f92"; childBorder = "#eb6f92"; };
+        placeholder = { border = "#191724"; background = "#191724"; text = "#e0def4"; indicator = "#191724"; childBorder = "#191724"; };
+        background = "#191724";
       };
 
       # Keybindings

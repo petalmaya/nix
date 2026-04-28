@@ -1,0 +1,39 @@
+#+author: Alice Liddell
+#+options: toc:nil
+
+* What?
+My nixos config.
+
+I like sway...
+
+* Why?
+Wouldnt you like to know!
+
+* Where?
+
+- =hosts/= Machine Configs
+  - =common= On the tin.
+  - =rabbit= Test of things.
+  - =wonderland= Primary setup
+
+- =modules/= Modules
+  - =nixos= System Level modules (In theory)
+  - =home= Home manger module
+
+- =users= On the tin
+  - =alice= main
+  - =lewis= niri
+  - =stacy= ..?
+
+* How?
+uh:
+#+begin_src nix
+  git clone https://codeberg.org/sheep/nix.git
+  cd nix
+  sudo nixos-rebuild switch --flake .#wonderland
+#+end_src
+    
+Thats how you get my thing uh make sure to give alice a password or just use lewis.
+
+* Who's Alice?
+Im Alice silly goose~

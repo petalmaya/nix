@@ -1,0 +1,64 @@
+* {
+    /* Everforest Color Palette */
+    background: #2b3339;
+    background-alt: #323c41;
+    foreground: #d3c6aa;
+    selected: #a7c080;
+    active: #83c092;
+    urgent: #e67e80;
+
+    border-color: @selected;
+    background-color: transparent;
+    text-color: @foreground;
+}
+
+window {
+    transparency: "real";
+    background-color: @background;
+    text-color: @foreground;
+    border: 3px;
+    border-color: @border-color;
+    border-radius: 12px;
+    width: 600px;
+}
+
+mainbox {
+    background-color: transparent;
+    border: 0;
+    padding: 20;
+}
+
+inputbar {
+    background-color: @background-alt;
+    text-color: @foreground;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+entry {
+    background-color: transparent;
+    text-color: @foreground;
+    placeholder-color: @foreground;
+    placeholder: "Search...";
+}
+
+listview {
+    background-color: transparent;
+    padding: 10px 0px 0px;
+    columns: 1;
+    lines: 6;
+    spacing: 5px;
+    fixed-height: true;
+}
+
+element {
+    background-color: transparent;
+    text-color: @foreground;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+element selected {
+    background-color: @selected;
+    text-color: @background;
+}

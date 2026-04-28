@@ -99,12 +99,12 @@
   gtk = {
     enable = true;
     theme = {
-      name = "rose-pine";
-      package = pkgs.rose-pine-gtk-theme;
+      name = "Everforest-Dark-B";
+      package = pkgs.everforest-gtk-theme;
     };
     iconTheme = {
-      name = "rose-pine";
-      package = pkgs.rose-pine-icon-theme;
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
     };
   };
 
@@ -130,18 +130,25 @@
   # Add HM managed programs
   programs.tmux = {
     enable = true;
-    plugins = with pkgs.tmuxPlugins; [
-      rose-pine
+    plugins = [
+      (pkgs.tmuxPlugins.mkTmuxPlugin {
+        pluginName = "tmux-everforest";
+        version = "unstable";
+        src = pkgs.fetchFromGitHub {
+          owner = "TanglingTreats";
+          repo = "tmux-everforest";
+          rev = "master";
+          sha256 = "081iqmcgskfzb4qnlcnya9wppxsrzp7p3z0pxq72sx1y6lh2y2id";
+        };
+      })
     ];
+    extraConfig = ''
+      set -g @tmux-everforest 'dark-medium'
+    '';
   };
 
   programs.yazi = {
     enable = true;
-    theme = {
-      flavor = {
-        use = "rose-pine";
-      };
-    };
   };
 
   home.stateVersion = "25.11";

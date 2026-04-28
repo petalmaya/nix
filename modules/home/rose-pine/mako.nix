@@ -6,9 +6,9 @@
     settings = {
       border-radius = 10;
       border-size = 2;
-      border-color = "#a7c080";
-      background-color = "#2b3339";
-      text-color = "#d3c6aa";
+      border-color = "#ebbcba";
+      background-color = "#191724";
+      text-color = "#e0def4";
       font = "Courier Prime 11";
       padding = "15";
       default-timeout = 5000;

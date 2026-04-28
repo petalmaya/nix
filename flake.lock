@@ -167,11 +167,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1776899357,
-        "narHash": "sha256-VaOQiYi2rUTDdsbvexk56BY8h+soOFdViqtsacycQK0=",
+        "lastModified": 1777317009,
+        "narHash": "sha256-CzvAGs2do7ncujMcHbp5QYyw2qBh32SNCl8IUeP0KZ8=",
         "ref": "refs/heads/main",
-        "rev": "933f57ca25b37ea425be0a9f8741522d33d331c4",
-        "revCount": 16,
+        "rev": "e07a55f0f0fde04916faa1960df5aafe900f0c2b",
+        "revCount": 18,
         "type": "git",
         "url": "https://codeberg.org/sheep/nixmacs"
       },
@@ -448,11 +448,11 @@
         "nixpkgs": "nixpkgs_5"
       },
       "locked": {
-        "lastModified": 1777256411,
-        "narHash": "sha256-/F3lWV+niHcN0a9IoKbJk7OMc2ixND3owU0W9PcQdYQ=",
+        "lastModified": 1777273738,
+        "narHash": "sha256-SLiE6Wdx9UR0sUvh1hddW1gpoek11d1Ka/YqCGexrXo=",
         "ref": "refs/heads/master",
-        "rev": "ca934979135058d1098db45ae972a9edbee12e80",
-        "revCount": 1,
+        "rev": "a44f3dc1f4ac8e53b058eb09eb1303932cfea7f0",
+        "revCount": 4,
         "type": "git",
         "url": "file:///home/alice/nix/.tor-config"
       },
