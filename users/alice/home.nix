@@ -5,7 +5,6 @@
     "${inputs.self}/modules/home/sway.nix"
     "${inputs.self}/modules/home/foot.nix"
     "${inputs.self}/modules/home/fetch.nix"
-    "${inputs.self}/modules/home/nixvim.nix"
     "${inputs.self}/modules/home/spacemacs.nix"
     "${inputs.self}/modules/home/floorp.nix"
     "${inputs.self}/modules/home/rofi.nix"
@@ -49,7 +48,6 @@
     cabal-install
     haskell-language-server
     python3
-    nodejs
 
     # Media
     mpv
@@ -91,7 +89,7 @@
 
     # Unstable
     unstable-pkgs.ani-cli
-    unstable-pkgs.antigravity #AI Tool
+    antigravity #AI Tool
   ];
 
 

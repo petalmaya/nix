@@ -8,11 +8,6 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     # Nixpak
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
-    #AliceVim
-    avim = {
-          url = "git+https://codeberg.org/sheep/avim";
-          inputs.nixpkgs.follows = "nixpkgs";
-    };
     # Emacs
     nixmacs = {
       url = "git+https://codeberg.org/sheep/nixmacs";
