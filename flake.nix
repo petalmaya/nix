@@ -29,7 +29,7 @@
     tor-config.url = "git+file:///home/alice/nix/.tor-config";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, avim, noctalia-shell, ... } @ inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, ... } @ inputs:
   let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
