@@ -38,7 +38,7 @@
     transmission_4-gtk nicotine-plus # Legal things
     vscodium stack obsidian # Idk i don rembere
     krita gimp # Photo editing
-    cinny-desktop iamb weechat # Non Discord chat
+    cinny-desktop weechat # Non Discord chat
     blockbench
 
 
@@ -89,7 +89,7 @@
 
     # Unstable
     unstable-pkgs.ani-cli
-    antigravity #AI Tool
+    #antigravity #AI Tool
   ];
 
 
