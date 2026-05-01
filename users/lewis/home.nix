@@ -18,7 +18,7 @@
 
   home.packages = with pkgs; [
     foot
-    yazi
+    nemo
     btop
     ripgrep
     wget curl

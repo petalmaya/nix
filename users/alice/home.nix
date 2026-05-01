@@ -17,11 +17,7 @@
   services.flatpak = {
     packages = [
       "app.twintaillauncher.ttl"
-      "com.github.taiko2k.tauonmb"
     ];
-    overrides = {
-      "com.github.taiko2k.tauonmb".Context.filesystems = [ "host" ];
-    };
   };
 
   home.username = "alice";
@@ -36,7 +32,7 @@
     fastfetch hyfetch # Fetch
     chafa libsixel ripgrep btop # Terminal things
     transmission_4-gtk nicotine-plus # Legal things
-    vscodium stack obsidian # Idk i don rembere
+    stack # Idk i don rembere
     krita gimp # Photo editing
     cinny-desktop weechat # Non Discord chat
     blockbench
@@ -52,6 +48,7 @@
     # Media
     mpv
     rmpc
+    audacious
     cava
     ffmpeg
     ffmpegthumbnailer
@@ -61,7 +58,6 @@
     bottles
     wine
     renpy
-    discord
     obs-studio
     prismlauncher
     openttd
@@ -84,12 +80,12 @@
     capitaine-cursors # Curosor
     git # Its git
     unzip p7zip     # The zippers
-    wget curl # -.-
+    wget curl nnn # -.-
     polkit_gnome
 
     # Unstable
     unstable-pkgs.ani-cli
-    #antigravity #AI Tool
+    antigravity #AI Tool
   ];
 
 

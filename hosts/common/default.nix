@@ -1,10 +1,12 @@
-{ config, pkgs, lib, unstable-pkgs, ... }:
+{ config, pkgs, lib, unstable-pkgs, inputs, ... }:
 
 {
+  imports = [
+    "${inputs.self}/modules/nixos/cachix.nix"
+  ];
   # Bootloader & basic networking
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
   networking.networkmanager.enable = true;
   networking.enableIPv6 = true;
 
