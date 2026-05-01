@@ -2,11 +2,16 @@
 
 {
   imports = [
-    "${inputs.self}/modules/home/foot.nix"
-    "${inputs.self}/modules/home/floorp.nix"
-    "${inputs.self}/modules/home/niri.nix"
-    "${inputs.self}/modules/home/noctalia.nix"
-    "${inputs.self}/modules/home/flatpak.nix"
+    # WM
+    "${inputs.self}/modules/home/wm/niri.nix"
+    # Terminal
+    "${inputs.self}/modules/home/terminal/foot.nix"
+    # Apps
+    "${inputs.self}/modules/home/apps/floorp.nix"
+    # Services
+    "${inputs.self}/modules/home/services/flatpak.nix"
+    # Themes
+    "${inputs.self}/modules/home/themes/noctalia.nix"
   ];
 
   services.flatpak.packages = [
