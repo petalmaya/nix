@@ -32,7 +32,7 @@
 
   programs.oh-my-posh = {
     enable = true;
-    settings = builtins.fromJSON (builtins.readFile ../../assets/dots/darkblood.omp.json);
+    settings = builtins.fromJSON (builtins.readFile ../../../assets/dots/darkblood.omp.json);
   };
 
   programs.zoxide = {
