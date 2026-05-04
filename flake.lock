@@ -86,11 +86,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777858117,
-        "narHash": "sha256-omlKvNrRZ30yKTuYgJZ4Di/TRTml0dwzyAy9kpvzPL8=",
+        "lastModified": 1777877164,
+        "narHash": "sha256-vFrWtRkiM/WA2gA0GSTAjF8KFTDLrRE62zNjSjnkwsg=",
         "ref": "refs/heads/main",
-        "rev": "42f59316ad78738abd13afc7791db1e76c62cda2",
-        "revCount": 23,
+        "rev": "ff5447d622ea07e0b0b71b4aa5322cb7a89f4715",
+        "revCount": 25,
         "type": "git",
         "url": "https://codeberg.org/sheep/nixmacs"
       },
