@@ -30,6 +30,11 @@
       url = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Disko
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Noctalia Shell
     noctalia-shell.url = "github:noctalia-dev/noctalia-shell";
     # Local Tor Config
@@ -54,12 +59,14 @@
         ./hosts/${hostname}/configuration.nix
         inputs.nix-flatpak.nixosModules.nix-flatpak
         inputs.tor-config.nixosModules.default
+        inputs.disko.nixosModules.disko
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.users.alice = import ./users/alice/home.nix;
           home-manager.users.lewis = import ./users/lewis/home.nix;
+          home-manager.users.hatter = import ./users/hatter/home.nix;
           home-manager.extraSpecialArgs = { inherit inputs unstable-pkgs; };
         }
       ];
@@ -68,6 +75,7 @@
     nixosConfigurations = {
       wonderland = mkHost "wonderland";
       rabbit = mkHost "rabbit";
+      teaparty = mkHost "teaparty";
     };
 
   };
