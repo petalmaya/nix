@@ -49,7 +49,7 @@
     inherit system;
     config.allowUnfree = true;
     };
-    mkHost = hostname: nixpkgs.lib.nixosSystem {
+    mkHost = hostname: hmUsers: nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = {
       inherit inputs unstable-pkgs;
@@ -64,18 +64,26 @@
         {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.users.alice = import ./users/alice/home.nix;
-          home-manager.users.lewis = import ./users/lewis/home.nix;
-          home-manager.users.hatter = import ./users/hatter/home.nix;
+          home-manager.users = hmUsers;
           home-manager.extraSpecialArgs = { inherit inputs unstable-pkgs; };
         }
       ];
     };
   in {
     nixosConfigurations = {
-      wonderland = mkHost "wonderland";
-      rabbit = mkHost "rabbit";
-      teaparty = mkHost "teaparty";
+      wonderland = mkHost "wonderland" {
+        alice = import ./users/alice/home.nix;
+        lewis = import ./users/lewis/home.nix;
+      };
+      rabbit = mkHost "rabbit" {
+        alice = import ./users/alice/home.nix;
+        lewis = import ./users/lewis/home.nix;
+      };
+      teaparty = mkHost "teaparty" {
+        alice  = import ./users/alice/home.nix;
+        lewis  = import ./users/lewis/home.nix;
+        hatter = import ./users/hatter/home.nix;
+      };
     };
 
   };
