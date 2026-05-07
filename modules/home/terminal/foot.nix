@@ -9,7 +9,7 @@
         shell = "${pkgs.zsh}/bin/zsh";
       };
       colors = {
-        alpha = "0.8";
+        alpha = "0.6";
         background = "2b3339";
         foreground = "d3c6aa";
 
