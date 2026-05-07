@@ -1,64 +1,225 @@
 { config, pkgs, lib, ... }:
 
 {
-  # ── Starship prompt ─────────────
+  # ── Starship prompt (gruvbox-rainbow) ──────────────────────────────────────
   programs.starship = {
     enable = true;
     enableZshIntegration = true;
     settings = {
-      # overall feel
-      add_newline = false;
-      scan_timeout = 10;
-      command_timeout = 500;
+      "$schema" = "https://starship.rs/config-schema.json";
 
-      format = "$username$directory$git_branch$git_state$git_status$cmd_duration$line_break$character";
+      format = ''
+        [](color_orange)\
+        $os\
+        $username\
+        [](bg:color_yellow fg:color_orange)\
+        $directory\
+        [](fg:color_yellow bg:color_aqua)\
+        $git_branch\
+        $git_status\
+        [](fg:color_aqua bg:color_blue)\
+        $c\
+        $cpp\
+        $rust\
+        $golang\
+        $nodejs\
+        $bun\
+        $php\
+        $java\
+        $kotlin\
+        $haskell\
+        $python\
+        [](fg:color_blue bg:color_bg3)\
+        $docker_context\
+        $conda\
+        $pixi\
+        [](fg:color_bg3 bg:color_bg1)\
+        $time\
+        [ ](fg:color_bg1)\
+        $line_break$character'';
 
-      # directory
+      palette = "gruvbox_dark";
+
+      "palettes.gruvbox_dark" = {
+        color_fg0    = "#fbf1c7";
+        color_bg1    = "#3c3836";
+        color_bg3    = "#665c54";
+        color_blue   = "#458588";
+        color_aqua   = "#689d6a";
+        color_green  = "#98971a";
+        color_orange = "#d65d0e";
+        color_purple = "#b16286";
+        color_red    = "#cc241d";
+        color_yellow = "#d79921";
+      };
+
+      # ── OS icon ─────────────────────────────────────────────────────────────
+      os = {
+        disabled = false;
+        style    = "bg:color_orange fg:color_fg0";
+      };
+
+      "os.symbols" = {
+        NixOS            = "";
+        Linux            = "󰌽";
+        Windows          = "󰍲";
+        Macos            = "󰀵";
+        Ubuntu           = "󰕈";
+        Arch             = "󰣇";
+        Artix            = "󰣇";
+        Debian           = "󰣚";
+        Fedora           = "󰣛";
+        Gentoo           = "󰣨";
+        Manjaro          = "";
+        Mint             = "󰣭";
+        EndeavourOS      = "";
+        Pop              = "";
+        Raspbian         = "󰐿";
+        SUSE             = "";
+        Alpine           = "";
+        Amazon           = "";
+        Android          = "";
+        AOSC             = "";
+        CentOS           = "";
+        Redhat           = "󱄛";
+        RedHatEnterprise = "󱄛";
+      };
+
+      # ── User ────────────────────────────────────────────────────────────────
+      username = {
+        show_always = true;
+        style_user  = "bg:color_orange fg:color_fg0";
+        style_root  = "bg:color_orange fg:color_fg0";
+        format      = "[ $user ]($style)";
+      };
+
+      # ── Directory ──────────────────────────────────────────────────────────
       directory = {
+        style             = "fg:color_fg0 bg:color_yellow";
+        format            = "[ $path ]($style)";
         truncation_length = 3;
-        truncate_to_repo  = true;
-        style             = "bold cyan";
+        truncation_symbol = "…/";
       };
 
-      # git <2
+      "directory.substitutions" = {
+        "Documents" = "󰈙 ";
+        "Downloads" = " ";
+        "Music"     = "󰝚 ";
+        "Pictures"  = " ";
+        "Developer" = "󰲋 ";
+      };
+
+      # ── Git ────────────────────────────────────────────────────────────────
       git_branch = {
-        symbol = " ";
-        style  = "bold purple";
+        symbol = "";
+        style  = "bg:color_aqua";
+        format = "[[ $symbol $branch ](fg:color_fg0 bg:color_aqua)]($style)";
       };
+
       git_status = {
-        ahead    = "⇡$count";
-        behind   = "⇣$count";
-        diverged = "⇕⇡$ahead_count⇣$behind_count";
-        modified = "!$count";
-        staged   = "+$count";
-        untracked= "?$count";
-        stashed  = "≡";
-        style    = "bold red";
-      };
-      git_state = {
-        style = "bold yellow";
+        style  = "bg:color_aqua";
+        format = "[[($all_status$ahead_behind )](fg:color_fg0 bg:color_aqua)]($style)";
       };
 
-      # prompt character
+      # ── Languages ───────────────────────────────────────────────────────────
+      nodejs = {
+        symbol = "";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      bun = {
+        symbol = "";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      c = {
+        symbol = " ";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      cpp = {
+        symbol = " ";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      rust = {
+        symbol = "";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      golang = {
+        symbol = "";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      php = {
+        symbol = "";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      java = {
+        symbol = "";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      kotlin = {
+        symbol = "";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      haskell = {
+        symbol = "";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+      python = {
+        symbol = "";
+        style  = "bg:color_blue";
+        format = "[[ $symbol( $version) ](fg:color_fg0 bg:color_blue)]($style)";
+      };
+
+      # ── Containers / environments ────────────────────────────────────────────
+      docker_context = {
+        symbol = "";
+        style  = "bg:color_bg3";
+        format = "[[ $symbol( $context) ](fg:#83a598 bg:color_bg3)]($style)";
+      };
+      conda = {
+        style  = "bg:color_bg3";
+        format = "[[ $symbol( $environment) ](fg:#83a598 bg:color_bg3)]($style)";
+      };
+      pixi = {
+        style  = "bg:color_bg3";
+        format = "[[ $symbol( $version)( $environment) ](fg:color_fg0 bg:color_bg3)]($style)";
+      };
+
+      # ── Time ────────────────────────────────────────────────────────────────
+      time = {
+        disabled    = false;
+        time_format = "%R";
+        style       = "bg:color_bg1";
+        format      = "[[  $time ](fg:color_fg0 bg:color_bg1)]($style)";
+      };
+
+      # ── Prompt character ────────────────────────────────────────────────────
+      line_break.disabled = false;
+
       character = {
-        success_symbol = "[❯](bold green)";
-        error_symbol   = "[❯](bold red)";
+        disabled                  = false;
+        success_symbol            = "[](bold fg:color_green)";
+        error_symbol              = "[](bold fg:color_red)";
+        vimcmd_symbol             = "[](bold fg:color_green)";
+        vimcmd_replace_one_symbol = "[](bold fg:color_purple)";
+        vimcmd_replace_symbol     = "[](bold fg:color_purple)";
+        vimcmd_visual_symbol      = "[](bold fg:color_yellow)";
       };
 
-      # cmd duration – only shown when > 2 s
+      # ── cmd duration ────────────────────────────────────────────────────────
       cmd_duration = {
         min_time           = 2000;
-        format             = "⏱ [$duration]($style) ";
-        style              = "bold yellow";
+        format             = "took [$duration]($style) ";
+        style              = "bold color_yellow";
         show_notifications = false;
-      };
-
-      # hide username when not root / not SSH
-      username = {
-        show_always = false;
-        format      = "[$user]($style) in ";
-        style_user  = "bold green";
-        style_root  = "bold red";
       };
     };
   };
@@ -77,7 +238,7 @@
       ignoreDups    = true;
       ignoreSpace   = true;
       expireDuplicatesFirst = true;
-      share         = true;           # share history across sessions
+      share         = true;
     };
 
     plugins = [
@@ -101,7 +262,7 @@
     initContent = ''
       # ── Completion tweaks ───────────────────────────────────────────────────
       zstyle ':completion:*' menu select
-      zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'   # case-insensitive
+      zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
       zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
       zstyle ':completion:*:descriptions' format '%B%d%b'
 
@@ -110,8 +271,8 @@
       bindkey '^[[B' history-substring-search-down
 
       # ── Options ─────────────────────────────────────────────────────────────
-      setopt AUTO_CD              # type dir name to cd into it
-      setopt CORRECT              # suggest corrections for mistyped commands
+      setopt AUTO_CD
+      setopt CORRECT
       setopt NO_BEEP
 
       # ── Git aliases ─────────────────────────────────────────────────────────
@@ -146,15 +307,20 @@
     enableZshIntegration = true;
   };
 
-  # ── Fzf (fuzzy finder) ────────────────────────────────────────────────────
+  # ── Fzf – gruvbox dark colours ─────────────────────────────────────────────
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
+    defaultOptions = [
+      "--color=bg+:#3c3836,bg:#282828,spinner:#fb4934,hl:#928374"
+      "--color=fg:#ebdbb2,header:#928374,info:#8ec07c,pointer:#fb4934"
+      "--color=marker:#fb4934,fg+:#ebdbb2,prompt:#fb4934,hl+:#fb4934"
+    ];
   };
 
   # ── bat (pretty cat) ──────────────────────────────────────────────────────
   programs.bat = {
     enable = true;
-    config.theme = "base16";
+    config.theme = "gruvbox-dark";
   };
 }
