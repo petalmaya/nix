@@ -3,7 +3,7 @@
 {
   imports = [
     # WM
-    "${inputs.self}/modules/home/wm/sway.nix"
+    "${inputs.self}/modules/home/themes/everforest"
     # Terminal
     "${inputs.self}/modules/home/terminal/foot.nix"
     "${inputs.self}/modules/home/terminal/zsh.nix"
@@ -21,7 +21,6 @@
     "${inputs.self}/modules/home/services/flatpak.nix"
     "${inputs.self}/modules/home/services/mpd.nix"
     # Themes
-    "${inputs.self}/modules/home/themes/noctalia.nix"
     "${inputs.self}/modules/home/themes/theme.nix"
   ];
 

@@ -8,6 +8,7 @@
         background-color: #2b3339;
         color: #d3c6aa;
         border: 3px solid #a7c080;
+        border-radius: 12px;
       }
       #input {
         background-color: #3a454a;

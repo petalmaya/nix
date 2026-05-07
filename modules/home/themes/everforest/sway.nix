@@ -17,6 +17,7 @@
       };
       # Output displays
       output = {
+        "*" = { bg = "/home/alice/nix/assets/wallpaper/forest_bg.jpg fill"; };
         "HDMI-A-1" = { pos = "0 0"; };
         "eDP-1" = { pos = "1680 0"; };
       };
@@ -84,7 +85,7 @@
 
         "Print" = "exec grim -g \"$(slurp)\" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png";
         "${modifier}+l" = "exec swaylock --image ~/.lock.png --scaling fill --ring-color f6a6aa --key-hl-color 1c262c --text-color f2d7d8";
-        "${modifier}+w" = "exec vivaldi";
+        "${modifier}+w" = "exec floorp";
         "${modifier}+e" = "exec foot -e yazi";
         "${modifier}+m" = "exec foot -e rmpc";
         "${modifier}+n" = "exec mpv --player-operation-mode=pseudo-gui";
