@@ -15,8 +15,6 @@
         };
       })
     ];
-    extraConfig = ''
-      set -g @tmux-everforest 'dark-medium'
-    '';
+    extraConfig = builtins.readFile ./tmux.conf;
   };
 }
