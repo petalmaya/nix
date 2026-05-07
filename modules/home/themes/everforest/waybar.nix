@@ -7,11 +7,14 @@
       mainBar = {
         layer = "top";
         position = "top";
+        margin-top = 5;
+        margin-left = 5;
+        margin-right = 5;
         height = 36;
         spacing = 4;
         modules-left = [ "sway/workspaces" "sway/mode" ];
         modules-center = [ "clock" ];
-        modules-right = [ "network" "cpu" "memory" "pulseaudio" "tray" ];
+        modules-right = [ "network" "cpu" "memory" "pulseaudio" "backlight" "battery" "tray" ];
 
         "sway/workspaces" = {
           disable-scroll = true;
@@ -42,6 +45,20 @@
           format = "VOL:{volume}%";
           format-muted = "MUTED";
         };
+
+        "backlight" = {
+          format = "BL:{percent}%";
+        };
+
+        "battery" = {
+          states = {
+            warning = 30;
+            critical = 15;
+          };
+          format = "BAT:{capacity}%";
+          format-charging = "CHG:{capacity}%";
+          format-plugged = "PLG:{capacity}%";
+        };
       };
     };
 
@@ -50,14 +67,14 @@
         font-family: "Courier Prime", monospace;
         font-size: 14px;
         min-height: 0;
-        border-radius: 0; /* Fully blocky */
+        border-radius: 12px;
         font-weight: bold;
       }
 
       window#waybar {
         background-color: #2b3339;
         color: #d3c6aa;
-        border-bottom: 3px solid #a7c080;
+        border: 2px solid #a7c080;
       }
 
       #workspaces button {
@@ -83,6 +100,8 @@
       #memory,
       #network,
       #pulseaudio,
+      #backlight,
+      #battery,
       #tray,
       #mode {
         padding: 0 10px;

@@ -10,7 +10,9 @@
     config = rec {
       modifier = "Mod4";
       terminal = "foot";
-      bars = [];
+      bars = [
+        { command = "waybar"; }
+      ];
       fonts = {
         names = [ "Courier Prime" ];
         size = 11.0;
@@ -152,7 +154,7 @@
        shadow_color #00000055
 
        layer_effects "mako" blur enable; corner_radius 12; shadows enable
-       layer_effects "waybar" blur enable; corner_radius 0; shadows enable
+       layer_effects "waybar" blur enable; corner_radius 12; shadows enable
        layer_effects "wofi" blur enable; corner_radius 0; shadows enable
        layer_effects "swaynag" blur enable; corner_radius 12; shadows enable
      '';
