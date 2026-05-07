@@ -33,7 +33,7 @@
       git_branch = {
         symbol = "";
         style  = "#e0def4";
-        format = "[\\[](bold #ea9a97)[$symbol $branch]($style)[\\]](bold #ea9a97)";
+        format = "[\\[](bold #ea9a97)[$symbol$branch]($style)[\\]](bold #ea9a97)";
       };
 
       git_status = {
