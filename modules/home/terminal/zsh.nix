@@ -10,25 +10,21 @@
 
       # Line 1: ┏[user][git][⚡ if root][x reason if error]
       # Line 2: ┖[full path]>
-      format = ''
-        [┏\[](bold #ea9a97)$username[](bold #ea9a97)\
-        $git_branch\
-        $sudo\
-        $status
-        [┖\[](bold #ea9a97)$directory[](bold #ea9a97)> '';
+      # Note: double-quoted string so \n = real newline, \\ = backslash
+      format = "┏$username$git_branch$sudo$status\n┖$directory> ";
 
       # ── User ──────────────────────────────────────────────────────────────
       username = {
         show_always = true;
         style_user  = "#e0def4";
         style_root  = "#e0def4";
-        format      = "[$user]($style)[\]](bold #ea9a97)";
+        format      = "[\\[](bold #ea9a97)[$user]($style)[\\]](bold #ea9a97)";
       };
 
       # ── Directory ─────────────────────────────────────────────────────────
       directory = {
         style             = "#e0def4";
-        format            = "[$path]($style)";
+        format            = "[\\[](bold #ea9a97)[$path]($style)[\\]](bold #ea9a97)";
         truncation_length = 0;
         truncate_to_repo  = false;
       };
@@ -37,7 +33,7 @@
       git_branch = {
         symbol = "";
         style  = "#e0def4";
-        format = "[\[](bold #ea9a97)$symbol $branch[\]](bold #ea9a97)";
+        format = "[\\[](bold #ea9a97)[$symbol $branch]($style)[\\]](bold #ea9a97)";
       };
 
       git_status = {
@@ -49,7 +45,7 @@
         disabled = false;
         symbol   = "⚡";
         style    = "#e0def4";
-        format   = "[\[](bold #ea9a97)$symbol[\]](bold #ea9a97)";
+        format   = "[\\[](bold #ea9a97)[$symbol]($style)[\\]](bold #ea9a97)";
       };
 
       # ── Exit status ───────────────────────────────────────────────────────
@@ -57,7 +53,7 @@
         disabled = false;
         symbol   = "x";
         style    = "#e0def4";
-        format   = "[\[](bold #ea9a97)x$common_meaning[\]](bold #ea9a97)";
+        format   = "[\\[](bold #ea9a97)[x$common_meaning]($style)[\\]](bold #ea9a97)";
       };
 
       # ── No separate character module (> is baked into format) ─────────────
