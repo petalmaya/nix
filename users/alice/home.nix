@@ -5,11 +5,11 @@
     # WM
     "${inputs.self}/modules/home/themes/everforest"
     # Terminal
-    "${inputs.self}/modules/home/terminal/foot.nix"
-    "${inputs.self}/modules/home/terminal/zsh.nix"
-    "${inputs.self}/modules/home/terminal/tmux.nix"
+    "${inputs.self}/modules/home/terminal/foot"
+    "${inputs.self}/modules/home/terminal/zsh"
+    "${inputs.self}/modules/home/terminal/tmux"
     # Apps
-    "${inputs.self}/modules/home/apps/fetch.nix"
+    "${inputs.self}/modules/home/apps/fetch"
     "${inputs.self}/modules/home/apps/spacemacs.nix"
     "${inputs.self}/modules/home/apps/floorp.nix"
     "${inputs.self}/modules/home/apps/rofi.nix"
@@ -17,7 +17,7 @@
     "${inputs.self}/modules/home/apps/gaming.nix"
     "${inputs.self}/modules/home/apps/pgm.nix"
     # Services
-    "${inputs.self}/modules/home/services/mako.nix"
+    "${inputs.self}/modules/home/services/mako"
     "${inputs.self}/modules/home/services/flatpak.nix"
     "${inputs.self}/modules/home/services/mpd.nix"
     # Themes

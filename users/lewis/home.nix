@@ -5,7 +5,7 @@
     # WM
     "${inputs.self}/modules/home/wm/niri.nix"
     # Terminal
-    "${inputs.self}/modules/home/terminal/foot.nix"
+    "${inputs.self}/modules/home/terminal/foot"
     # Apps
     "${inputs.self}/modules/home/apps/floorp.nix"
     # Services
