@@ -1,6 +1,7 @@
 { pkgs, lib, ... }:
 
 {
+  services.swayosd.enable = true;
   wayland.windowManager.sway = {
     enable = true;
     checkConfig = false;
@@ -10,9 +11,7 @@
     config = rec {
       modifier = "Mod4";
       terminal = "foot";
-      bars = [
-        { command = "waybar"; }
-      ];
+      bars = [];
       fonts = {
         names = [ "Courier Prime" ];
         size = 11.0;
@@ -92,11 +91,11 @@
         "${modifier}+m" = "exec foot -e rmpc";
         "${modifier}+n" = "exec mpv --player-operation-mode=pseudo-gui";
 
-        "XF86AudioRaiseVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ +5%";
-        "XF86AudioLowerVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ -5%";
-        "XF86AudioMute" = "exec pactl set-sink-mute @DEFAULT_SINK@ toggle";
-        "XF86MonBrightnessUp" = "exec brightnessctl set +5%";
-        "XF86MonBrightnessDown" = "exec brightnessctl set 5%-";
+        "XF86AudioRaiseVolume" = "exec swayosd-client --output-volume raise";
+        "XF86AudioLowerVolume" = "exec swayosd-client --output-volume lower";
+        "XF86AudioMute" = "exec swayosd-client --output-volume mute-toggle";
+        "XF86MonBrightnessUp" = "exec swayosd-client --brightness raise";
+        "XF86MonBrightnessDown" = "exec swayosd-client --brightness lower";
 
         "${modifier}+c" = "kill";
         "${alt}+F4" = "kill";
