@@ -66,6 +66,7 @@
     unzip p7zip     # The zippers
     wget curl nnn # -.-
     polkit_gnome
+    age sops # Secrets and encryption
 
     # Unstable
     unstable-pkgs.ani-cli
