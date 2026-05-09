@@ -6,7 +6,7 @@
   ];
   # Bootloader & basic networking
   sops.defaultSopsFile = ../../secrets/secrets.yaml;
-  sops.age.keyFile = "/home/alice/.config/sops/age/keys.txt";
+  sops.age.keyFile = "/var/lib/nixsecrets/keys.txt";
 
   boot.loader.systemd-boot.enable = true;
 
@@ -111,18 +111,21 @@
   ];
 
   # User account (base)
-  sops.secrets."passwords/alice".neededForUsers = true;
+  users.mutableUsers = false;
+
+  sops.secrets.alice_password.neededForUsers = true;
   users.users.alice = {
     isNormalUser = true;
-    hashedPasswordFile = config.sops.secrets."passwords/alice".path;
+    hashedPasswordFile = config.sops.secrets.alice_password.path;
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
     shell = pkgs.zsh;
   };
-  sops.secrets."passwords/lewis".neededForUsers = true;
+  sops.secrets.lewis_password.neededForUsers = true;
   users.users.lewis = {
     isNormalUser = true;
-    hashedPasswordFile = config.sops.secrets."passwords/lewis".path;
+    hashedPasswordFile = config.sops.secrets.lewis_password.path;
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
+    shell = pkgs.zsh;
   };
 
   systemd.oomd.enable = true;

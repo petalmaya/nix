@@ -12,7 +12,7 @@
     "${inputs.self}/modules/home/apps/fetch"
     "${inputs.self}/modules/home/apps/spacemacs.nix"
     "${inputs.self}/modules/home/apps/floorp.nix"
-    "${inputs.self}/modules/home/apps/rofi.nix"
+
     "${inputs.self}/modules/home/apps/yazi.nix"
     "${inputs.self}/modules/home/apps/gaming.nix"
     "${inputs.self}/modules/home/apps/pgm.nix"
