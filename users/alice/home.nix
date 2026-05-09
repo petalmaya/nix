@@ -27,6 +27,9 @@
   home.username = "alice";
   home.homeDirectory = "/home/alice";
 
+  nixtop.themes.everforest.enable = true;
+
+
   home.packages = with pkgs; [
     # Misc
     pkgs.palemoon-bin w3m tor-browser # Browsers

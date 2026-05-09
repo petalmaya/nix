@@ -5,7 +5,11 @@
     "${inputs.self}/modules/nixos/cachix.nix"
   ];
   # Bootloader & basic networking
+  sops.defaultSopsFile = ../../secrets/secrets.yaml;
+  sops.age.keyFile = "/home/alice/.config/sops/age/keys.txt";
+
   boot.loader.systemd-boot.enable = true;
+
   boot.loader.efi.canTouchEfiVariables = true;
   networking.networkmanager.enable = true;
   networking.enableIPv6 = true;
@@ -107,15 +111,17 @@
   ];
 
   # User account (base)
+  sops.secrets."passwords/alice".neededForUsers = true;
   users.users.alice = {
     isNormalUser = true;
-    initialPassword = "alice";
+    hashedPasswordFile = config.sops.secrets."passwords/alice".path;
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
     shell = pkgs.zsh;
   };
+  sops.secrets."passwords/lewis".neededForUsers = true;
   users.users.lewis = {
     isNormalUser = true;
-    initialPassword = "alice";
+    hashedPasswordFile = config.sops.secrets."passwords/lewis".path;
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
   };
 

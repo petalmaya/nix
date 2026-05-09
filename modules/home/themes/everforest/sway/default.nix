@@ -1,6 +1,6 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 
-{
+lib.mkIf config.nixtop.themes.everforest.enable {
   services.swayosd.enable = true;
   wayland.windowManager.sway = {
     enable = true;
