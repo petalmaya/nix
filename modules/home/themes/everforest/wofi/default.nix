@@ -1,5 +1,15 @@
 { config, lib, pkgs, ... }:
 
 lib.mkIf config.nixtop.themes.everforest.enable {
-  xdg.configFile."wofi/style.css".source = ./style.css;
+  programs.wofi = {
+    enable = true;
+    style = builtins.readFile ./style.css;
+    settings = {
+      allow_images = true;
+      allow_markup = true;
+      term = "foot";
+      width = 600;
+      height = 400;
+    };
+  };
 }
