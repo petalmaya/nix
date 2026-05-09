@@ -12,9 +12,10 @@
   networking.hostName = "lookingglass";
   networking.extraHosts = "127.0.0.1 lookingglass";
 
+  sops.secrets."passwords/cheshire".neededForUsers = true;
   users.users.cheshire = {
     isNormalUser = true;
-    initialPassword = "alice";
+    hashedPasswordFile = config.sops.secrets."passwords/cheshire".path;
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
   };
 

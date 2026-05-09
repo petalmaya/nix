@@ -1,6 +1,6 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
-{
+lib.mkIf config.nixtop.themes.everforest.enable {
   home.packages = with pkgs; [
     waybar
     playerctl
@@ -10,7 +10,7 @@
   ];
 
   xdg.configFile = {
-    "waybar/config".source = ./config.jsonc;
+    "waybar/config.jsonc".source = ./config.jsonc;
     "waybar/style.css".source = ./style.css;
   };
 }

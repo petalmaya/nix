@@ -28,9 +28,10 @@
   };
 
   # User definitions for this host specifically
+  sops.secrets."passwords/hatter".neededForUsers = true;
   users.users.hatter = {
     isNormalUser = true;
-    initialPassword = "alice";
+    hashedPasswordFile = config.sops.secrets."passwords/hatter".path;
     extraGroups = [ "networkmanager" "wheel" "video" "audio" ];
   };
 

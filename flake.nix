@@ -39,9 +39,14 @@
     noctalia-shell.url = "github:noctalia-dev/noctalia-shell";
     # Local Tor Config
     tor-config.url = "git+file:///home/alice/nix/.tor-config";
+    # Sops
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, ... } @ inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, ... } @ inputs:
   let
     mkHost = sys: hostname: hmUsers:
       let
@@ -60,6 +65,7 @@
         inputs.nix-flatpak.nixosModules.nix-flatpak
         inputs.tor-config.nixosModules.default
         inputs.disko.nixosModules.disko
+        sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
         {
           home-manager.useGlobalPkgs = true;
