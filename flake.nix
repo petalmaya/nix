@@ -43,19 +43,19 @@
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, ... } @ inputs:
   let
-    system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system};
-    unstable-pkgs = import nixpkgs-unstable {
-    inherit system;
-    config.allowUnfree = true;
-    };
-    mkHost = hostname: hmUsers: nixpkgs.lib.nixosSystem {
-      inherit system;
-      specialArgs = {
-      inherit inputs unstable-pkgs;
-      };
-      modules = [
-        ./hosts/${hostname}/hardware-configuration.nix
+    mkHost = sys: hostname: hmUsers:
+      let
+        unstable-pkgs = import nixpkgs-unstable {
+          system = sys;
+          config.allowUnfree = true;
+        };
+      in nixpkgs.lib.nixosSystem {
+        system = sys;
+        specialArgs = {
+          inherit inputs unstable-pkgs;
+        };
+        modules = [
+          ./hosts/${hostname}/hardware-configuration.nix
         ./hosts/${hostname}/configuration.nix
         inputs.nix-flatpak.nixosModules.nix-flatpak
         inputs.tor-config.nixosModules.default
@@ -71,18 +71,21 @@
     };
   in {
     nixosConfigurations = {
-      wonderland = mkHost "wonderland" {
+      wonderland = mkHost "x86_64-linux" "wonderland" {
         alice = import ./users/alice/home.nix;
         lewis = import ./users/lewis/home.nix;
       };
-      rabbit = mkHost "rabbit" {
+      rabbit = mkHost "x86_64-linux" "rabbit" {
         alice = import ./users/alice/home.nix;
         lewis = import ./users/lewis/home.nix;
       };
-      teaparty = mkHost "teaparty" {
+      teaparty = mkHost "x86_64-linux" "teaparty" {
         alice  = import ./users/alice/home.nix;
         lewis  = import ./users/lewis/home.nix;
         hatter = import ./users/hatter/home.nix;
+      };
+      lookingglass = mkHost "aarch64-linux" "lookingglass" {
+        cheshire = import ./users/cheshire/home.nix;
       };
     };
 

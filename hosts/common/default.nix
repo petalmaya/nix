@@ -32,7 +32,7 @@
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    alsa.support32Bit = true;
+    alsa.support32Bit = pkgs.stdenv.hostPlatform.isx86_64;
     pulse.enable = true;
   };
 
@@ -75,7 +75,7 @@
   programs.zsh.enable = true;
 
   # Steam + services
-  programs.steam.enable = true;
+  programs.steam.enable = pkgs.stdenv.hostPlatform.isx86_64;
   services.gvfs.enable = true;
   services.udisks2.enable = true;
   services.gnome.gnome-keyring.enable = true;
@@ -109,12 +109,13 @@
   # User account (base)
   users.users.alice = {
     isNormalUser = true;
+    initialPassword = "alice";
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
     shell = pkgs.zsh;
   };
   users.users.lewis = {
     isNormalUser = true;
-    initialPassword = "lewis";
+    initialPassword = "alice";
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
   };
 
