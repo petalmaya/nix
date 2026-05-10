@@ -120,10 +120,9 @@
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
     shell = pkgs.zsh;
   };
-  sops.secrets.lewis_password.neededForUsers = true;
   users.users.lewis = {
     isNormalUser = true;
-    hashedPasswordFile = config.sops.secrets.lewis_password.path;
+    hashedPassword = "$6$iEVpQmCCXxG4wWea$1bE0JRO0hUiV3M24nOS6XQe3jrCEzFlR1fAvRm1V8/ATevuCNZWyNQ.RjUdHkpznE.7BYNTWq5KfNKncLrVzX1";
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
     shell = pkgs.zsh;
   };

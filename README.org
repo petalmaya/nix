@@ -4,7 +4,7 @@
 * What?
 My nixos config.
 
-I like sway...
+I like sway <3 :3
 
 * Why?
 Wouldnt you like to know!
@@ -12,28 +12,79 @@ Wouldnt you like to know!
 * Where?
 
 - =hosts/= Machine Configs
-  - =common= On the tin.
-  - =rabbit= Test of things.
-  - =wonderland= Primary setup
+  - =common= Shared config for all machines
+    - =default.nix= Base system config, users, audio, fonts etc
+    - =home-wifi.nix= WiFi via sops-nix (writes NM keyfile on activation)
+  - =rabbit= Test machine
+  - =wonderland= Primary setup (alice's main laptop)
+  - =lookingglass= Cheshire's machine
+  - =teaparty= Hatter's machine (RPi4)
 
 - =modules/= Modules
-  - =nixos= System Level modules (In theory)
-  - =home= Home manger module
+  - =nixos= System Level modules
+  - =home= Home Manager modules
 
-- =users= On the tin
-  - =alice= main
-  - =lewis= niri
-  - =stacy= ..?
+- =users= User home configs
+  - =alice= main (wonderland, rabbit)
+  - =lewis= secondary user
+  - =cheshire= lookingglass
+  - =hatter= teaparty
+
+- =secrets/= sops-encrypted secrets (see secrets.yaml.example)
 
 * How?
-uh:
-#+begin_src nix
+
+** Quickstart (For me ofc)
+
+#+begin_src sh
   git clone https://codeberg.org/sheep/nix.git
   cd nix
   sudo nixos-rebuild switch --flake .#wonderland
 #+end_src
-    
-Thats how you get my thing uh make sure to give alice a password or just use lewis.
+
+** Installing on a new machine (new user with their own key)
+
+You need your own age key so you can decrypt/re-encrypt the secrets.
+
+*** 1. Generate an age key
+#+begin_src sh
+  age-keygen -o ~/.config/sops/age/keys.txt
+  # Note down the public key printed — you'll need it
+#+end_src
+
+*** 2. Add your public key to .sops.yaml
+Edit =.sops.yaml= and replace my age public key with your own:
+#+begin_src yaml
+  keys:
+    - &admin age1YOUR_PUBLIC_KEY_HERE
+  creation_rules:
+    - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
+      key_groups:
+      - age:
+        - *admin
+#+end_src
+
+*** 3. Create your secrets.yaml
+Since my =secrets.yaml= is ignored by git, you'll need to create your own!
+You can use the provided example as a structure reference:
+#+begin_src sh
+  cp secrets/secrets.yaml.example secrets/secrets.yaml
+  sops secrets/secrets.yaml
+#+end_src
+
+*** 4. Copy the key to where nixos-activate expects it
+The system activation reads the key from =/var/lib/nixsecrets/keys.txt=.
+Before first rebuild, drop your key there:
+#+begin_src sh
+  sudo mkdir -p /var/lib/nixsecrets
+  sudo cp ~/.config/sops/age/keys.txt /var/lib/nixsecrets/keys.txt
+  sudo chmod 600 /var/lib/nixsecrets/keys.txt
+#+end_src
+
+*** 5. Build!
+#+begin_src sh
+  sudo nixos-rebuild switch --flake .#wonderland
+#+end_src
 
 * Who's Alice?
 Im Alice silly goose~
