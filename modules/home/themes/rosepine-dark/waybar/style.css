@@ -1,0 +1,157 @@
+/* Rosepine Dark */
+@define-color background #191724;
+@define-color surface #1f1d2e;
+@define-color overlay #26233a;
+@define-color text #e0def4;
+@define-color subtle #908caa;
+@define-color muted #6e6a86;
+@define-color love #eb6f92;
+@define-color gold #f6c177;
+@define-color rose #ebbcba;
+@define-color pine #31748f;
+@define-color foam #9ccfd8;
+@define-color iris #c4a7e7;
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "Courier Prime", monospace;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background-color: @background;
+    color: @text;
+    border-bottom: 1px solid @overlay;
+}
+
+/* ── Workspaces ─────────────────────────────────────────────── */
+
+#workspaces button {
+    padding: 0 8px;
+    background-color: transparent;
+    color: @subtle;
+    margin: 0;
+}
+
+#workspaces button:hover {
+    background: @overlay;
+}
+
+#workspaces button.focused {
+    color: @love;
+    border-bottom: 2px solid @love;
+    font-weight: 700;
+}
+
+#workspaces button.urgent {
+    background-color: @gold;
+    color: @background;
+}
+
+/* ── Mode ── */
+#mode {
+    color: @gold;
+    padding: 0 10px;
+    border-bottom: 2px solid @gold;
+    font-style: italic;
+}
+
+/* ── Common module base ─────────────────────────────────────── */
+#clock,
+#cpu,
+#memory,
+#temperature,
+#battery,
+#network,
+#pulseaudio,
+#tray {
+    padding: 0 10px;
+    margin: 0;
+    background-color: transparent;
+    border-bottom: 2px solid transparent;
+}
+
+/* ── Clock (center) ─────────────────────────────────────────── */
+#clock {
+    color: @text;
+    font-weight: 600;
+    border-bottom-color: transparent;
+}
+
+/* ── Right modules ──────────────────────────────────────────── */
+#temperature {
+    color: @foam;
+    border-bottom-color: @foam;
+}
+
+#temperature.critical {
+    color: @love;
+    border-bottom-color: @love;
+}
+
+#cpu {
+    color: @iris;
+    border-bottom-color: @iris;
+}
+
+#memory {
+    color: @rose;
+    border-bottom-color: @rose;
+}
+
+#battery {
+    color: @pine;
+    border-bottom-color: @pine;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: @foam;
+    border-bottom-color: @foam;
+}
+
+#battery.warning:not(.charging) {
+    color: @gold;
+    border-bottom-color: @gold;
+}
+
+#battery.critical:not(.charging) {
+    color: @love;
+    border-bottom-color: @love;
+}
+
+#pulseaudio {
+    color: @gold;
+    border-bottom-color: @gold;
+}
+
+#pulseaudio.muted {
+    color: @muted;
+    border-bottom-color: transparent;
+}
+
+#network {
+    color: @pine;
+    border-bottom-color: @pine;
+}
+
+#network.disconnected {
+    color: @love;
+    border-bottom-color: @love;
+}
+
+#tray {
+    background-color: transparent;
+}
+
+#tray>.passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray>.needs-attention {
+    -gtk-icon-effect: highlight;
+    color: @love;
+    border-bottom-color: @love;
+}
