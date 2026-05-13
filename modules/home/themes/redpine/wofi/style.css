@@ -1,0 +1,35 @@
+      window {
+        background-color: #191724;
+        color: #e0def4;
+        border: 3px solid #661b2a;
+        border-radius: 30px;
+        margin: 10px;
+      }
+
+      #input {
+        background-color: #2a1015;
+        color: #e0def4;
+        border: none;
+        border-radius: 20px;
+        margin: 10px;
+      }
+
+      #inner-box {
+        background-color: #191724;
+      }
+
+      #outer-box {
+        background-color: #191724;
+      }
+
+      #text {
+        color: #e0def4;
+      }
+
+      #entry:selected {
+        background-color: #661b2a;
+      }
+
+      #entry:selected #text {
+        color: #191724;
+      }

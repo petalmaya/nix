@@ -11,5 +11,6 @@
     openrct2
     bolt-launcher
     balatro
+    unstable-pkgs.vesktop
   ];
 }
