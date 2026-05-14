@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, unstable-pkgs, ... }:
 
 {
   home.packages = with pkgs; [
@@ -10,7 +10,8 @@
     openttd
     openrct2
     bolt-launcher
-    balatro
+    steam-run
     unstable-pkgs.vesktop
+    pokemmo-installer
   ];
 }
