@@ -6,9 +6,7 @@
 }
 
 window#waybar {
-    /* background: #352718; */
-    /* background: transparent; */
-    background-color: rgba(53,39,24,0.75);
+    background-color: rgba(53, 39, 24, 0.75);
     color: #ffffff;
 }
 
@@ -18,7 +16,7 @@ tooltip {
 }
 
 tooltip label {
-  color: white;
+    color: white;
 }
 
 #workspaces button {
@@ -26,8 +24,7 @@ tooltip label {
 }
 
 #workspaces button.persistent {
-    /* color: #dfd2c4; */
-    color: #ffffff
+    color: #ffffff;
 }
 
 #workspaces button.focused {
@@ -44,14 +41,14 @@ tooltip label {
     margin-right: 0px;
 }
 
-#pulseaudio,#wireplumber,#network,#cpu,#memory,#backlight,#battery,#clock {
-	margin-left: 5px;
-	margin-right: 5px;
+#pulseaudio, #wireplumber, #network, #cpu, #memory, #backlight, #battery, #clock {
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 #wireplumber {
     border-top: 5px solid #ffa21f;
-    color:  #ffffff;
+    color: #ffffff;
 }
 
 #wireplumber.muted {
@@ -59,12 +56,12 @@ tooltip label {
 }
 
 #network {
-	border-top: 5px solid #6fd560;
+    border-top: 5px solid #6fd560;
     color: #ffffff;
 }
 
 #network.disconnected {
-	border-top: 5px solid #b02930;
+    border-top: 5px solid #b02930;
     color: #ffffff;
 }
 

@@ -1,9 +1,9 @@
-{ inputs, ... }:
+{ config, lib, ... }: {
+  options.nixtop.themes.guixstyle.enable = lib.mkEnableOption "Guixstyle Theme";
 
-{
   imports = [
-    ./sway.nix
-    ./waybar.nix
-    ./swaync.nix
+    ./sway
+    ./waybar
+    ./swaync
   ];
 }

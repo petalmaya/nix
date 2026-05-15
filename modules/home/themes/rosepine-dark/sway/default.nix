@@ -38,7 +38,7 @@ lib.mkIf config.nixtop.themes.rosepine-dark.enable {
         { command = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"; }
         { command = "keepassxc --minimized"; }
         { command = "mako"; always = false; }
-        { command = "waybar"; always = false; }
+        { command = "waybar"; always = true; }
       ];
 
       # Border styling and Window Rules
