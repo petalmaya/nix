@@ -3,8 +3,8 @@
 {
   imports = [
     # WM — enable ONE theme at a time
-    "${inputs.self}/modules/home/themes/everforest"
-    # "${inputs.self}/modules/home/themes/rosepine-dark"
+    #"${inputs.self}/modules/home/themes/everforest"
+    "${inputs.self}/modules/home/themes/rosepine-dark"
     # Terminal
     "${inputs.self}/modules/home/terminal/foot"
     "${inputs.self}/modules/home/terminal/zsh"
@@ -28,8 +28,8 @@
   home.username = "alice";
   home.homeDirectory = "/home/alice";
 
-  nixtop.themes.everforest.enable = true;
-  # nixtop.themes.rosepine-dark.enable = true;
+  # nixtop.themes.everforest.enable = true;
+  nixtop.themes.rosepine-dark.enable = true;
 
 
   home.packages = with pkgs; [

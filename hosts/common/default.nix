@@ -13,7 +13,8 @@
   boot.loader.efi.canTouchEfiVariables = true;
   networking.networkmanager.enable = true;
   networking.enableIPv6 = true;
-
+  time.timeZone = "America/Edmonton";
+  
   # Swap / Zram - very common on laptops
   zramSwap = {
     enable = true;
