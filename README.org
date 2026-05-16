@@ -4,7 +4,7 @@
 * What?
 My nixos config.
 
-I like sway <3 :3
+I like swayFX <3 :3
 
 * Why?
 Wouldnt you like to know!
