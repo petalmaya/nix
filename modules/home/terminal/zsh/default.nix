@@ -57,13 +57,20 @@
     };
   };
 
-  # ── Zoxide (smart cd) ──────────────────────────────────────────────────────
+  # Zoxide (smart cd)
   programs.zoxide = {
     enable = true;
     enableZshIntegration = true;
   };
 
-  # ── Fzf – gruvbox dark colours ─────────────────────────────────────────────
+  # Direnv
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+    nix-direnv.enable = true;
+  };
+
+  # Fzf – gruvbox dark colours
   programs.fzf = {
     enable = true;
     enableZshIntegration = true;
@@ -74,7 +81,7 @@
     ];
   };
 
-  # ── bat (pretty cat) ──────────────────────────────────────────────────────
+  # bat (pretty cat)
   programs.bat = {
     enable = true;
     config.theme = "gruvbox-dark";

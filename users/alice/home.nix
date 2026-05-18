@@ -16,7 +16,6 @@
 
     "${inputs.self}/modules/home/apps/yazi.nix"
     "${inputs.self}/modules/home/apps/gaming.nix"
-    "${inputs.self}/modules/home/apps/pgm.nix"
     # Services
     "${inputs.self}/modules/home/services/mako"
     "${inputs.self}/modules/home/services/flatpak.nix"
