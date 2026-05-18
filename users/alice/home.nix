@@ -33,7 +33,7 @@
 
   home.packages = with pkgs; [
     # Misc
-    pkgs.palemoon-bin w3m tor-browser # Browsers
+    pkgs.palemoon-bin links2 tor-browser # Browsers
     unstable-pkgs.tutanota-desktop keepassxc # Mail
     xfce.mousepad nemo # Acker
     foot # Terminal Emulator's
@@ -43,7 +43,7 @@
     stack # Idk i don rembere
     krita gimp # Photo editing
     cinny-desktop weechat # Non Discord chat
-    blockbench
+    blockbench tree
 
 
     # Media
@@ -58,7 +58,7 @@
     # Utilities
     swaybg          # Wallpaper
     libnotify # Notifications handled by Mako module
-    # App launcher handled by HM Programs
+    #rofi # App launcher handled by HM Programs
     grim slurp      # Screenshots
     swaylock        # Lockscreen
     brightnessctl   # Brightness keys
