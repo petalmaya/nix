@@ -5,6 +5,7 @@
     # WM — enable ONE theme at a time
     #"${inputs.self}/modules/home/themes/everforest"
     "${inputs.self}/modules/home/themes/rosepine-dark"
+    #"${inputs.self}/modules/home/themes/niripine"
     # Terminal
     "${inputs.self}/modules/home/terminal/foot"
     "${inputs.self}/modules/home/terminal/zsh"
@@ -21,7 +22,7 @@
     "${inputs.self}/modules/home/services/flatpak.nix"
     "${inputs.self}/modules/home/services/mpd.nix"
     # Themes
-    "${inputs.self}/modules/home/themes/theme.nix"
+    "${inputs.self}/modules/home/themes/theme-redpine.nix"
   ];
 
   home.username = "alice";
@@ -29,7 +30,7 @@
 
   # nixtop.themes.everforest.enable = true;
   nixtop.themes.rosepine-dark.enable = true;
-
+  # nixtop.themes.niripine.enable = true;
 
   home.packages = with pkgs; [
     # Misc

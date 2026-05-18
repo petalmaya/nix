@@ -2,9 +2,13 @@
   description = "Alice's Nixtop";
 
   nixConfig = {
-    extra-substituters = [ "https://nix-community.cachix.org" ];
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+      "https://niri.cachix.org"
+    ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
     ];
   };
 
@@ -44,6 +48,8 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Niri Flake
+    niri.url = "github:sodiboo/niri-flake";
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, ... } @ inputs:
@@ -72,6 +78,7 @@
           home-manager.useUserPackages = true;
           home-manager.users = hmUsers;
           home-manager.extraSpecialArgs = { inherit inputs unstable-pkgs; };
+          home-manager.sharedModules = [ inputs.niri.homeModules.niri ];
         }
       ];
     };
