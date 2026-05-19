@@ -50,7 +50,7 @@
     # Media
     mpv
     rmpc
-    audacious
+    strawberry
     cava
     ffmpeg
     ffmpegthumbnailer
