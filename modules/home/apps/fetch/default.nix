@@ -1,9 +1,12 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 {
-  # Fastfetch/Hyfetch
-  programs.fastfetch = {
-    enable = true;
+  options.nixtop.apps.fetch.enable = lib.mkEnableOption "Fastfetch/Hyfetch tool";
+
+  config = lib.mkIf config.nixtop.apps.fetch.enable {
+    programs.fastfetch = {
+      enable = true;
+    };
+    
+    xdg.configFile."fastfetch/config.jsonc".source = ./config.jsonc;
   };
-  
-  xdg.configFile."fastfetch/config.jsonc".source = ./config.jsonc;
 }

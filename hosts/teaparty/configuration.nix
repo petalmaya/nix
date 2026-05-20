@@ -8,25 +8,16 @@
     ./disko.nix
   ];
 
-  # Bootloader & Networking
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
   networking.hostName = "teaparty";
   networking.extraHosts = "127.0.0.1 teaparty";
+
+  # Enable desktop environment and graphical configuration
+  nixtop.desktop.enable = true;
 
   # Graphics and XFCE setup
   services.xserver.enable = true;
   services.xserver.desktopManager.xfce.enable = true;
   services.xserver.displayManager.lightdm.enable = true;
-
-  # Services for hosting files & remote access
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = true; # Allow password for easy initial login
-    };
-  };
 
   # User definitions for this host specifically
   sops.secrets.hatter_password.neededForUsers = true;
@@ -39,6 +30,4 @@
   environment.systemPackages = with pkgs; [
     sshfs
   ];
-
-  system.stateVersion = "25.11";
 }

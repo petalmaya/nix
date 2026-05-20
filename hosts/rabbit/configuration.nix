@@ -7,29 +7,20 @@
     ./hardware-configuration.nix
   ];
 
-  # Bootloader & Networking
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  networking.hostName = "rabbit"; # Corrected hostname for this host
+  networking.hostName = "rabbit";
   networking.extraHosts = "127.0.0.1 rabbit";
 
-  # Graphics & Hardware Acceleration (Intel Broadwell)
-  hardware.graphics = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver
-      intel-vaapi-driver
-      libvdpau-va-gl
+  # Enable desktop environment and graphical configuration
+  nixtop.desktop.enable = true;
 
-      # Vulkan Drivers
-      vulkan-loader
-      vulkan-validation-layers
-      intel-compute-runtime
-    ];
-  };
+  # Graphics & Hardware Acceleration (Intel Broadwell specific overrides)
+  hardware.graphics.extraPackages = with pkgs; [
+    intel-media-driver
+    intel-vaapi-driver
+    libvdpau-va-gl
+    intel-compute-runtime
+  ];
+
   boot.initrd.kernelModules = [ "i915" ];
   hardware.enableAllFirmware = true;
-
-  system.stateVersion = "25.11";
 }
-

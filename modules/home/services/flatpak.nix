@@ -1,13 +1,17 @@
-{ inputs, lib, ... }: {
+{ inputs, lib, config, ... }: {
   imports = [
     inputs.nix-flatpak.homeManagerModules.nix-flatpak
   ];
 
-  services.flatpak = {
-    enable = true;
-    update.onActivation = true;
-    packages = [
-      "app.twintaillauncher.ttl"
-    ];
+  options.nixtop.services.flatpak.enable = lib.mkEnableOption "Flatpak service";
+
+  config = lib.mkIf config.nixtop.services.flatpak.enable {
+    services.flatpak = {
+      enable = true;
+      update.onActivation = true;
+      packages = [
+        "app.twintaillauncher.ttl"
+      ];
+    };
   };
 }

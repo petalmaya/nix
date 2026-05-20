@@ -1,6 +1,6 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 
-{
+lib.mkIf config.nixtop.themes.niriforest.enable {
   programs.niri = {
     enable = true;
 
@@ -93,7 +93,7 @@
         # Terminal / launcher
         "Mod+Return"      = { action.spawn = [ "foot" ]; };
         "Mod+D"           = { action.spawn = [ "wofi" "--show" "drun" "--allow-images" ]; };
-        "Mod+K"           = { action.spawn = [ "sh" "-c" "$HOME/.local/bin/wl-kaomoji" ]; };
+        "Mod+Shift+K"     = { action.spawn = [ "sh" "-c" "$HOME/.local/bin/wl-kaomoji" ]; };
 
         # Screenshot
         "Print"           = { action.spawn = [ "sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png" ]; };

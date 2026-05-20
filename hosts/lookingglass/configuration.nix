@@ -7,11 +7,10 @@
     ./hardware-configuration.nix
   ];
 
-  # Bootloader & Networking
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
   networking.hostName = "lookingglass";
   networking.extraHosts = "127.0.0.1 lookingglass";
+
+  # Note: nixtop.desktop.enable is NOT set to true here since lookingglass is a headless server host.
 
   sops.secrets.cheshire_password.neededForUsers = true;
   users.users.cheshire = {
@@ -19,6 +18,4 @@
     hashedPasswordFile = config.sops.secrets.cheshire_password.path;
     extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
   };
-
-  system.stateVersion = "25.11";
 }

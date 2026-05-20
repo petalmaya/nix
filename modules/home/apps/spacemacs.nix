@@ -1,7 +1,11 @@
-{ pkgs, inputs, ... }:
+{ pkgs, lib, config, inputs, ... }:
 
 {
-  home.packages = [
-    inputs.nixmacs.packages.${pkgs.stdenv.hostPlatform.system}.default
-  ];
+  options.nixtop.apps.spacemacs.enable = lib.mkEnableOption "Spacemacs (nixmacs) configuration";
+
+  config = lib.mkIf config.nixtop.apps.spacemacs.enable {
+    home.packages = [
+      inputs.nixmacs.packages.${pkgs.stdenv.hostPlatform.system}.default
+    ];
+  };
 }
