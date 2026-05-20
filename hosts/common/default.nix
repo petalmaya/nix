@@ -28,7 +28,7 @@
       services.openssh = {
         enable = true;
         settings = {
-          PasswordAuthentication = true;
+          PasswordAuthentication = false;
           PermitRootLogin = "no";
         };
       };
@@ -48,10 +48,15 @@
         hashedPasswordFile = config.sops.secrets.alice_password.path;
         extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
         shell = pkgs.zsh;
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIaO01Z2u6T2zPwR/XOoR6Zv0EvgAsTCvCd1M4bm7Yph alice@wonderland"
+        ];
       };
+
+      sops.secrets.lewis_password.neededForUsers = true;
       users.users.lewis = {
         isNormalUser = true;
-        hashedPassword = "$6$iEVpQmCCXxG4wWea$1bE0JRO0hUiV3M24nOS6XQe3jrCEzFlR1fAvRm1V8/ATevuCNZWyNQ.RjUdHkpznE.7BYNTWq5KfNKncLrVzX1";
+        hashedPasswordFile = config.sops.secrets.lewis_password.path;
         extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
         shell = pkgs.zsh;
       };

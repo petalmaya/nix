@@ -11,6 +11,7 @@
   networking.extraHosts = "127.0.0.1 lookingglass";
 
   # Note: nixtop.desktop.enable is NOT set to true here since lookingglass is a headless server host.
+  # nixtop.tor.enable = false;
 
   sops.secrets.cheshire_password.neededForUsers = true;
   users.users.cheshire = {

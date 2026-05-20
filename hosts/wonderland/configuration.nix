@@ -13,6 +13,9 @@
   # Enable desktop environment and graphical configuration
   nixtop.desktop.enable = true;
 
+  # Enable tor/nginx service
+  nixtop.tor.enable = true;
+
   boot.initrd.kernelModules = [ "i915" ];
 
   hardware.graphics.extraPackages = with pkgs; [

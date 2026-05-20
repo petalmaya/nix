@@ -41,8 +41,6 @@
     };
     # Noctalia Shell
     noctalia-shell.url = "github:noctalia-dev/noctalia-shell";
-    # Local Tor Config
-    tor-config.url = "git+file:///home/alice/nix/.tor-config";
     # Sops
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -69,7 +67,7 @@
           ./hosts/${hostname}/hardware-configuration.nix
         ./hosts/${hostname}/configuration.nix
         inputs.nix-flatpak.nixosModules.nix-flatpak
-        inputs.tor-config.nixosModules.default
+        ./modules/nixos/tor.nix
         inputs.disko.nixosModules.disko
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
