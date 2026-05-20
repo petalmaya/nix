@@ -1,6 +1,6 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
-{
+lib.mkIf config.nixtop.themes.niriforest.enable {
   programs.wofi = {
     enable = true;
     style = builtins.readFile ./style.css;

@@ -1,36 +1,24 @@
-{ config, pkgs, lib, inputs,  unstable-pkgs, ... }:
+{ config, pkgs, lib, inputs, unstable-pkgs, ... }:
 
 {
-  imports = [
-    # WM — enable ONE theme at a time
-    #"${inputs.self}/modules/home/themes/everforest"
-    "${inputs.self}/modules/home/themes/rosepine-dark"
-    #"${inputs.self}/modules/home/themes/niripine"
-    # Terminal
-    "${inputs.self}/modules/home/terminal/foot"
-    "${inputs.self}/modules/home/terminal/zsh"
-    "${inputs.self}/modules/home/terminal/tmux"
-    # Apps
-    "${inputs.self}/modules/home/apps/fetch"
-    "${inputs.self}/modules/home/apps/spacemacs.nix"
-    "${inputs.self}/modules/home/apps/floorp.nix"
-
-    "${inputs.self}/modules/home/apps/yazi.nix"
-    "${inputs.self}/modules/home/apps/gaming.nix"
-    # Services
-    "${inputs.self}/modules/home/services/mako"
-    "${inputs.self}/modules/home/services/flatpak.nix"
-    "${inputs.self}/modules/home/services/mpd.nix"
-    # Themes
-    "${inputs.self}/modules/home/themes/theme-redpine.nix"
-  ];
-
   home.username = "alice";
   home.homeDirectory = "/home/alice";
 
-  # nixtop.themes.everforest.enable = true;
-  nixtop.themes.rosepine-dark.enable = true;
-  # nixtop.themes.niripine.enable = true;
+  # Enable desired modules via options
+  nixtop = {
+    themes.rosepine-dark.enable = true;
+    terminal.foot.enable = true;
+    terminal.zsh.enable = true;
+    terminal.tmux.enable = true;
+    apps.fetch.enable = true;
+    apps.spacemacs.enable = true;
+    apps.floorp.enable = true;
+    apps.yazi.enable = true;
+    apps.gaming.enable = true;
+    services.mako.enable = true;
+    services.flatpak.enable = true;
+    services.mpd.enable = true;
+  };
 
   home.packages = with pkgs; [
     # Misc
@@ -46,7 +34,6 @@
     cinny-desktop weechat # Non Discord chat
     blockbench tree
 
-
     # Media
     mpv
     rmpc
@@ -59,14 +46,13 @@
     # Utilities
     swaybg          # Wallpaper
     libnotify # Notifications handled by Mako module
-    #rofi # App launcher handled by HM Programs
     grim slurp      # Screenshots
     swaylock        # Lockscreen
     brightnessctl   # Brightness keys
     wl-clipboard    # Clipboard
     playerctl gvfs
     pulseaudio      # For 'pactl' volume commands
-    capitaine-cursors # Curosor
+    capitaine-cursors # Cursor
     git # Its git
     unzip p7zip     # The zippers
     wget curl nnn # -.-
@@ -77,7 +63,6 @@
     unstable-pkgs.ani-cli
     unstable-pkgs.antigravity #AI Tool
   ];
-
 
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;

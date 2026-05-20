@@ -1,9 +1,12 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 {
-  # Foot :p
-  programs.foot = {
-    enable = true;
-  };
+  options.nixtop.terminal.foot.enable = lib.mkEnableOption "Foot terminal emulator";
 
-  xdg.configFile."foot/foot.ini".source = ./foot.ini;
+  config = lib.mkIf config.nixtop.terminal.foot.enable {
+    programs.foot = {
+      enable = true;
+    };
+
+    xdg.configFile."foot/foot.ini".source = ./foot.ini;
+  };
 }

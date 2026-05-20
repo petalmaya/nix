@@ -1,17 +1,21 @@
-{ pkgs, unstable-pkgs, ... }:
+{ pkgs, lib, config, unstable-pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    bottles
-    wine
-    renpy
-    obs-studio
-    prismlauncher
-    openttd
-    openrct2
-    bolt-launcher
-    steam-run
-    unstable-pkgs.vesktop
-    pokemmo-installer
-  ];
+  options.nixtop.apps.gaming.enable = lib.mkEnableOption "Gaming applications";
+
+  config = lib.mkIf config.nixtop.apps.gaming.enable {
+    home.packages = with pkgs; [
+      bottles
+      wine
+      renpy
+      obs-studio
+      prismlauncher
+      openttd
+      openrct2
+      bolt-launcher
+      steam-run
+      unstable-pkgs.vesktop
+      pokemmo-installer
+    ];
+  };
 }

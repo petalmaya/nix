@@ -78,7 +78,10 @@
           home-manager.useUserPackages = true;
           home-manager.users = hmUsers;
           home-manager.extraSpecialArgs = { inherit inputs unstable-pkgs; };
-          home-manager.sharedModules = [ inputs.niri.homeModules.niri ];
+          home-manager.sharedModules = [
+            inputs.niri.homeModules.niri
+            (import ./modules/home)
+          ];
         }
       ];
     };
