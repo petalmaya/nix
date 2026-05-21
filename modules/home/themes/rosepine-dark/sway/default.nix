@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, inputs, ... }:
 
 lib.mkIf config.nixtop.themes.rosepine-dark.enable {
   services.swayosd.enable = true;
@@ -19,7 +19,7 @@ lib.mkIf config.nixtop.themes.rosepine-dark.enable {
 
       # Output displays — placeholder solid color background
       output = {
-        "*" = { bg = "/home/alice/nix/assets/wallpaper/cute_bg.png fill"; };
+        "*" = { bg = "${inputs.self}/assets/wallpaper/cute_bg.png fill"; };
         "HDMI-A-1" = { pos = "0 0"; };
         "eDP-1" = { pos = "1680 0"; };
       };
