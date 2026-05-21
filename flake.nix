@@ -48,9 +48,15 @@
     };
     # Niri Flake
     niri.url = "github:sodiboo/niri-flake";
+
+    # Core Nix modules (Zsh & Tmux)
+    core-nix = {
+      url = "path:/home/alice/core-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, ... } @ inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, core-nix, ... } @ inputs:
   let
     mkHost = sys: hostname: hmUsers:
       let
@@ -78,6 +84,7 @@
           home-manager.extraSpecialArgs = { inherit inputs unstable-pkgs; };
           home-manager.sharedModules = [
             inputs.niri.homeModules.niri
+            inputs.core-nix.homeManagerModules.core
             (import ./modules/home)
           ];
         }
@@ -92,14 +99,6 @@
       rabbit = mkHost "x86_64-linux" "rabbit" {
         alice = import ./users/alice/home.nix;
         lewis = import ./users/lewis/home.nix;
-      };
-      teaparty = mkHost "x86_64-linux" "teaparty" {
-        alice  = import ./users/alice/home.nix;
-        lewis  = import ./users/lewis/home.nix;
-        hatter = import ./users/hatter/home.nix;
-      };
-      lookingglass = mkHost "aarch64-linux" "lookingglass" {
-        cheshire = import ./users/cheshire/home.nix;
       };
     };
 

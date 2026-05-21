@@ -17,6 +17,8 @@
 
       boot.loader.systemd-boot.enable = true;
       boot.loader.efi.canTouchEfiVariables = true;
+      boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+      boot.binfmt.preferStaticEmulators = true;
       networking.networkmanager.enable = true;
       networking.enableIPv6 = true;
       time.timeZone = "America/Edmonton";
