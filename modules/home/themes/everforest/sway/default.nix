@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, inputs, ... }:
 
 lib.mkIf config.nixtop.themes.everforest.enable {
   services.swayosd.enable = true;
@@ -18,7 +18,7 @@ lib.mkIf config.nixtop.themes.everforest.enable {
       };
       # Output displays
       output = {
-        "*" = { bg = "/home/alice/nix/assets/wallpaper/forest_bg.jpg fill"; };
+        "*" = { bg = "${inputs.self}/assets/wallpaper/forest_bg.jpg fill"; };
         "HDMI-A-1" = { pos = "0 0"; };
         "eDP-1" = { pos = "1680 0"; };
       };

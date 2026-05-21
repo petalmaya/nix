@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, inputs, ... }:
 
 lib.mkIf config.nixtop.themes.niriforest.enable {
   programs.niri = {
@@ -27,7 +27,7 @@ lib.mkIf config.nixtop.themes.niriforest.enable {
 
       # Autostart
       spawn-at-startup = [
-        { command = [ "swaybg" "-i" "/home/alice/nix/assets/wallpaper/forest_bg.jpg" "-m" "fill" ]; }
+        { command = [ "swaybg" "-i" "${inputs.self}/assets/wallpaper/forest_bg.jpg" "-m" "fill" ]; }
         { command = [ "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP=niri" ]; }
         { command = [ "systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP" ]; }
         { command = [ "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1" ]; }

@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, inputs, ... }:
 
 lib.mkIf config.nixtop.themes.guixstyle.enable {
   wayland.windowManager.sway = {
@@ -18,7 +18,7 @@ lib.mkIf config.nixtop.themes.guixstyle.enable {
 
       # Output displays — replace with your actual wallpaper path
       output = {
-        "*" = { bg = "/home/alice/nix/assets/wallpaper/guixstyle_bg.png fill"; };
+        "*" = { bg = "${inputs.self}/assets/wallpaper/twi_bg.png fill"; };
         "HDMI-A-1" = { pos = "0 0"; };
         "eDP-1" = { pos = "1680 0"; };
       };
