@@ -51,7 +51,7 @@
 
     # Core Nix modules (Zsh & Tmux)
     core-nix = {
-      url = "path:/home/alice/core-nix";
+      url = "github:red-hood-woods/nix-core";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
