@@ -17,7 +17,7 @@
 
       boot.loader.systemd-boot.enable = true;
       boot.loader.efi.canTouchEfiVariables = true;
-      boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+      boot.binfmt.emulatedSystems = lib.filter (sys: sys != pkgs.stdenv.hostPlatform.system) [ "aarch64-linux" ];
       boot.binfmt.preferStaticEmulators = true;
       networking.networkmanager.enable = true;
       networking.enableIPv6 = true;
