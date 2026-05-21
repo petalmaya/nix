@@ -5,7 +5,6 @@
     ./apps/fetch
     ./apps/floorp.nix
     ./apps/gaming.nix
-    ./apps/nixvim.nix
     ./apps/rofi.nix
     ./apps/spacemacs.nix
     ./apps/yazi.nix
@@ -13,8 +12,6 @@
     ./services/mako
     ./services/mpd.nix
     ./terminal/foot
-    ./terminal/tmux
-    ./terminal/zsh
     ./wm/niri.nix
     ./wm/sway-noctalia.nix
     ./wm/sway-ribbit.nix
