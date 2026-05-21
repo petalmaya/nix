@@ -7,14 +7,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1779339371,
-        "narHash": "sha256-5YAwVrvl31AYsRcBr5Uavm0kIlU31sB4wQQlwVoJL0c=",
-        "path": "/home/alice/core-nix",
-        "type": "path"
+        "lastModified": 1779340186,
+        "narHash": "sha256-nZnlSnVJOD4935fDofzkXYT+hUxjODjC0GQ/LD0XtUc=",
+        "owner": "red-hood-woods",
+        "repo": "nix-core",
+        "rev": "936222729fd81d5a87d0d8586d1735376bb86b8f",
+        "type": "github"
       },
       "original": {
-        "path": "/home/alice/core-nix",
-        "type": "path"
+        "owner": "red-hood-woods",
+        "repo": "nix-core",
+        "type": "github"
       }
     },
     "disko": {
