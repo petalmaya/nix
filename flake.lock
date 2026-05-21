@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "core-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1779339371,
+        "narHash": "sha256-5YAwVrvl31AYsRcBr5Uavm0kIlU31sB4wQQlwVoJL0c=",
+        "path": "/home/alice/core-nix",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/alice/core-nix",
+        "type": "path"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -47,11 +64,11 @@
       },
       "locked": {
         "dir": "pkgs/firefox-addons",
-        "lastModified": 1779249871,
-        "narHash": "sha256-GP3+R4ds6IoW5xokq4g6n455to0iFepMYYC7XnXeZCo=",
+        "lastModified": 1779336167,
+        "narHash": "sha256-YbAbHiHmPhBVqgVvWzFOrQTkmYQ7oXOvEBNDRT6ruBA=",
         "owner": "rycee",
         "repo": "nur-expressions",
-        "rev": "085aa4376cf34978977700fa56a5d9ccddbfc8a6",
+        "rev": "e4bc7d7ca24db3a7b1daac4ef0957b8148b444bf",
         "type": "gitlab"
       },
       "original": {
@@ -162,11 +179,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778802938,
-        "narHash": "sha256-Hx7/GQNdX4veTTxPTJBRlG5OwyGJcgVaOayCt37lMhg=",
+        "lastModified": 1779336723,
+        "narHash": "sha256-YvV9snsQDAy15FcyZrl6OnIl+6XJNNq2QCkxLITCb2I=",
         "ref": "refs/heads/main",
-        "rev": "b1e99da646386c44adc5389643f0847a9c0858c9",
-        "revCount": 30,
+        "rev": "22bcf3a585ae2a61b5306c1574aa9d77dcf442da",
+        "revCount": 31,
         "type": "git",
         "url": "https://codeberg.org/sheep/nixmacs"
       },
@@ -331,6 +348,7 @@
     },
     "root": {
       "inputs": {
+        "core-nix": "core-nix",
         "disko": "disko",
         "firefox-addons": "firefox-addons",
         "home-manager": "home-manager",
