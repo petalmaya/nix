@@ -2,58 +2,53 @@
 #+options: toc:nil
 
 * What?
-My nixos config.
+my main nixos configuration! this is what runs my cozy daily setup on wonderland (my main laptop) and rabbit (my test machine) ♡
 
-I like sway <3 :3
+i like niri and swayfx a lot, they look so pretty and smooth! :3
 
 * Why?
-Wouldnt you like to know!
+wouldnt you like to know! but seriously, nix is just so comfy once you get the hang of it~
 
 * Where?
+here is how everything is organized in my little wonderland:
 
-- =hosts/= Machine Configs
-  - =common= Shared config for all machines
-    - =default.nix= Base system config, users, audio, fonts etc
-    - =home-wifi.nix= WiFi via sops-nix (writes NM keyfile on activation)
-  - =rabbit= Test machine
-  - =wonderland= Primary setup (alice's main laptop)
-  - =lookingglass= Cheshire's machine
-  - =teaparty= Hatter's machine (RPi4)
+- =hosts/= — machine configurations
+  - =common/= — shared config for all my systems (base config, users, audio, custom fonts, openssh, etc.)
+  - =wonderland/= — my main laptop (x86_64-linux, cozy swayfx/niri desktop setup)
+  - =rabbit/= — my test machine (x86_64-linux, for experimenting without breaking things!)
 
-- =modules/= Modules
-  - =nixos= System Level modules
-  - =home= Home Manager modules
+- =modules/= — my custom nixos and home manager modules
+  - =nixos/= — system-level modules (cachix, flatpak, tor, etc.)
+  - =home/= — home manager configuration (apps, services, terminal, wm, and themes!)
 
-- =users= User home configs
-  - =alice= main (wonderland, rabbit)
-  - =lewis= secondary user
-  - =cheshire= lookingglass
-  - =hatter= teaparty
+- =users/= — home manager user configs
+  - =alice/= — my main profile (used on wonderland and rabbit)
+  - =lewis/= — secondary user setup for testing and multitasking
 
-- =secrets/= sops-encrypted secrets (see secrets.yaml.example)
+- =secrets/= — sops-encrypted secrets (ssh keys, passwords, wifi configurations, etc.)
 
 * How?
 
-** Quickstart (For me ofc)
-
+** Quickstart (for me ofc)
+if i ever need to rebuild my system in a hurry:
 #+begin_src sh
   git clone https://codeberg.org/sheep/nix.git
   cd nix
-  sudo nixos-rebuild switch --flake .#wonderland
+  nixsw
 #+end_src
+(yes, i have a =nixsw= alias that does the hard rebuild work for me!)
 
-** Installing on a new machine (new user with their own key)
+** Installing on a new machine (or new user setup)
+you need your own age key so you can decrypt and re-encrypt the secrets.
 
-You need your own age key so you can decrypt/re-encrypt the secrets.
-
-*** 1. Generate an age key
+*** 1. generate an age key
 #+begin_src sh
   age-keygen -o ~/.config/sops/age/keys.txt
-  # Note down the public key printed — you'll need it
+  # write down the public key printed — you'll need it!
 #+end_src
 
-*** 2. Add your public key to .sops.yaml
-Edit =.sops.yaml= and replace my age public key with your own:
+*** 2. add your public key to .sops.yaml
+edit =.sops.yaml= and replace my public key with your own:
 #+begin_src yaml
   keys:
     - &admin age1YOUR_PUBLIC_KEY_HERE
@@ -64,27 +59,26 @@ Edit =.sops.yaml= and replace my age public key with your own:
         - *admin
 #+end_src
 
-*** 3. Create your secrets.yaml
-Since my =secrets.yaml= is ignored by git, you'll need to create your own!
-You can use the provided example as a structure reference:
+*** 3. create your secrets.yaml
+my actual secrets are ignored by git, so you should create your own using the template:
 #+begin_src sh
   cp secrets/secrets.yaml.example secrets/secrets.yaml
   sops secrets/secrets.yaml
 #+end_src
 
-*** 4. Copy the key to where nixos-activate expects it
-The system activation reads the key from =/var/lib/nixsecrets/keys.txt=.
-Before first rebuild, drop your key there:
+*** 4. copy your keys where nixos-activate expects them
+the system activation script looks for the key at =/var/lib/nixsecrets/keys.txt=.
+before you run your first rebuild, put the key there:
 #+begin_src sh
   sudo mkdir -p /var/lib/nixsecrets
   sudo cp ~/.config/sops/age/keys.txt /var/lib/nixsecrets/keys.txt
   sudo chmod 600 /var/lib/nixsecrets/keys.txt
 #+end_src
 
-*** 5. Build!
+*** 5. build!
 #+begin_src sh
   sudo nixos-rebuild switch --flake .#wonderland
 #+end_src
 
 * Who's Alice?
-Im Alice silly goose~
+im alice, silly goose! just a girl who loves cute things, aesthetic desktops, and nix~ ♡
