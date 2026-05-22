@@ -1,0 +1,142 @@
+# Sway configuration for Guixstyle
+modifier Mod4
+terminal foot
+default_border pixel 2
+gaps inner 0
+gaps outer 0
+smart_gaps off
+
+# Fonts
+font pango:DejaVu Sans Mono 11
+
+# Output displays positions
+output HDMI-A-1 pos 0 0
+output eDP-1 pos 1680 0
+
+# Keyboard & touchpad input
+input "type:keyboard" {
+    xkb_layout "us"
+    xkb_variant "dvorak"
+    xkb_options "ctrl:swapcaps,altwin:swap_alt_win"
+}
+input "type:touchpad" {
+    tap "enabled"
+    natural_scroll "enabled"
+}
+input "*" {
+    repeat_delay "250"
+    repeat_rate "40"
+}
+
+# Default layout
+workspace_layout tabbed
+
+# Workspace assignments
+assign [app_id="org.keepassxc.KeePassXC"] workspace number 2
+assign [app_id="LibreWolf"] workspace number 2
+assign [app_id="mpv"] workspace number 3
+assign [app_id="org.pwmt.zathura"] workspace number 8
+assign [app_id="mpv-album"] workspace number 9
+assign [app_id="signal"] workspace number 10
+assign [app_id="org.gajim.Gajim"] workspace number 10
+
+# Colors
+# Guixstyle warm dark brown color scheme
+# bg: #352718  accent: #ffa21f  green: #6fd560
+# class                 border  backgr. text    indicator child_border
+client.focused          #ffa21f #ffa21f #282828 #6fd560   #ffa21f
+client.focused_inactive #352718 #352718 #e8e4b1 #352718   #352718
+client.unfocused        #282828 #282828 #9da9a0 #282828   #282828
+client.urgent           #b02930 #b02930 #e8e4b1 #b02930   #b02930
+client.placeholder      #352718 #352718 #e8e4b1 #352718   #352718
+client.background       #352718
+
+# Keybindings
+bindsym Mod4+Return exec foot
+bindsym Mod4+Shift+f exec fuzzel
+bindsym Mod4+k exec $HOME/.local/bin/wl-kaomoji
+bindsym Mod4+Shift+c reload
+
+bindsym Print exec grim -g "$(slurp)" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png
+bindsym Mod4+l exec swaylock
+bindsym Mod4+w exec librewolf
+bindsym Mod4+e exec foot -e yazi
+bindsym Mod4+b exec librewolf
+bindsym Mod4+m exec foot -e rmpc
+bindsym Mod4+n exec mpv --player-operation-mode=pseudo-gui
+
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86MonBrightnessUp exec brightnessctl set +5%
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+
+bindsym Mod4+c kill
+bindsym Mod1+F4 kill
+
+bindsym Mod4+h split h
+bindsym Mod4+v split v
+bindsym Mod4+s layout toggle split
+bindsym Mod4+t layout tabbed
+bindsym Mod4+f fullscreen toggle
+bindsym Mod4+space floating toggle
+bindsym Mod4+Shift+space focus mode_toggle
+
+bindsym Mod4+Tab focus right
+bindsym Mod4+Shift+Tab focus left
+bindsym Mod4+c workspace back_and_forth
+
+bindsym Mod4+Control+Right workspace next
+bindsym Mod4+Control+Left workspace prev
+
+bindsym Mod4+1 workspace number 1
+bindsym Mod4+2 workspace number 2
+bindsym Mod4+3 workspace number 3
+bindsym Mod4+4 workspace number 4
+bindsym Mod4+5 workspace number 5
+bindsym Mod4+6 workspace number 6
+bindsym Mod4+7 workspace number 7
+bindsym Mod4+8 workspace number 8
+bindsym Mod4+9 workspace number 9
+bindsym Mod4+0 workspace number 10
+
+bindsym Mod4+Shift+1 move container to workspace number 1
+bindsym Mod4+Shift+2 move container to workspace number 2
+bindsym Mod4+Shift+3 move container to workspace number 3
+bindsym Mod4+Shift+4 move container to workspace number 4
+bindsym Mod4+Shift+5 move container to workspace number 5
+bindsym Mod4+Shift+6 move container to workspace number 6
+bindsym Mod4+Shift+7 move container to workspace number 7
+bindsym Mod4+Shift+8 move container to workspace number 8
+bindsym Mod4+Shift+9 move container to workspace number 9
+bindsym Mod4+Shift+0 move container to workspace number 10
+
+bindsym Mod4+minus scratchpad show
+bindsym Mod4+Shift+minus move scratchpad
+
+bindsym Mod4+BackSpace exec swaymsg reload
+bindsym Mod4+q exec swaynag -t warning -m 'Really exit?' -b 'Yes' 'swaymsg exit'
+bindsym Mod4+r mode resize
+
+# Guix-specific keybindings
+bindsym Mod4+Shift+n exec guix shell firefox -- firefox https://netflix.com
+bindsym Mod4+a exec control-music.scm track
+bindsym Mod4+Shift+t exec toggle-theme.scm
+
+# Resize Mode
+mode "resize" {
+    bindsym Left resize shrink width 5 px or 5 ppt
+    bindsym Down resize grow height 5 px or 5 ppt
+    bindsym Up resize shrink height 5 px or 5 ppt
+    bindsym Right resize grow width 5 px or 5 ppt
+    bindsym Return mode default
+    bindsym Escape mode default
+}
+
+# Autostart applications
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+exec keepassxc --minimized
+exec swayidle -w timeout 900 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' before-sleep 'swaylock'
+exec waybar
+exec swaync
