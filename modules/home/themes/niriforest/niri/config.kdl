@@ -1,0 +1,155 @@
+// Niri configuration for Niriforest
+outputs {
+    "HDMI-A-1" {
+        position x=0 y=0
+    }
+    "eDP-1" {
+        position x=1680 y=0
+    }
+}
+
+input {
+    touchpad {
+        tap
+        natural-scroll
+    }
+    touch {
+        map-to-output "eDP-1"
+    }
+}
+
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP=niri"
+spawn-at-startup "systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+spawn-at-startup "keepassxc" "--minimized"
+spawn-at-startup "mako"
+spawn-at-startup "waybar"
+
+layout {
+    gaps 12
+    center-focused-column "never"
+    preset-column-widths {
+        proportion 0.333
+        proportion 0.5
+        proportion 0.667
+        proportion 1.0
+    }
+    default-column-width { proportion 0.5; }
+
+    // Border colours mirror sway everforest colours
+    focus-ring {
+        enable
+        width 3
+        active-color "#a7c080"   // everforest green
+        inactive-color "#3a454a" // everforest dim
+    }
+    border {
+        off
+    }
+}
+
+prefer-no-csd
+
+window-rule {
+    match app-id="^(eog|sxiv|feh|mpv|vlc|file-roller|xarchiver)$"
+    open-floating true
+}
+window-rule {
+    match app-id="thunar" title="File Operation Progress"
+    open-floating true
+}
+window-rule {
+    match app-id="thunar" title="Confirm to replace files"
+    open-floating true
+}
+
+animations {
+    enable
+}
+
+cursor {
+    theme "Adwaita"
+    size 24
+}
+
+environment {
+    XDG_CURRENT_DESKTOP "niri"
+}
+
+binds {
+    // Terminal / launcher
+    "Mod+Return"      { spawn "foot"; }
+    "Mod+D"           { spawn "wofi" "--show" "drun" "--allow-images"; }
+    "Mod+Shift+K"     { spawn "sh" "-c" "$HOME/.local/bin/wl-kaomoji"; }
+
+    // Screenshot
+    "Print"           { spawn "sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png"; }
+
+    // Lock
+    "Mod+Shift+L"     { spawn "swaylock" "--image" "/home/alice/.lock.png" "--scaling" "fill" "--ring-color" "f6a6aa" "--key-hl-color" "1c262c" "--text-color" "f2d7d8"; }
+
+    // Apps
+    "Mod+W"           { spawn "floorp"; }
+    "Mod+E"           { spawn "foot" "-e" "yazi"; }
+    "Mod+M"           { spawn "foot" "-e" "rmpc"; }
+    "Mod+N"           { spawn "mpv" "--player-operation-mode=pseudo-gui"; }
+
+    // Audio / brightness
+    "XF86AudioRaiseVolume"    { spawn "swayosd-client" "--output-volume" "raise"; }
+    "XF86AudioLowerVolume"    { spawn "swayosd-client" "--output-volume" "lower"; }
+    "XF86AudioMute"           { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
+    "XF86MonBrightnessUp"     { spawn "swayosd-client" "--brightness" "raise"; }
+    "XF86MonBrightnessDown"   { spawn "swayosd-client" "--brightness" "lower"; }
+
+    // Window management
+    "Mod+C"           { close-window; }
+    "Alt+F4"          { close-window; }
+
+    "Mod+F"           { maximize-column; }
+    "Mod+Shift+F"     { fullscreen-window; }
+    "Mod+Space"       { toggle-window-floating; }
+    "Mod+Shift+Space" { switch-focus-between-floating-and-tiling; }
+
+    // Focus movement (arrow keys + hjkl-ish)
+    "Mod+Left"        { focus-column-left; }
+    "Mod+Right"       { focus-column-right; }
+    "Mod+Up"          { focus-window-up; }
+    "Mod+Down"        { focus-window-down; }
+    "Mod+H"           { focus-column-left; }
+    "Mod+J"           { focus-window-down; }
+    "Mod+K"           { focus-window-up; }
+    "Mod+L"           { focus-column-right; }
+
+    // Move columns
+    "Mod+Shift+Left"  { move-column-left; }
+    "Mod+Shift+Right" { move-column-right; }
+    "Mod+Shift+H"     { move-column-left; }
+    "Mod+Shift+J"     { move-column-right; }
+
+    // Workspaces
+    "Mod+Control+Right" { focus-workspace-down; }
+    "Mod+Control+Left"  { focus-workspace-up; }
+    "Mod+1"             { focus-workspace 1; }
+    "Mod+2"             { focus-workspace 2; }
+    "Mod+3"             { focus-workspace 3; }
+    "Mod+4"             { focus-workspace 4; }
+    "Mod+5"             { focus-workspace 5; }
+    "Mod+6"             { focus-workspace 6; }
+    "Mod+Shift+1"       { move-column-to-workspace 1; }
+    "Mod+Shift+2"       { move-column-to-workspace 2; }
+    "Mod+Shift+3"       { move-column-to-workspace 3; }
+    "Mod+Shift+4"       { move-column-to-workspace 4; }
+    "Mod+Shift+5"       { move-column-to-workspace 5; }
+    "Mod+Shift+6"       { move-column-to-workspace 6; }
+
+    // Column sizing
+    "Mod+Minus" { set-column-width "-10%"; }
+    "Mod+Equal" { set-column-width "+10%"; }
+    "Mod+R"     { switch-preset-column-width; }
+
+    // Quit
+    "Mod+Q"           { quit; }
+    "Mod+Shift+C"     { do-screen-transition; }
+
+    // Show keybind overlay
+    "Mod+Shift+Slash" { show-hotkey-overlay; }
+}

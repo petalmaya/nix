@@ -1,0 +1,102 @@
+# Sway configuration for Redpine
+modifier Mod4
+terminal foot
+default_border pixel 3
+gaps inner 0
+gaps outer 0
+smart_gaps off
+
+# Fonts
+font pango:Courier Prime 11
+
+# Output displays positions
+output HDMI-A-1 pos 0 0
+output eDP-1 pos 1680 0
+
+# Touchscreen Input
+input "3823:49229:eGalax_Inc._eGalaxTouch_EXC3000-0367-46.00.00" {
+    map_to_output eDP-1
+}
+
+# Window rules and styling
+for_window [app_id="(?i)eog|sxiv|feh|mpv|vlc|file-roller|xarchiver"] floating enable, focus
+for_window [class="(?i)eog|sxiv|feh|mpv|vlc|file-roller|xarchiver"] floating enable, focus
+for_window [window_role="dialog"] floating enable
+for_window [window_role="pop-up"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+for_window [app_id="thunar" title="File Operation Progress"] floating enable
+for_window [app_id="thunar" title="Confirm to replace files"] floating enable, sticky enable, focus
+
+# Colors
+# class                 border  backgr. text    indicator child_border
+client.focused          #661b2a #661b2a #e0def4 #661b2a   #661b2a
+client.focused_inactive #4a1c25 #4a1c25 #908caa #4a1c25   #4a1c25
+client.unfocused        #2a1015 #2a1015 #6e6a86 #2a1015   #2a1015
+client.urgent           #eb6f92 #eb6f92 #e0def4 #eb6f92   #eb6f92
+client.placeholder      #2a1015 #2a1015 #e0def4 #2a1015   #2a1015
+
+# Keybindings
+bindsym Mod4+Return exec foot
+bindsym Mod4+d exec wofi --show drun --allow-images
+bindsym Mod4+k exec $HOME/.local/bin/wl-kaomoji
+bindsym Mod4+Shift+c reload
+
+bindsym Print exec grim -g "$(slurp)" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png
+bindsym Mod4+l exec swaylock --image ~/.lock.png --scaling fill --ring-color f6a6aa --key-hl-color 1c262c --text-color f2d7d8
+bindsym Mod4+w exec floorp
+bindsym Mod4+e exec foot -e yazi
+bindsym Mod4+m exec foot -e rmpc
+bindsym Mod4+n exec mpv --player-operation-mode=pseudo-gui
+
+bindsym XF86AudioRaiseVolume exec swayosd-client --output-volume raise
+bindsym XF86AudioLowerVolume exec swayosd-client --output-volume lower
+bindsym XF86AudioMute exec swayosd-client --output-volume mute-toggle
+bindsym XF86MonBrightnessUp exec swayosd-client --brightness raise
+bindsym XF86MonBrightnessDown exec swayosd-client --brightness lower
+
+bindsym Mod4+c kill
+bindsym Mod1+F4 kill
+
+bindsym Mod4+h split h
+bindsym Mod4+v split v
+bindsym Mod4+s layout toggle split
+bindsym Mod4+f fullscreen toggle
+bindsym Mod4+space floating toggle
+bindsym Mod4+Shift+space focus mode_toggle
+
+bindsym Mod4+Control+Right workspace next
+bindsym Mod4+Control+Left workspace prev
+bindsym Mod4+1 workspace 1:1
+bindsym Mod4+2 workspace 2:2
+bindsym Mod4+3 workspace 3:3
+bindsym Mod4+4 workspace 4:4
+bindsym Mod4+5 workspace 5:5
+bindsym Mod4+6 workspace 6:6
+
+bindsym Mod4+Shift+1 move container to workspace 1:1
+bindsym Mod4+Shift+2 move container to workspace 2:2
+bindsym Mod4+Shift+3 move container to workspace 3:3
+bindsym Mod4+Shift+4 move container to workspace 4:4
+bindsym Mod4+Shift+5 move container to workspace 5:5
+bindsym Mod4+Shift+6 move container to workspace 6:6
+
+bindsym Mod4+BackSpace exec swaymsg reload
+bindsym Mod4+q exec swaynag -t warning -m 'Really exit?' -b 'Yes' 'swaymsg exit'
+bindsym Mod4+r mode resize
+
+# Resize Mode
+mode "resize" {
+    bindsym Left resize shrink width 5 px or 5 ppt
+    bindsym Down resize grow height 5 px or 5 ppt
+    bindsym Up resize shrink height 5 px or 5 ppt
+    bindsym Right resize grow width 5 px or 5 ppt
+    bindsym Return mode default
+    bindsym Escape mode default
+}
+
+# Autostart applications
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+exec systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+exec keepassxc --minimized
+exec mako
