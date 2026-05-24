@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1779340186,
-        "narHash": "sha256-nZnlSnVJOD4935fDofzkXYT+hUxjODjC0GQ/LD0XtUc=",
+        "lastModified": 1779473220,
+        "narHash": "sha256-5p0eFbZtAlhRntGr7KR8rQSTnJ9Gnhz1G/Yw41GUSb4=",
         "owner": "red-hood-woods",
         "repo": "nix-core",
-        "rev": "936222729fd81d5a87d0d8586d1735376bb86b8f",
+        "rev": "72a37bfa1f7de82aa615ae7f1563bc8d39adb76c",
         "type": "github"
       },
       "original": {

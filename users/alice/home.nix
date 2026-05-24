@@ -9,7 +9,8 @@
     themes.rosepine-dark.enable = true;
     terminal.foot.enable = true;
     terminal.zsh.enable = true;
-    terminal.tmux.enable = true;
+    # terminal.tmux.enable = true;
+    terminal.zellij.enable = true;
     apps.fetch.enable = true;
     apps.spacemacs.enable = true;
     apps.floorp.enable = true;

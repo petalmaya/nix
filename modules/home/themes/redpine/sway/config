@@ -1,6 +1,4 @@
 # Sway configuration for Redpine
-modifier Mod4
-terminal foot
 default_border pixel 3
 gaps inner 0
 gaps outer 0
@@ -80,6 +78,18 @@ bindsym Mod4+Shift+3 move container to workspace 3:3
 bindsym Mod4+Shift+4 move container to workspace 4:4
 bindsym Mod4+Shift+5 move container to workspace 5:5
 bindsym Mod4+Shift+6 move container to workspace 6:6
+
+# Focus movement (arrow keys)
+bindsym Mod4+Left focus left
+bindsym Mod4+Down focus down
+bindsym Mod4+Up focus up
+bindsym Mod4+Right focus right
+
+# Move window (arrow keys)
+bindsym Mod4+Shift+Left move left
+bindsym Mod4+Shift+Down move down
+bindsym Mod4+Shift+Up move up
+bindsym Mod4+Shift+Right move right
 
 bindsym Mod4+BackSpace exec swaymsg reload
 bindsym Mod4+q exec swaynag -t warning -m 'Really exit?' -b 'Yes' 'swaymsg exit'
