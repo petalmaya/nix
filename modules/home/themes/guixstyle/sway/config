@@ -1,6 +1,4 @@
 # Sway configuration for Guixstyle
-modifier Mod4
-terminal foot
 default_border pixel 2
 gaps inner 0
 gaps outer 0

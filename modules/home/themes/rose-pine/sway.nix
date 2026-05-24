@@ -123,6 +123,18 @@
         "${modifier}+Shift+5" = "move container to workspace 5:V";
         "${modifier}+Shift+6" = "move container to workspace 6:VI";
 
+        # Focus movement (arrow keys)
+        "${modifier}+Left"  = "focus left";
+        "${modifier}+Down"  = "focus down";
+        "${modifier}+Up"    = "focus up";
+        "${modifier}+Right" = "focus right";
+
+        # Move window (arrow keys)
+        "${modifier}+Shift+Left"  = "move left";
+        "${modifier}+Shift+Down"  = "move down";
+        "${modifier}+Shift+Up"    = "move up";
+        "${modifier}+Shift+Right" = "move right";
+
         "${modifier}+BackSpace" = "exec swaymsg reload";
         "${modifier}+q" = "exec swaynag -t warning -m 'Really exit?' -b 'Yes' 'swaymsg exit'";
         "${modifier}+r" = "mode resize";
