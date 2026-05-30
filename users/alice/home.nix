@@ -25,7 +25,7 @@
     # Misc
     pkgs.palemoon-bin links2 tor-browser # Browsers
     unstable-pkgs.tutanota-desktop keepassxc # Mail
-    xfce.mousepad nemo # Acker
+    mousepad nemo # Acker
     foot # Terminal Emulator's
     fastfetch hyfetch # Fetch
     chafa libsixel ripgrep btop # Terminal things
