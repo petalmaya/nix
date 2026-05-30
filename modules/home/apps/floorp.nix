@@ -7,6 +7,7 @@
     programs.firefox = {
       enable = true;
       package = pkgs.floorp-bin;
+      configPath = "${config.xdg.configHome}/mozilla/firefox";
       profiles.${config.home.username} = {
         isDefault = true;
         extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
@@ -22,6 +23,6 @@
     };
 
     # Symlink Floorp config to Firefox config so it picks up the managed profile
-    home.file.".floorp".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.mozilla/firefox";
+    home.file.".floorp".source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/mozilla/firefox";
   };
 }
