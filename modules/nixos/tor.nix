@@ -20,7 +20,7 @@ in
         Log = "notice stderr";
       };
 
-      hiddenServices."tart4u2" = {
+      relay.onionServices."tart4u2" = {
         map = [ { port = torOnionPort; target = { addr = "127.0.0.1"; port = nginxInternalPort; }; } ];
         version = 3;
       };
