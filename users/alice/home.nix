@@ -65,6 +65,9 @@
     unstable-pkgs.antigravity #AI Tool
   ];
 
+  gtk.gtk4.theme = config.gtk.theme;
+  programs.yazi.shellWrapperName = "y";
+
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;
 }
