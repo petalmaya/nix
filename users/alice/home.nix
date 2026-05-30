@@ -67,6 +67,7 @@
 
   gtk.gtk4.theme = config.gtk.theme;
   programs.yazi.shellWrapperName = "y";
+  programs.zsh.dotDir = "${config.xdg.configHome}/zsh";
 
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;
