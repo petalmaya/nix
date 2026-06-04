@@ -1,0 +1,10 @@
+{
+  "items": [
+    { "label": "NX Update", "command": "nx-update" },
+    { "label": "NX Rebuild", "command": "nx-rebuild" },
+    { "label": "NX Clean", "command": "nx-clean" },
+    { "label": "NX Gens", "command": "nx-gens" },
+    { "label": "NX Tree", "command": "nx-tree" },
+    { "label": "GIF Starter", "command": "gif" }
+  ]
+}

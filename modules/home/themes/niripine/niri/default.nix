@@ -8,6 +8,7 @@ lib.mkIf config.nixtop.themes.niripine.enable {
       ${builtins.readFile ./config.kdl}
 
       // Dynamic/Nix-specific extra options
+      spawn-at-startup "dbus-update-activation-environment" "--systemd" "--all"
       spawn-at-startup "swaybg" "-i" "${inputs.self}/assets/wallpaper/cute_bg.png" "-m" "fill"
       spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
     '';

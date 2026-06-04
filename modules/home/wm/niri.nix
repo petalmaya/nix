@@ -11,6 +11,7 @@
     ];
 
     xdg.configFile."niri/config.kdl".text = ''
+      spawn-at-startup "dbus-update-activation-environment" "--systemd" "--all"
       spawn-at-startup "noctalia-shell"
       spawn-at-startup "swaybg" "-m" "fill" "-i" "${pkgs.nixos-artwork.wallpapers.nineish.src}"
       
@@ -115,6 +116,11 @@
 
         // Screenshot
         Print { spawn "sh" "-c" "grim -g \"$(slurp)\" -"; }
+      }
+
+      environment {
+          XDG_CURRENT_DESKTOP "niri"
+          PYTHONIOENCODING "utf-8"
       }
     '';
   };

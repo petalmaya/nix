@@ -22,5 +22,8 @@
     ./themes/guixstyle
     ./themes/niriforest
     ./themes/noctalia.nix
+    ./themes/roseniri
+    ./themes/loveniri
+    ./themes/pureniri
   ];
 }

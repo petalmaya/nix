@@ -5,8 +5,8 @@
     gtk = {
       enable = true;
       theme = {
-        name = "rose-pine";
-        package = pkgs.rose-pine-gtk-theme;
+        name = "Everforest-Dark-B";
+        package = pkgs.everforest-gtk-theme;
       };
       iconTheme = {
         name = "Papirus-Dark";

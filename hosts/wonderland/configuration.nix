@@ -34,4 +34,12 @@
   };
 
   hardware.enableAllFirmware = true;
+
+  # Enable Bluetooth
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
+
+  # Fix TPM0 systemd boot timeout
+  systemd.tpm2.enable = false;
 }

@@ -1,7 +1,8 @@
-// Niri configuration for Niripine
+// Niri configuration for Roseniri
 output "HDMI-A-1" {
     position x=0 y=0
 }
+
 output "eDP-1" {
     position x=1680 y=0
 }
@@ -16,11 +17,6 @@ input {
     }
 }
 
-spawn-at-startup "dbus-update-activation-environment" "--systemd" "--all"
-spawn-at-startup "keepassxc" "--minimized"
-spawn-at-startup "mako"
-spawn-at-startup "waybar"
-
 layout {
     gaps 12
     center-focused-column "never"
@@ -32,12 +28,11 @@ layout {
     }
     default-column-width { proportion 0.5; }
 
-    // Border colours mirror rosepine-dark colours
-    // love: #eb6f92, base: #191724, overlay: #26233a
+    // Border colours mirror rosepine-dark colors (focused active #ebbcba, focused inactive #26233a)
     focus-ring {
         width 3
-        active-color "#eb6f92"   // rosepine love
-        inactive-color "#26233a" // rosepine overlay
+        active-color "#ebbcba"
+        inactive-color "#26233a"
     }
     border {
         off
@@ -51,15 +46,19 @@ window-rule {
     open-floating true
 }
 window-rule {
-    match app-id="thunar" title="File Operation Progress"
+    match app-id="org.gnome.Nautilus" title=".*Progress.*"
     open-floating true
 }
 window-rule {
-    match app-id="thunar" title="Confirm to replace files"
+    match app-id="org.gnome.Nautilus" title=".*Replace.*"
     open-floating true
 }
 
-
+// Rounded corners for niri windows
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
 
 cursor {
     xcursor-theme "capitaine-cursors"
@@ -74,10 +73,13 @@ environment {
 binds {
     // Terminal / launcher
     "Mod+Return"      { spawn "foot"; }
-    "Mod+D"           { spawn "wofi" "--show" "drun" "--allow-images"; }
+    "Mod+D"           { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
 
     // Screenshot
     "Print"           { spawn "sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png"; }
+
+    // Lock
+    "Mod+L"           { spawn "swaylock" "--image" "/home/alice/.lock.png" "--scaling" "fill" "--ring-color" "f6a6aa" "--key-hl-color" "1c262c" "--text-color" "f2d7d8"; }
 
     // Apps
     "Mod+W"           { spawn "floorp"; }
@@ -101,25 +103,31 @@ binds {
     "Mod+Space"       { toggle-window-floating; }
     "Mod+Shift+Space" { switch-focus-between-floating-and-tiling; }
 
-    // Focus movement
+    // Focus movement (sway-like arrow keys)
     "Mod+Left"        { focus-column-left; }
     "Mod+Right"       { focus-column-right; }
     "Mod+Up"          { focus-window-up; }
     "Mod+Down"        { focus-window-down; }
-    "Mod+H"           { focus-column-left; }
-    "Mod+J"           { focus-window-down; }
-    "Mod+K"           { focus-window-up; }
-    "Mod+L"           { focus-column-right; }
 
-    // Move columns
+    // Move columns / windows (sway-like)
     "Mod+Shift+Left"  { move-column-left; }
     "Mod+Shift+Right" { move-column-right; }
-    "Mod+Shift+H"     { move-column-left; }
-    "Mod+Shift+J"     { move-column-right; }
+    "Mod+Shift+Up"    { move-window-up; }
+    "Mod+Shift+Down"  { move-window-down; }
+
+    // H and V window actions (familiar to sway split h and split v)
+    "Mod+H"           { expel-window-from-column; }
+    "Mod+V"           { consume-window-into-column; }
+    "Mod+BracketLeft"  { consume-or-expel-window-left; }
+    "Mod+BracketRight" { consume-or-expel-window-right; }
 
     // Workspaces
     "Mod+Control+Right" { focus-workspace-down; }
     "Mod+Control+Left"  { focus-workspace-up; }
+    "Mod+Control+Shift+Right" { move-column-to-workspace-down; }
+    "Mod+Control+Shift+Left"  { move-column-to-workspace-up; }
+    "Mod+Ctrl+Page_Down"      { move-column-to-workspace-down; }
+    "Mod+Ctrl+Page_Up"        { move-column-to-workspace-up; }
     "Mod+1"             { focus-workspace 1; }
     "Mod+2"             { focus-workspace 2; }
     "Mod+3"             { focus-workspace 3; }
@@ -138,9 +146,10 @@ binds {
     "Mod+Equal" { set-column-width "+10%"; }
     "Mod+R"     { switch-preset-column-width; }
 
-    // Quit / reload
+    // Quit / reload / overview
     "Mod+Q"           { quit; }
-    "Mod+Shift+C"     { do-screen-transition; }
+    "Mod+Shift+C"     { spawn "niri-msg" "reload"; }
+    "Mod+O"           { toggle-overview; }
 
     // Show keybind overlay
     "Mod+Shift+Slash" { show-hotkey-overlay; }
