@@ -11,6 +11,8 @@
       update.onActivation = true;
       packages = [
         "app.twintaillauncher.ttl"
+        "com.usebottles.bottles"
+        "com.github.tchx84.Flatseal"
       ];
     };
   };

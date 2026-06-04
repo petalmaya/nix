@@ -5,7 +5,6 @@
 
   config = lib.mkIf config.nixtop.apps.gaming.enable {
     home.packages = with pkgs; [
-      bottles
       wine
       renpy
       obs-studio

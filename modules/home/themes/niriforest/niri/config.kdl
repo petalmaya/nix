@@ -1,11 +1,9 @@
 // Niri configuration for Niriforest
-outputs {
-    "HDMI-A-1" {
-        position x=0 y=0
-    }
-    "eDP-1" {
-        position x=1680 y=0
-    }
+output "HDMI-A-1" {
+    position x=0 y=0
+}
+output "eDP-1" {
+    position x=1680 y=0
 }
 
 input {
@@ -18,8 +16,7 @@ input {
     }
 }
 
-spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP=niri"
-spawn-at-startup "systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "--all"
 spawn-at-startup "keepassxc" "--minimized"
 spawn-at-startup "mako"
 spawn-at-startup "waybar"
@@ -37,7 +34,6 @@ layout {
 
     // Border colours mirror sway everforest colours
     focus-ring {
-        enable
         width 3
         active-color "#a7c080"   // everforest green
         inactive-color "#3a454a" // everforest dim
@@ -62,17 +58,16 @@ window-rule {
     open-floating true
 }
 
-animations {
-    enable
-}
+
 
 cursor {
-    theme "Adwaita"
-    size 24
+    xcursor-theme "capitaine-cursors"
+    xcursor-size 24
 }
 
 environment {
     XDG_CURRENT_DESKTOP "niri"
+    PYTHONIOENCODING "utf-8"
 }
 
 binds {

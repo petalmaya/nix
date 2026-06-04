@@ -4,7 +4,6 @@
   home.username = "alice";
   home.homeDirectory = "/home/alice";
 
-  # Enable desired modules via options
   nixtop = {
     themes.rosepine-dark.enable = true;
     terminal.foot.enable = true;
