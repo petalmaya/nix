@@ -13,6 +13,7 @@
         "app.twintaillauncher.ttl"
         "com.usebottles.bottles"
         "com.github.tchx84.Flatseal"
+        "io.github.Adda0.Stardrop"
       ];
     };
   };
