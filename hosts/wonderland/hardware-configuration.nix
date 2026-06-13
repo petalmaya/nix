@@ -13,36 +13,6 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/c67d96c8-1045-4b69-81b7-288664d6ef0b";
-      fsType = "btrfs";
-      options = [ "subvol=@root" "compress=zstd:3" "noatime" "autodefrag" ];
-    };
-
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/7042-A20A";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
-
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/c67d96c8-1045-4b69-81b7-288664d6ef0b";
-      fsType = "btrfs";
-      options = [ "subvol=@home" "compress=zstd:3" "noatime" "autodefrag" ];
-    };
-
-  fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/c67d96c8-1045-4b69-81b7-288664d6ef0b";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" "compress=zstd:3" "noatime" "autodefrag" ];
-    };
-
-  fileSystems."/var/log" =
-    { device = "/dev/disk/by-uuid/c67d96c8-1045-4b69-81b7-288664d6ef0b";
-      fsType = "btrfs";
-      options = [ "subvol=@log" "compress=zstd:3" "noatime" "autodefrag" ];
-    };
-
   swapDevices = [ ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
