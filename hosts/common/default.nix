@@ -65,11 +65,8 @@
 
       systemd.oomd.enable = true;
       system.stateVersion = "25.11";
-    }
 
-    # Desktop/Graphical configuration (only for GUI-enabled hosts)
-    (lib.mkIf config.nixtop.desktop.enable {
-      # Swap / Zram - very common on laptops
+      # --- SWAP & ZRAM SETUP (Now applied to all hosts) ---
       zramSwap = {
         enable = true;
         algorithm = "zstd";
@@ -82,10 +79,19 @@
         priority = 0;
       }];
 
+      # Tells NixOS to correctly initialize the file on your Btrfs root
+      boot.btrfs.swapfiles = [{
+        file = "/var/lib/swapfile";
+        size = 8192;
+      }];
+
       boot.kernel.sysctl = {
         "vm.swappiness" = 10;
       };
+    }
 
+    # Desktop/Graphical configuration (only for GUI-enabled hosts)
+    (lib.mkIf config.nixtop.desktop.enable {
       # Audio
       security.rtkit.enable = true;
       services.pipewire = {
