@@ -5,6 +5,7 @@
     ../common/default.nix
     ../common/home-wifi.nix
     ./hardware-configuration.nix
+    ./disko.nix
   ];
 
   networking.hostName = "wonderland";
