@@ -79,12 +79,6 @@
         priority = 0;
       }];
 
-      # Tells NixOS to correctly initialize the file on your Btrfs root
-      boot.btrfs.swapfiles = [{
-        file = "/var/lib/swapfile";
-        size = 8192;
-      }];
-
       boot.kernel.sysctl = {
         "vm.swappiness" = 10;
       };
