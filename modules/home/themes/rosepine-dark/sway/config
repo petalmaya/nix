@@ -9,7 +9,7 @@ font pango:Courier Prime 11
 
 # Output displays positions
 output HDMI-A-1 pos 0 0
-output eDP-1 pos 1680 0
+output eDP-1 pos 1440 0
 
 # Touchscreen Input
 input "3823:49229:eGalax_Inc._eGalaxTouch_EXC3000-0367-46.00.00" {
