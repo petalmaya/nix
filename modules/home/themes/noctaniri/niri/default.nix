@@ -20,7 +20,7 @@ lib.mkIf config.nixtop.themes.noctaniri.enable {
     '';
   };
 
-  # swayosd works under niri
+  # swayosd works under niri (Should doestn idk why who knows lol!)
   services.swayosd.enable = true;
 
   home.packages = with pkgs; [

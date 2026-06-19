@@ -28,7 +28,7 @@ layout {
     }
     default-column-width { proportion 0.5; }
 
-    // Border colours match twi_bg colors (focused active gradient from pink #EA458F to violet #A66BBF, inactive #273873)
+    // Border colours match twilight colors (focused active gradient from pink #EA458F to violet #A66BBF, inactive #273873)
     focus-ring {
         width 3
         active-gradient from="#EA458F" to="#A66BBF" angle=45
