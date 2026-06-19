@@ -7,7 +7,7 @@ my main nixos configuration! this is what runs my cozy daily setup on wonderland
 i like niri and swayfx a lot, they look so pretty and smooth! :3
 
 * Why?
-wouldnt you like to know! but seriously, nix is just so comfy once you get the hang of it~
+wouldnt you like to know!
 
 * Where?
 here is how everything is organized in my little wonderland:
@@ -36,7 +36,6 @@ if i ever need to rebuild my system in a hurry:
   cd nix
   nixsw
 #+end_src
-(yes, i have a =nixsw= alias that does the hard rebuild work for me!)
 
 ** Installing on a new machine (or new user setup)
 you need your own age key so you can decrypt and re-encrypt the secrets.
@@ -81,4 +80,4 @@ before you run your first rebuild, put the key there:
 #+end_src
 
 * Who's Alice?
-im alice, silly goose! just a girl who loves cute things, aesthetic desktops, and nix~ ♡
+im alice, silly goose!
