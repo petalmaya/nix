@@ -66,7 +66,7 @@
       systemd.oomd.enable = true;
       system.stateVersion = "25.11";
 
-      # --- SWAP & ZRAM SETUP (Now applied to all hosts) ---
+      # Zram
       zramSwap = {
         enable = true;
         algorithm = "zstd";

@@ -3,7 +3,8 @@
 {
   imports = [
     ./apps/fetch
-    ./apps/floorp.nix
+    # ./apps/floorp.nix
+    ./apps/zen.nix
     ./apps/gaming.nix
     ./apps/rofi.nix
     ./apps/spacemacs.nix
@@ -25,5 +26,6 @@
     ./themes/roseniri
     ./themes/loveniri
     ./themes/pureniri
+    ./themes/noctaniri
   ];
 }

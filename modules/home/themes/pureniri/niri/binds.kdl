@@ -111,7 +111,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+Tab repeat=false { toggle-overview; }
 
-    Mod+Ctrl+D hotkey-overlay-title="Toggle Session" { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    Mod+Ctrl+D hotkey-overlay-title="Toggle Session" { spawn "noctalia" "msg" "panel-toggle" "session"; }
     Mod+Space hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
     Mod+Shift+Backspace { show-hotkey-overlay; }    
 

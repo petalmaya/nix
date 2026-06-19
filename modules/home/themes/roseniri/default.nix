@@ -25,14 +25,9 @@
       gtk.enable = true;
     };
 
-    programs.noctalia-shell = {
+    programs.noctalia = {
       enable = true;
-      plugins = [
-        "screentoolkit"
-        "clipper"
-        "assistant-panel"
-        "mpd-mpris"
-      ];
+      # Note: Legacy v4 plugins are incompatible with v5.
     };
   };
 }

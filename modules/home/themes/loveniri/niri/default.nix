@@ -12,7 +12,7 @@ lib.mkIf config.nixtop.themes.loveniri.enable {
       spawn-at-startup "xwayland-satellite"
       spawn-at-startup "swaybg" "-i" "${inputs.self}/assets/wallpaper/cute_bg.png" "-m" "fill"
       spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
-      spawn-at-startup "noctalia-shell"
+      spawn-at-startup "noctalia"
     '';
   };
 

@@ -1,11 +1,11 @@
 { config, lib, pkgs, inputs, ... }: {
-  options.nixtop.themes.loveniri.enable = lib.mkEnableOption "Loveniri Theme (Niri + Noctalia Shell with enhanced keybinds)";
+  options.nixtop.themes.noctaniri.enable = lib.mkEnableOption "Noctaniri Theme (Niri + Noctalia Shell v5)";
 
   imports = [
     ./niri
   ];
 
-  config = lib.mkIf config.nixtop.themes.loveniri.enable {
+  config = lib.mkIf config.nixtop.themes.noctaniri.enable {
     gtk = {
       enable = true;
       theme = {
@@ -27,7 +27,9 @@
 
     programs.noctalia = {
       enable = true;
-      # Note: Legacy v4 plugins are incompatible with v5.
+      # Note: Legacy v4 plugins like "screentoolkit", "clipper", "assistant-panel", 
+      # and "mpd-mpris" are not supported in the v5 rewrite (which has native 
+      # clipboard history and media widgets instead).
     };
   };
 }

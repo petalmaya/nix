@@ -80,7 +80,7 @@ binds {
     "Print"           { spawn "sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png"; }
 
     // Apps
-    "Mod+W"           { spawn "floorp"; }
+    "Mod+W"           { spawn "zen-twilight"; }
     "Mod+E"           { spawn "foot" "-e" "yazi"; }
     "Mod+M"           { spawn "foot" "-e" "rmpc"; }
     "Mod+N"           { spawn "mpv" "--player-operation-mode=pseudo-gui"; }

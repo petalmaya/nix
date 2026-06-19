@@ -37,7 +37,7 @@
           { command = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"; }
           { command = "keepassxc --minimized"; }
           { command = "mako"; always = false; }
-          { command = "noctalia-shell"; always = true; }
+          { command = "noctalia"; always = true; }
         ];
 
         # Border styling and Window Rules
@@ -82,7 +82,7 @@
           alt = "Mod1";
         in lib.mkOptionDefault {
           "${modifier}+Return" = "exec foot";
-          "${modifier}+d" = "exec noctalia-shell ipc call launcher toggle";
+          "${modifier}+d" = "exec noctalia msg panel-toggle launcher";
           "${modifier}+k" = "exec $HOME/.local/bin/wl-kaomoji";
           "${modifier}+Shift+d" = "exec rofi --show drun";
           "${modifier}+Shift+c" = "reload";
@@ -157,7 +157,7 @@
 
         layer_effects "mako" blur enable; corner_radius 12; shadows enable
         layer_effects "rofi" blur enable; corner_radius 12; shadows enable
-        layer_effects "noctalia-shell" blur enable; corner_radius 12; shadows enable
+        layer_effects "noctalia" blur enable; corner_radius 12; shadows enable
         layer_effects "swaynag" blur enable; corner_radius 12; shadows enable
       '';
     };

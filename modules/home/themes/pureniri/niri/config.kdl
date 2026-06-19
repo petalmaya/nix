@@ -236,16 +236,16 @@ binds {
     // ── Terminal / Launcher ──────────────────────────────────────────────────
     "Mod+Return"              { spawn "foot"; }
     "Mod+T"                   { spawn "foot"; }
-    "Mod+D"                   { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    "Mod+D"                   { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
     "Mod+Space"               { spawn "fuzzel"; }
 
     // ── Apps ─────────────────────────────────────────────────────────────────
-    "Mod+W"                   { spawn "floorp"; }
+    "Mod+W"                   { spawn "zen-twilight"; }
     "Mod+E"                   { spawn "nautilus"; }
     "Mod+M"                   { spawn "foot" "-e" "rmpc"; }
     "Mod+N"                   { spawn "mpv" "--player-operation-mode=pseudo-gui"; }
     "Mod+Z"                   { spawn "pavucontrol"; }
-    "Mod+X"                   { spawn "floorp"; }
+    "Mod+X"                   { spawn "zen-twilight"; }
 
     // ── Screenshot ───────────────────────────────────────────────────────────
     "Print"                   { screenshot; }
@@ -256,11 +256,11 @@ binds {
     "Mod+L"                   { spawn "swaylock" "--image" "/home/alice/.lock.png" "--scaling" "fill" "--ring-color" "f6a6aa" "--key-hl-color" "1c262c" "--text-color" "f2d7d8"; }
 
     // ── Audio / brightness (with allow-when-locked) ───────────────────────────
-    "XF86AudioRaiseVolume" allow-when-locked=true    { spawn "noctalia-shell" "ipc" "call" "volume" "increase"; }
-    "XF86AudioLowerVolume" allow-when-locked=true    { spawn "noctalia-shell" "ipc" "call" "volume" "decrease"; }
-    "XF86AudioMute"        allow-when-locked=true    { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
-    "XF86MonBrightnessUp"  allow-when-locked=true    { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
-    "XF86MonBrightnessDown" allow-when-locked=true   { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
+    "XF86AudioRaiseVolume" allow-when-locked=true    { spawn "noctalia" "msg" "volume-up"; }
+    "XF86AudioLowerVolume" allow-when-locked=true    { spawn "noctalia" "msg" "volume-down"; }
+    "XF86AudioMute"        allow-when-locked=true    { spawn "noctalia" "msg" "volume-mute"; }
+    "XF86MonBrightnessUp"  allow-when-locked=true    { spawn "noctalia" "msg" "brightness-up"; }
+    "XF86MonBrightnessDown" allow-when-locked=true   { spawn "noctalia" "msg" "brightness-down"; }
 
     // ── Media keys (playerctl) ───────────────────────────────────────────────
     "XF86AudioPlay" allow-when-locked=true            { spawn "playerctl" "play-pause"; }
@@ -386,9 +386,9 @@ binds {
     // ── Session / Reload ─────────────────────────────────────────────────────
     "Mod+Q"           { quit; }
     "Mod+Shift+C"     { spawn "niri-msg" "reload"; }
-    "Mod+Shift+E"     { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
-    "Mod+S"           { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
-    "Mod+Ctrl+D"      { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    "Mod+Shift+E"     { spawn "noctalia" "msg" "panel-toggle" "session"; }
+    "Mod+S"           { spawn "noctalia" "msg" "panel-toggle" "session"; }
+    "Mod+Ctrl+D"      { spawn "noctalia" "msg" "panel-toggle" "session"; }
     "Mod+Shift+P"     { power-off-monitors; }
     "Ctrl+Alt+Delete" { quit; }
 }
