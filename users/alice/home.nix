@@ -5,14 +5,15 @@
   home.homeDirectory = "/home/alice";
 
   nixtop = {
-    themes.rosepine-dark.enable = true;
+    themes.noctaniri.enable = true;
     terminal.foot.enable = true;
     terminal.zsh.enable = true;
     # terminal.tmux.enable = true;
     terminal.zellij.enable = true;
     apps.fetch.enable = true;
     apps.spacemacs.enable = true;
-    apps.floorp.enable = true;
+    # apps.floorp.enable = true;
+    apps.zen.enable = true;
     apps.yazi.enable = true;
     apps.gaming.enable = true;
     services.mako.enable = true;
@@ -24,7 +25,7 @@
     # Misc
     pkgs.palemoon-bin links2 tor-browser # Browsers
     unstable-pkgs.tutanota-desktop keepassxc # Mail
-    mousepad nemo # Acker
+    mousepad nautilus # Acker
     foot # Terminal Emulator's
     fastfetch hyfetch # Fetch
     chafa libsixel ripgrep btop # Terminal things
@@ -70,4 +71,18 @@
 
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;
+
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true;
+    templates = "${config.home.homeDirectory}/Templates";
+    setSessionVariables = true;
+  };
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "inode/directory" = [ "org.gnome.Nautilus.desktop" ];
+    };
+  };
 }

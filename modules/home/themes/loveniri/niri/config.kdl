@@ -176,10 +176,10 @@ binds {
 
     // ── Terminal / Launcher ──────────────────────────────────────────────────
     "Mod+Return"              { spawn "foot"; }
-    "Mod+D"                   { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    "Mod+D"                   { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
 
     // ── Apps ─────────────────────────────────────────────────────────────────
-    "Mod+W"                   { spawn "floorp"; }
+    "Mod+W"                   { spawn "zen-twilight"; }
     "Mod+E"                   { spawn "foot" "-e" "yazi"; }
     "Mod+M"                   { spawn "foot" "-e" "rmpc"; }
     "Mod+N"                   { spawn "mpv" "--player-operation-mode=pseudo-gui"; }
@@ -333,7 +333,7 @@ binds {
     // ── Session ──────────────────────────────────────────────────────────────
     "Mod+Q"           { quit; }
     "Mod+Shift+C"     { spawn "niri-msg" "reload"; }
-    "Mod+Shift+E"     { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    "Mod+Shift+E"     { spawn "noctalia" "msg" "panel-toggle" "session"; }
     "Mod+Shift+P"     { power-off-monitors; }
     "Ctrl+Alt+Delete" { quit; }
 }

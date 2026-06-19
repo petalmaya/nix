@@ -48,7 +48,7 @@ bindsym Mod4+Shift+c reload
 
 bindsym Print exec grim -g "$(slurp)" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png
 bindsym Mod4+l exec swaylock --color 191724 --ring-color eb6f92 --key-hl-color f6c177 --text-color e0def4
-bindsym Mod4+w exec floorp
+bindsym Mod4+w exec zen-twilight
 bindsym Mod4+e exec foot -e yazi
 bindsym Mod4+m exec foot -e rmpc
 bindsym Mod4+n exec mpv --player-operation-mode=pseudo-gui

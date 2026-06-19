@@ -54,6 +54,12 @@
       url = "github:red-hood-woods/nix-core";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Zen Browser
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, core-nix, ... } @ inputs:
@@ -85,6 +91,7 @@
           home-manager.sharedModules = [
             inputs.niri.homeModules.niri
             inputs.core-nix.homeManagerModules.core
+            inputs.zen-browser.homeModules.twilight
             (import ./modules/home)
           ];
         }

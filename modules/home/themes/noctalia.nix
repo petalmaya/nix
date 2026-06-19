@@ -10,14 +10,9 @@
   options.nixtop.themes.noctalia.enable = lib.mkEnableOption "Noctalia Theme";
 
   config = lib.mkIf config.nixtop.themes.noctalia.enable {
-    programs.noctalia-shell = {
+    programs.noctalia = {
       enable = true;
-      plugins = [
-        "screentoolkit"
-        "clipper"
-        "assistant-panel"
-        "mpd-mpris"
-      ];
+      # Note: Legacy v4 plugins are incompatible with v5.
     };
   };
 }

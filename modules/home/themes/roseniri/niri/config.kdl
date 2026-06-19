@@ -4,7 +4,7 @@ output "HDMI-A-1" {
 }
 
 output "eDP-1" {
-    position x=1680 y=0
+    position x=1440 y=0
 }
 
 input {
@@ -73,7 +73,7 @@ environment {
 binds {
     // Terminal / launcher
     "Mod+Return"      { spawn "foot"; }
-    "Mod+D"           { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    "Mod+D"           { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
 
     // Screenshot
     "Print"           { spawn "sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png"; }
@@ -82,7 +82,7 @@ binds {
     "Mod+L"           { spawn "swaylock" "--image" "/home/alice/.lock.png" "--scaling" "fill" "--ring-color" "f6a6aa" "--key-hl-color" "1c262c" "--text-color" "f2d7d8"; }
 
     // Apps
-    "Mod+W"           { spawn "floorp"; }
+    "Mod+W"           { spawn "zen-twilight"; }
     "Mod+E"           { spawn "foot" "-e" "yazi"; }
     "Mod+M"           { spawn "foot" "-e" "rmpc"; }
     "Mod+N"           { spawn "mpv" "--player-operation-mode=pseudo-gui"; }
