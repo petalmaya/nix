@@ -37,8 +37,15 @@
   hardware.enableAllFirmware = true;
 
   # Enable Bluetooth
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    settings = {
+      General = {
+        Experimental = true;
+      };
+    };
+  };
   services.blueman.enable = true;
 
   # Fix TPM0 systemd boot timeout
