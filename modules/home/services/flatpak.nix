@@ -14,6 +14,9 @@
         "com.usebottles.bottles"
         "com.github.tchx84.Flatseal"
         "io.github.Adda0.Stardrop"
+        "com.adamcake.Bolt"
+        "com.valvesoftware.Steam"
+        "dev.vencord.Vesktop"
       ];
     };
   };

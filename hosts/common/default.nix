@@ -3,6 +3,7 @@
 {
   imports = [
     "${inputs.self}/modules/nixos/cachix.nix"
+    "${inputs.self}/modules/nixos/podman.nix"
   ];
 
   options = {
@@ -97,6 +98,7 @@
 
       hardware.graphics = {
         enable = true;
+        enable32Bit = true;
         extraPackages = with pkgs; [
           vulkan-loader
           vulkan-validation-layers
@@ -132,8 +134,16 @@
         package = pkgs.swayfx;
       };
 
-      # Steam + services
-      programs.steam.enable = pkgs.stdenv.hostPlatform.isx86_64;
+      # Steam managed via Flatpak now
+      # programs.steam.enable = pkgs.stdenv.hostPlatform.isx86_64;
+      hardware.steam-hardware.enable = true;
+
+      # Xbox controller Bluetooth & rumble support
+      hardware.xpadneo.enable = true;
+      boot.extraModprobeConfig = ''
+        options bluetooth disable_ertm=1
+      '';
+
       services.gvfs.enable = true;
       services.udisks2.enable = true;
       services.gnome.gnome-keyring.enable = true;

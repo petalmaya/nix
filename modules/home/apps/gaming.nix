@@ -11,9 +11,7 @@
       prismlauncher
       openttd
       openrct2
-      bolt-launcher
       steam-run
-      unstable-pkgs.vesktop
       pokemmo-installer
     ];
   };
