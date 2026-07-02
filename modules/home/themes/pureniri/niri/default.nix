@@ -20,9 +20,6 @@ lib.mkIf config.nixtop.themes.pureniri.enable {
   xdg.configFile."niri/noctalia.kdl".text = builtins.readFile ./noctalia.kdl;
   xdg.configFile."niri/dms/binds.kdl".text = builtins.readFile ./binds.kdl;
 
-  # swayosd works under niri
-  services.swayosd.enable = true;
-
   home.packages = with pkgs; [
     swaybg
     swaylock

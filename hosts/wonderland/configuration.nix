@@ -15,7 +15,7 @@
   nixtop.desktop.enable = true;
 
   # Enable tor/nginx service
-  nixtop.tor.enable = true;
+  nixtop.tor.enable = false;
 
   boot.initrd.kernelModules = [ "i915" ];
 

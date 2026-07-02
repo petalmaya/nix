@@ -14,9 +14,6 @@ lib.mkIf config.nixtop.themes.niripine.enable {
     '';
   };
 
-  # swayosd works under niri
-  services.swayosd.enable = true;
-
   home.packages = with pkgs; [
     swaybg
     swaylock

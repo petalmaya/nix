@@ -193,12 +193,12 @@ binds {
     "Mod+L"                   { spawn "swaylock" "--image" "/home/alice/.lock.png" "--scaling" "fill" "--ring-color" "f6a6aa" "--key-hl-color" "1c262c" "--text-color" "f2d7d8"; }
 
     // ── Audio / brightness (with allow-when-locked) ───────────────────────────
-    "XF86AudioRaiseVolume" allow-when-locked=true    { spawn "swayosd-client" "--output-volume" "raise"; }
-    "XF86AudioLowerVolume" allow-when-locked=true    { spawn "swayosd-client" "--output-volume" "lower"; }
-    "XF86AudioMute"        allow-when-locked=true    { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
-    "XF86AudioMicMute"     allow-when-locked=true    { spawn "swayosd-client" "--output-volume" "mic-mute-toggle"; }
-    "XF86MonBrightnessUp"  allow-when-locked=true    { spawn "swayosd-client" "--brightness" "raise"; }
-    "XF86MonBrightnessDown" allow-when-locked=true   { spawn "swayosd-client" "--brightness" "lower"; }
+    "XF86AudioRaiseVolume" allow-when-locked=true    { spawn "pactl" "set-sink-volume" "@DEFAULT_SINK@" "+5%"; }
+    "XF86AudioLowerVolume" allow-when-locked=true    { spawn "pactl" "set-sink-volume" "@DEFAULT_SINK@" "-5%"; }
+    "XF86AudioMute"        allow-when-locked=true    { spawn "pactl" "set-sink-mute" "@DEFAULT_SINK@" "toggle"; }
+    "XF86AudioMicMute"     allow-when-locked=true    { spawn "pactl" "set-source-mute" "@DEFAULT_SOURCE@" "toggle"; }
+    "XF86MonBrightnessUp"  allow-when-locked=true    { spawn "brightnessctl" "set" "+5%"; }
+    "XF86MonBrightnessDown" allow-when-locked=true   { spawn "brightnessctl" "set" "5%-"; }
 
     // ── Media keys (playerctl) ───────────────────────────────────────────────
     "XF86AudioPlay" allow-when-locked=true            { spawn "playerctl" "play-pause"; }
