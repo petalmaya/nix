@@ -89,11 +89,11 @@ binds {
     "Mod+N"           { spawn "mpv" "--player-operation-mode=pseudo-gui"; }
 
     // Audio / brightness
-    "XF86AudioRaiseVolume"    { spawn "swayosd-client" "--output-volume" "raise"; }
-    "XF86AudioLowerVolume"    { spawn "swayosd-client" "--output-volume" "lower"; }
-    "XF86AudioMute"           { spawn "swayosd-client" "--output-volume" "mute-toggle"; }
-    "XF86MonBrightnessUp"     { spawn "swayosd-client" "--brightness" "raise"; }
-    "XF86MonBrightnessDown"   { spawn "swayosd-client" "--brightness" "lower"; }
+    "XF86AudioRaiseVolume"    { spawn "pactl" "set-sink-volume" "@DEFAULT_SINK@" "+5%"; }
+    "XF86AudioLowerVolume"    { spawn "pactl" "set-sink-volume" "@DEFAULT_SINK@" "-5%"; }
+    "XF86AudioMute"           { spawn "pactl" "set-sink-mute" "@DEFAULT_SINK@" "toggle"; }
+    "XF86MonBrightnessUp"     { spawn "brightnessctl" "set" "+5%"; }
+    "XF86MonBrightnessDown"   { spawn "brightnessctl" "set" "5%-"; }
 
     // Window management
     "Mod+C"           { close-window; }

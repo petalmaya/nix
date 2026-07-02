@@ -16,9 +16,6 @@ lib.mkIf config.nixtop.themes.loveniri.enable {
     '';
   };
 
-  # swayosd works under niri
-  services.swayosd.enable = true;
-
   home.packages = with pkgs; [
     swaybg
     swaylock

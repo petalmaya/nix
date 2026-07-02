@@ -4,6 +4,7 @@
   imports = [
     "${inputs.self}/modules/nixos/cachix.nix"
     "${inputs.self}/modules/nixos/podman.nix"
+    "${inputs.self}/modules/nixos/nix-ld.nix"
   ];
 
   options = {
@@ -122,10 +123,34 @@
       ];
 
       # Desktop / Wayland stuff
-      xdg.portal = {
-        enable = true;
-        wlr.enable = true;
-        extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      xdg = {
+        menus.enable = true;
+        mime.enable = true;
+        icons.enable = true;
+
+        portal = {
+          enable = true;
+          xdgOpenUsePortal = false;
+          wlr.enable = true;
+          config = {
+            common = {
+              default = [
+                "gnome"
+                "gtk"
+              ];
+              "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+            };
+            niri = {
+              "org.freedesktop.impl.portal.FileChooser" = [ "gnome" ];
+              "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
+            };
+          };
+          extraPortals = with pkgs; [
+            xdg-desktop-portal
+            xdg-desktop-portal-gnome
+            xdg-desktop-portal-gtk
+          ];
+        };
       };
 
       # SwayFX

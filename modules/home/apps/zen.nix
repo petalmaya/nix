@@ -4,6 +4,10 @@
   options.nixtop.apps.zen.enable = lib.mkEnableOption "Zen browser configuration";
 
   config = lib.mkIf config.nixtop.apps.zen.enable {
+    home.sessionVariables = {
+      MOZ_ENABLE_WAYLAND = "1";
+    };
+
     programs.zen-browser = {
       enable = true;
       profiles.default = {
