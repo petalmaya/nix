@@ -27,9 +27,6 @@
 
     programs.noctalia = {
       enable = true;
-      # Note: Legacy v4 plugins like "screentoolkit", "clipper", "assistant-panel", 
-      # and "mpd-mpris" are not supported in the v5 rewrite (which has native 
-      # clipboard history and media widgets instead).
     };
   };
 }

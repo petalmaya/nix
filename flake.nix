@@ -47,7 +47,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # Niri Flake
-    niri.url = "github:sodiboo/niri-flake";
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Core Nix modules (Zsh & Tmux)
     core-nix = {
