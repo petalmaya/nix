@@ -66,8 +66,7 @@
     unstable-pkgs.antigravity #AI Tool
     unstable-pkgs.yt-dlp
   ];
-
-  gtk.gtk4.theme = config.gtk.theme;
+  gtk.gtk4.theme = null;
   programs.yazi.shellWrapperName = "y";
   programs.zsh.dotDir = "${config.xdg.configHome}/zsh";
 

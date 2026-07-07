@@ -52,12 +52,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Core Nix modules (Zsh & Tmux)
-    core-nix = {
-      url = "github:red-hood-woods/nix-core";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Zen Browser
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
@@ -65,7 +59,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, core-nix, ... } @ inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, ... } @ inputs:
   let
     mkHost = sys: hostname: hmUsers:
       let
@@ -93,7 +87,6 @@
           home-manager.extraSpecialArgs = { inherit inputs unstable-pkgs; };
           home-manager.sharedModules = [
             inputs.niri.homeModules.niri
-            inputs.core-nix.homeManagerModules.core
             inputs.zen-browser.homeModules.twilight
             (import ./modules/home)
           ];

@@ -1,25 +1,5 @@
 {
   "nodes": {
-    "core-nix": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1780618376,
-        "narHash": "sha256-GlhdIwY+3V00yjLFzi0PBz0bxghPeLjrp8KpHEn+g5o=",
-        "owner": "red-hood-woods",
-        "repo": "nix-core",
-        "rev": "85b8de8263eae663183cdcc5d1364884c9790d69",
-        "type": "github"
-      },
-      "original": {
-        "owner": "red-hood-woods",
-        "repo": "nix-core",
-        "type": "github"
-      }
-    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -331,7 +311,6 @@
     },
     "root": {
       "inputs": {
-        "core-nix": "core-nix",
         "disko": "disko",
         "firefox-addons": "firefox-addons",
         "home-manager": "home-manager",

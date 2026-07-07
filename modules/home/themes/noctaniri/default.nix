@@ -27,6 +27,9 @@
 
     programs.noctalia = {
       enable = true;
+      settings = {
+        theme.templates.builtin_ids = [ "niri" ];
+      };
     };
   };
 }
