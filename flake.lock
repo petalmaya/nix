@@ -291,6 +291,26 @@
         "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
       }
     },
+    "noctalia-greeter": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1783448862,
+        "narHash": "sha256-/6QHGF8qB7Khc3fYj9J7nnhKjrmRnv5GtilKXNQKd70=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia-greeter",
+        "rev": "a8941defe8950062ec3f8189dccd7332f865a9a6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "noctalia-dev",
+        "repo": "noctalia-greeter",
+        "type": "github"
+      }
+    },
     "noctalia-shell": {
       "inputs": {
         "nixpkgs": "nixpkgs_3"
@@ -319,6 +339,7 @@
         "nixmacs": "nixmacs",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "noctalia-greeter": "noctalia-greeter",
         "noctalia-shell": "noctalia-shell",
         "sops-nix": "sops-nix",
         "zen-browser": "zen-browser"
