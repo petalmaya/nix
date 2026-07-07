@@ -5,6 +5,7 @@
     "${inputs.self}/modules/nixos/cachix.nix"
     "${inputs.self}/modules/nixos/podman.nix"
     "${inputs.self}/modules/nixos/nix-ld.nix"
+    "${inputs.self}/modules/nixos/noctalia-greeter.nix"
   ];
 
   options = {
@@ -88,6 +89,9 @@
 
     # Desktop/Graphical configuration (only for GUI-enabled hosts)
     (lib.mkIf config.nixtop.desktop.enable {
+      # Enable Noctalia Greeter (DM)
+      nixtop.noctalia-greeter.enable = true;
+
       # Audio
       security.rtkit.enable = true;
       services.pipewire = {

@@ -41,6 +41,11 @@
     };
     # Noctalia Shell
     noctalia-shell.url = "github:noctalia-dev/noctalia-shell";
+    # Noctalia Greeter
+    noctalia-greeter = {
+      url = "github:noctalia-dev/noctalia-greeter";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Sops
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -76,6 +81,7 @@
           ./hosts/${hostname}/hardware-configuration.nix
         ./hosts/${hostname}/configuration.nix
         inputs.nix-flatpak.nixosModules.nix-flatpak
+        inputs.noctalia-greeter.nixosModules.default
         ./modules/nixos/tor.nix
         inputs.disko.nixosModules.disko
         sops-nix.nixosModules.sops
