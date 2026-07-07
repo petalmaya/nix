@@ -28,11 +28,11 @@ layout {
     }
     default-column-width { proportion 0.5; }
 
-    // Border colours match twilight colors (focused active gradient from pink #EA458F to violet #A66BBF, inactive #273873)
+    // Border colours match sunset colors (focused active gradient from crimson #9E3B4B to golden yellow #F9C567, inactive dark rust #5C2518)
     focus-ring {
         width 3
-        active-gradient from="#EA458F" to="#A66BBF" angle=45
-        inactive-color "#273873"
+        active-gradient from="#9E3B4B" to="#F9C567" angle=45
+        inactive-color "#5C2518"
     }
     border {
         off

@@ -23,9 +23,10 @@
 
   home.packages = with pkgs; [
     # Misc
-    pkgs.palemoon-bin links2 tor-browser # Browsers
+    pkgs.palemoon-bin links2 # Browsers
     unstable-pkgs.tutanota-desktop keepassxc # Mail
     mousepad nautilus # Acker
+    mpvpaper
     foot # Terminal Emulator's
     fastfetch hyfetch # Fetch
     chafa libsixel ripgrep btop # Terminal things
@@ -36,7 +37,7 @@
     blockbench tree
 
     # Media
-    mpv
+    (mpv.override { scripts = [ mpvScripts.mpris ]; })
     rmpc
     strawberry
     cava
@@ -63,6 +64,7 @@
     # Unstable
     unstable-pkgs.ani-cli
     unstable-pkgs.antigravity #AI Tool
+    unstable-pkgs.yt-dlp
   ];
 
   gtk.gtk4.theme = config.gtk.theme;

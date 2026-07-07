@@ -3,7 +3,7 @@
 lib.mkIf config.nixtop.themes.noctaniri.enable {
   programs.niri = {
     enable = true;
-    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-stable;
+    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
     config = ''
       // Base Niri configuration
       ${builtins.readFile ./config.kdl}

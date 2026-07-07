@@ -17,6 +17,7 @@
         "com.adamcake.Bolt"
         "com.valvesoftware.Steam"
         "dev.vencord.Vesktop"
+        "org.torproject.torbrowser-launcher"
       ];
     };
   };
