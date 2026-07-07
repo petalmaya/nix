@@ -19,7 +19,12 @@ here is how everything is organized in my little wonderland:
 
 - =modules/= — my custom nixos and home manager modules
   - =nixos/= — system-level modules (cachix, flatpak, tor, etc.)
-  - =home/= — home manager configuration (apps, services, terminal, wm, and themes!)
+  - =home/= — home manager configuration:
+    - =apps/= — fetch, gaming, rofi, spacemacs, yazi, zen, etc.
+    - =services/= — flatpak, mako, mpd
+    - =terminal/= — foot terminal emulator, plus my shell & multiplexer setup (zsh, tmux, zellij)
+    - =wm/= — niri and sway configs
+    - =themes/= — custom visual themes (noctaniri, pureniri, loveniri, etc.)
 
 - =users/= — home manager user configs
   - =alice/= — my main profile (used on wonderland and rabbit)

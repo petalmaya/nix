@@ -13,6 +13,9 @@
     ./services/mako
     ./services/mpd.nix
     ./terminal/foot
+    ./terminal/zsh
+    ./terminal/tmux
+    ./terminal/zellij
     ./wm/niri.nix
     ./wm/sway-noctalia.nix
     ./wm/sway-ribbit.nix
