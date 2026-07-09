@@ -1,10 +1,11 @@
 // Niri configuration for Noctaniri
 output "HDMI-A-1" {
+    mode "1680x1050"
     position x=0 y=0
 }
 
 output "eDP-1" {
-    position x=1440 y=0
+    position x=1680 y=0
 }
 
 input {
@@ -87,7 +88,8 @@ binds {
     "Mod+D"           { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
 
     // Screenshot
-    "Print"           { spawn "sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png"; }
+    "Print"           { spawn "noctalia" "msg" "screenshot-region"; }
+    "Mod+Print"       { spawn "sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/$(date +%Y-%m-%d_%H-%m-%s).png"; }
 
     // Lock
     "Mod+L"           { spawn "noctalia" "msg" "session" "lock"; }
