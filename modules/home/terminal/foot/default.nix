@@ -8,5 +8,10 @@
     };
 
     xdg.configFile."foot/foot.ini".source = ./foot.ini;
+
+    home.activation.ensureFootNoctaliaTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD mkdir -p $HOME/.config/foot/themes
+      $DRY_RUN_CMD [ -e "$HOME/.config/foot/themes/noctalia" ] || touch "$HOME/.config/foot/themes/noctalia"
+    '';
   };
 }

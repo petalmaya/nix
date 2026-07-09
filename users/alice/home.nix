@@ -37,13 +37,13 @@
     blockbench tree
 
     # Media
-    (mpv.override { scripts = [ mpvScripts.mpris ]; })
     rmpc
-    strawberry
+    unstable-pkgs.tauon
     cava
     ffmpeg
     ffmpegthumbnailer
     feh
+    loupe
 
     # Utilities
     swaybg          # Wallpaper
@@ -57,7 +57,7 @@
     capitaine-cursors # Cursor
     git # Its git
     unzip p7zip     # The zippers
-    wget curl nnn # -.-
+    wget curl # -.-
     polkit_gnome
     age sops # Secrets and encryption
 
@@ -69,6 +69,17 @@
   gtk.gtk4.theme = null;
   programs.yazi.shellWrapperName = "y";
   programs.zsh.dotDir = "${config.xdg.configHome}/zsh";
+
+  programs.mpv = {
+    enable = true;
+    package = pkgs.mpv.override {
+      scripts = with pkgs.mpvScripts; [ mpris modernz ];
+    };
+    config = {
+      osc = "no";
+      border = "no";
+    };
+  };
 
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;

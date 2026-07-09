@@ -7,7 +7,7 @@
     programs.zellij = {
       enable = true;
       settings = {
-        theme = "rose-pine-moon";
+        theme = "gruvbox-dark";
         default_shell = "zsh";
         pane_frames = true;
         ui = {
@@ -18,7 +18,5 @@
         };
       };
     };
-
-    xdg.configFile."zellij/themes/rose-pine-moon.kdl".source = ./rose-pine-moon.kdl;
   };
 }
