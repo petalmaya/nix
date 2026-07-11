@@ -1,7 +1,7 @@
 #+author: Alice Liddell
 #+options: toc:nil
 
-caption: screenshot of noctaniri  
+caption:screenshot of noctaniri  
 [[file:noctaniri.png]]
 
 * What?
