@@ -1,10 +1,13 @@
 #+author: Alice Liddell
 #+options: toc:nil
 
+caption: screenshot of noctaniri  
+[[file:noctaniri.png]]
+
 * What?
 my main nixos configuration! this is what runs my cozy daily setup on wonderland (my main laptop) and rabbit (my test machine) ♡
 
-i like niri and swayfx a lot, they look so pretty and smooth! :3
+i like niri :3
 
 * Why?
 wouldnt you like to know!
@@ -86,3 +89,6 @@ before you run your first rebuild, put the key there:
 
 * Who's Alice?
 im alice, silly goose!
+
+* what about the servers?!
+i moved most of it to another repo, and even then i've moved off of nixos for them perfering other distros for ease of setting up quickly.

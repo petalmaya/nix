@@ -6,6 +6,7 @@
     "${inputs.self}/modules/nixos/podman.nix"
     "${inputs.self}/modules/nixos/nix-ld.nix"
     "${inputs.self}/modules/nixos/noctalia-greeter.nix"
+    "${inputs.self}/modules/nixos/plymouth.nix"
   ];
 
   options = {
@@ -91,6 +92,9 @@
     (lib.mkIf config.nixtop.desktop.enable {
       # Enable Noctalia Greeter (DM)
       nixtop.noctalia-greeter.enable = true;
+
+      # Enable Plymouth Boot Splash
+      nixtop.plymouth.enable = true;
 
       # Audio
       security.rtkit.enable = true;
