@@ -95,7 +95,7 @@ binds {
     "Mod+L"           { spawn "noctalia" "msg" "session" "lock"; }
 
     // Apps
-    "Mod+W"           { spawn "zen-twilight"; }
+    "Mod+W"           { spawn "librewolf"; }
     "Mod+E"           { spawn "nautilus"; }
     "Mod+M"           { spawn "foot" "-e" "rmpc"; }
     "Mod+N"           { spawn "mpv" "--player-operation-mode=pseudo-gui"; }

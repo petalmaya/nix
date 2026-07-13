@@ -143,8 +143,8 @@
         package = pkgs.swayfx;
       };
 
-      # Steam managed via Flatpak now
-      # programs.steam.enable = pkgs.stdenv.hostPlatform.isx86_64;
+      # Steam declared here to support the HM installation for Alice
+      programs.steam.enable = pkgs.stdenv.hostPlatform.isx86_64;
       hardware.steam-hardware.enable = true;
 
       # Xbox controller Bluetooth & rumble support
