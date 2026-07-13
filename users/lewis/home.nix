@@ -6,12 +6,12 @@
 
   # Enable desired modules via options
   nixtop = {
-    wm.niri.enable = true;
+    themes.noctaniri.enable = true;
     terminal.foot.enable = true;
     # apps.floorp.enable = true;
-    apps.zen.enable = true;
+    # apps.zen.enable = true;
+    apps.firefox-esr.enable = true;
     services.flatpak.enable = true;
-    themes.noctalia.enable = true;
   };
 
   home.packages = with pkgs; [

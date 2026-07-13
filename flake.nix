@@ -62,9 +62,15 @@
       url = "github:0xc000022070/zen-browser-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Spicetify
+    spicetify-nix = {
+      url = "github:Gerg-L/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, ... } @ inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, spicetify-nix, ... } @ inputs:
   let
     mkHost = sys: hostname: hmUsers:
       let
@@ -94,6 +100,7 @@
           home-manager.sharedModules = [
             inputs.niri.homeModules.niri
             inputs.zen-browser.homeModules.twilight
+            inputs.spicetify-nix.homeManagerModules.default
             (import ./modules/home)
           ];
         }

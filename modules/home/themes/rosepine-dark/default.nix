@@ -12,6 +12,7 @@
         name = "Papirus-Dark";
         package = pkgs.papirus-icon-theme;
       };
+      gtk4.theme = null;
     };
 
     home.pointerCursor = {

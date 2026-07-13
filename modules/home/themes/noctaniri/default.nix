@@ -3,7 +3,11 @@
 
   imports = [
     ./niri
-  ];
+  ] ++ (if inputs.noctalia-shell ? homeModules
+        then builtins.attrValues inputs.noctalia-shell.homeModules
+        else if inputs.noctalia-shell ? homeManagerModules
+        then builtins.attrValues inputs.noctalia-shell.homeManagerModules
+        else []);
 
   config = lib.mkIf config.nixtop.themes.noctaniri.enable {
     gtk = {
@@ -16,6 +20,7 @@
         name = "Papirus-Dark";
         package = pkgs.papirus-icon-theme;
       };
+      gtk4.theme = null;
     };
 
     home.pointerCursor = {

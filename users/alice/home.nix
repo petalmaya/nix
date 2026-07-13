@@ -13,7 +13,10 @@
     apps.fetch.enable = true;
     apps.spacemacs.enable = true;
     # apps.floorp.enable = true;
-    apps.zen.enable = true;
+    # apps.zen.enable = true;
+    # apps.librewolf.enable = true;
+    apps.firefox-esr.enable = true;
+    apps.spicetify.enable = true;
     apps.yazi.enable = true;
     apps.gaming.enable = true;
     services.mako.enable = true;
@@ -24,7 +27,7 @@
   home.packages = with pkgs; [
     # Misc
     pkgs.palemoon-bin links2 # Browsers
-    unstable-pkgs.tutanota-desktop keepassxc # Mail
+    unstable-pkgs.tutanota-desktop keepassxc steam # Mail & Gaming
     mousepad nautilus # Acker
     mpvpaper
     foot # Terminal Emulator's
