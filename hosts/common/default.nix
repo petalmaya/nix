@@ -143,7 +143,7 @@
         package = pkgs.swayfx;
       };
 
-      # Steam declared here to support the HM installation for Alice
+      # Steam
       programs.steam.enable = pkgs.stdenv.hostPlatform.isx86_64;
       hardware.steam-hardware.enable = true;
 

@@ -20,6 +20,7 @@ in
     programs.firefox = {
       enable = true;
       package = pkgs.firefox-esr;
+      # configPath = "${config.xdg.configHome}/mozilla/firefox"; uncomment once june 21
       nativeMessagingHosts = [ pywalfox-manifest ];
       profiles.${config.home.username} = {
         isDefault = true;
