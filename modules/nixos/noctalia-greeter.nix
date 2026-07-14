@@ -15,8 +15,7 @@
       };
     };
 
-    # Simply register the niri session package so that noctalia-greeter/greetd can see it,
-    # without enabling system-level programs.niri configuration.
+    # Let it see niri
     services.displayManager.sessionPackages = [
       inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable
     ];

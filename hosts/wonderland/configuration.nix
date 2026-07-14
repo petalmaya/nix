@@ -48,6 +48,6 @@
   };
   services.blueman.enable = true;
 
-  # Fix TPM0 systemd boot timeout
+  # Fix TPM0 systemd boot timeout (Old device.)
   systemd.tpm2.enable = false;
 }

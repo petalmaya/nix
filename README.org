@@ -51,7 +51,7 @@ you need your own age key so you can decrypt and re-encrypt the secrets.
 *** 1. generate an age key
 #+begin_src sh
   age-keygen -o ~/.config/sops/age/keys.txt
-  # write down the public key printed — you'll need it!
+  # write down the public key printed - you'll need it!
 #+end_src
 
 *** 2. add your public key to .sops.yaml

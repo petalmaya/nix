@@ -2,6 +2,7 @@
   pkgs,
   ...
 }:
+# Funny part is im just gonna keep using steam-run lol
 {
   programs.nix-ld = {
     enable = true;
