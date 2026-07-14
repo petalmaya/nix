@@ -1,3 +1,8 @@
+# Alice's Home Manager configuration.
+#
+# All modules are defined under modules/home/ and registered in
+# modules/home/default.nix.  This file just flips the enable switches and
+# adds any packages/settings that don't belong in a dedicated module.
 { config, pkgs, lib, inputs, unstable-pkgs, ... }:
 
 {
@@ -26,7 +31,7 @@
 
   home.packages = with pkgs; [
     # Misc
-    pkgs.palemoon-bin links2 # Browsers
+    pkgs.palemoon-bin links2 # Side Browsers
     unstable-pkgs.tutanota-desktop keepassxc steam # Mail & Gaming
     mousepad nautilus # Acker
     mpvpaper
@@ -69,8 +74,11 @@
     unstable-pkgs.antigravity #AI Tool
     unstable-pkgs.yt-dlp
   ];
+  # gtk4.theme must be explicitly nulled here because redpine/noctaniri both
+  # set it, and HM currently warns if it's set to any value for GTK4.
   gtk.gtk4.theme = null;
   programs.yazi.shellWrapperName = "y";
+  # Keep zsh config in XDG_CONFIG_HOME instead of the home directory root.
   programs.zsh.dotDir = "${config.xdg.configHome}/zsh";
 
   programs.mpv = {

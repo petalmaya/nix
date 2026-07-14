@@ -1,3 +1,9 @@
+# Firefox ESR browser with Pywalfox native messaging and curated extensions.
+#
+# The pywalfox-manifest derivation is needed because Home Manager's
+# nativeMessagingHosts option expects a package that exposes the manifest
+# JSON at the standard path inside its output — this constructs that package
+# from scratch using writeTextFile.
 { pkgs, lib, config, inputs, ... }:
 
 let
@@ -21,23 +27,29 @@ in
       enable = true;
       package = pkgs.firefox-esr;
       # configPath = "${config.xdg.configHome}/mozilla/firefox"; uncomment once june 21
+      # ^ waiting for esr to shift to 153
       nativeMessagingHosts = [ pywalfox-manifest ];
+      # Profile name matches the username so Firefox creates it automatically.
       profiles.${config.home.username} = {
         isDefault = true;
         extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
-          pywalfox
-          ublock-origin
-          darkreader
-          bitwarden
-          sponsorblock
+          pywalfox        # dynamic Pywal colour theming
+          ublock-origin   # ad & tracker blocking
+          darkreader      # automatic dark mode for any site
+          bitwarden       # password manager
+          sponsorblock    # skip YouTube sponsor segments
         ];
         settings = {
+          # autoDisableScopes=0 prevents Firefox from silently disabling
+          # declaratively installed extensions on first launch.
           "extensions.autoDisableScopes" = 0;
+          # enabledScopes=15 (all bits set) ensures all scope types are active.
           "extensions.enabledScopes" = 15;
         };
       };
     };
 
+    # pywalfox-native provides the host binary the manifest points at.
     home.packages = [ pkgs.pywalfox-native ];
   };
 }

@@ -70,16 +70,27 @@
     };
   };
 
+  # All flake inputs are collected as `inputs` so they can be forwarded into
+  # NixOS/Home Manager modules via `specialArgs` / `extraSpecialArgs`.
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, noctalia-shell, sops-nix, spicetify-nix, ... } @ inputs:
   let
+    # mkHost builds a full NixOS system configuration.
+    # Arguments:
+    #   sys      – the Nix system string, e.g. "x86_64-linux"
+    #   hostname – matches a directory under ./hosts/
+    #   hmUsers  – attrset of { username = homeConfig; } passed to Home Manager
     mkHost = sys: hostname: hmUsers:
       let
+        # Instantiate nixpkgs-unstable separately so individual packages from
+        # the rolling channel can be cherry-picked with `unstable-pkgs.<name>`.
         unstable-pkgs = import nixpkgs-unstable {
           system = sys;
           config.allowUnfree = true;
         };
       in nixpkgs.lib.nixosSystem {
         system = sys;
+        # Make `inputs` and `unstable-pkgs` available to every NixOS module
+        # without having to wire them through manually each time.
         specialArgs = {
           inherit inputs unstable-pkgs;
         };
@@ -93,25 +104,34 @@
         sops-nix.nixosModules.sops
         home-manager.nixosModules.home-manager
         {
+          # useGlobalPkgs – share the NixOS pkgs instance so HM doesn't
+          # compile its own separate copy of nixpkgs.
           home-manager.useGlobalPkgs = true;
+          # useUserPackages – install HM packages into /etc/profiles/per-user
+          # instead of ~/.nix-profile, which plays nicer with some tooling.
           home-manager.useUserPackages = true;
           home-manager.users = hmUsers;
+          # Forward the same extra args into every Home Manager module.
           home-manager.extraSpecialArgs = { inherit inputs unstable-pkgs; };
+          # sharedModules are available to all users' home configs.
+          # Third-party HM modules are loaded here so user files stay lean.
           home-manager.sharedModules = [
-            inputs.niri.homeModules.niri
-            inputs.zen-browser.homeModules.twilight
-            inputs.spicetify-nix.homeManagerModules.default
-            (import ./modules/home)
+            inputs.niri.homeModules.niri          # niri window manager HM integration
+            inputs.zen-browser.homeModules.twilight # Zen browser home module
+            inputs.spicetify-nix.homeManagerModules.default # Spicetify Spotify theming
+            (import ./modules/home)               # our local modules/home registry
           ];
         }
       ];
     };
   in {
     nixosConfigurations = {
+      # "wonderland" – the primary desktop/laptop machine
       wonderland = mkHost "x86_64-linux" "wonderland" {
         alice = import ./users/alice/home.nix;
         lewis = import ./users/lewis/home.nix;
       };
+      # "rabbit" – secondary machine (same user configs, different hardware)
       rabbit = mkHost "x86_64-linux" "rabbit" {
         alice = import ./users/alice/home.nix;
         lewis = import ./users/lewis/home.nix;

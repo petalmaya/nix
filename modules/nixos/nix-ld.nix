@@ -1,14 +1,20 @@
+# nix-ld lets dynamically-linked binaries (e.g. pre-built game mods, AppImages,
+# random downloads) run on NixOS without repackaging them.  It works by
+# providing a fake ld-linux stub at the path those binaries hardcode, and
+# making the listed libraries available to them at runtime.
+#
+# (Funny part is im just gonna keep using steam-run lol)
 {
   pkgs,
   ...
 }:
-# Funny part is im just gonna keep using steam-run lol
 {
   programs.nix-ld = {
     enable = true;
     libraries = with pkgs; [
-      dconf
+      dconf  # GSettings / GNOME config system
 
+      # Fonts & multimedia
       fontconfig
       freetype
       SDL2
@@ -16,6 +22,7 @@
       SDL2_mixer
       SDL2_ttf
 
+      # C runtime & common compression/crypto
       stdenv.cc.cc
       zlib
       zstd
