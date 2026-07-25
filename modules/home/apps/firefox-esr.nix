@@ -25,9 +25,8 @@ in
   config = lib.mkIf config.nixtop.apps.firefox-esr.enable {
     programs.firefox = {
       enable = true;
-      package = pkgs.firefox-esr;
-      # configPath = "${config.xdg.configHome}/mozilla/firefox"; uncomment once june 21
-      # ^ waiting for esr to shift to 153
+      package = pkgs.firefox-esr-153;
+      configPath = "${config.xdg.configHome}/mozilla/firefox";
       nativeMessagingHosts = [ pywalfox-manifest ];
       # Profile name matches the username so Firefox creates it automatically.
       profiles.${config.home.username} = {
