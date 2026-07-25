@@ -5,10 +5,12 @@
     extra-substituters = [
       "https://nix-community.cachix.org"
       "https://niri.cachix.org"
+      "https://noctalia.cachix.org"
     ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
     ];
   };
 
@@ -21,8 +23,8 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=latest";
     # Emacs
     nixmacs = {
-      url = "git+https://codeberg.org/sheep/nixmacs";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:petalmaya/nixmacs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     # Home Manger
     home-manager = {

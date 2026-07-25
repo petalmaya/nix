@@ -31,10 +31,10 @@
 
   home.packages = with pkgs; [
     # Misc
-    pkgs.palemoon-bin links2 # Side Browsers
+    links2 # Side Browsers
     unstable-pkgs.tutanota-desktop keepassxc steam # Mail & Gaming
     mousepad nautilus # Acker
-    mpvpaper
+    mpvpaper hyprpicker
     foot # Terminal Emulator's
     fastfetch hyfetch # Fetch
     chafa libsixel ripgrep btop # Terminal things
@@ -42,7 +42,7 @@
     stack # Idk i don rembere
     krita gimp # Photo editing
     cinny-desktop weechat # Non Discord chat
-    blockbench tree
+    blockbench tree bitwarden-cli
 
     # Media
     rmpc
@@ -71,7 +71,7 @@
 
     # Unstable
     unstable-pkgs.ani-cli
-    unstable-pkgs.antigravity #AI Tool
+    unstable-pkgs.antigravity-ide #AI Tool
     unstable-pkgs.yt-dlp
   ];
   # gtk4.theme must be explicitly nulled here because redpine/noctaniri both
