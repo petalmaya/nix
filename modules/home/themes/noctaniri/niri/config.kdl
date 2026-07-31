@@ -82,6 +82,33 @@ environment {
     PYTHONIOENCODING "utf-8"
 }
 
+animations {
+    // Window opening: Slime expanding into place with a subtle overshoot
+    window-open {
+        spring damping-ratio=0.5 stiffness=400 epsilon=0.0001
+    }
+
+    // Window closing: Soft deflate
+    window-close {
+        spring damping-ratio=0.6 stiffness=450 epsilon=0.0001
+    }
+
+    // Moving windows / column switching: Maximum slime bounce when dragging/moving
+    window-movement {
+        spring damping-ratio=0.52 stiffness=350 epsilon=0.0001
+    }
+
+    // Workspace scrolling: Smooth gel-like transition
+    workspace-switch {
+        spring damping-ratio=0.6 stiffness=300 epsilon=0.0001
+    }
+
+    // Overview / Horizontal movement
+    horizontal-view-movement {
+        spring damping-ratio=0.6 stiffness=250 epsilon=0.0001
+    }
+}
+
 binds {
     // Terminal / launcher
     "Mod+Return"      { spawn "foot"; }
