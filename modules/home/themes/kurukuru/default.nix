@@ -75,8 +75,8 @@ in {
       # nerd-fonts.jetbrains-mono + symbols-only, neither of which is what
       # the launcher/glyphs actually want).
       pkgs.material-symbols
-      pkgs.nerd-fonts.noto-sans-mono
-      pkgs.librebarcode
+      pkgs.nerd-fonts.noto
+#     pkgs.librebarcode
       inputs.matugen.packages.${system}.default
     ];
 

@@ -21,7 +21,6 @@
     ./apps/spicetify.nix
     ./apps/gaming.nix
     ./apps/rofi.nix
-    ./apps/spacemacs.nix
     ./apps/yazi.nix
 
     # Background services

@@ -20,7 +20,6 @@
     # terminal.tmux.enable = true;
     terminal.zellij.enable = true;
     apps.fetch.enable = true;
-    apps.spacemacs.enable = true;
     # apps.floorp.enable = true;
     # apps.zen.enable = true;
     # apps.librewolf.enable = true;
