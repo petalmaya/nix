@@ -1,0 +1,330 @@
+// =============================================================================
+// niri config for Alice on Debian
+// Ported from modules/home/themes/noctaniri/niri/config.kdl
+//
+// Edit freely. Reload with:  niri msg action load-config-file
+// Or bind: Mod+Shift+C  (below)
+// =============================================================================
+
+// --- Outputs ---------------------------------------------------------------
+// Adjust monitor names with:  niri msg outputs
+// Comment out blocks you don't have.
+
+output "HDMI-A-1" {
+    mode "1680x1050"
+    position x=0 y=0
+}
+
+output "eDP-1" {
+    position x=1680 y=0
+}
+
+// --- Input -----------------------------------------------------------------
+
+input {
+    touchpad {
+        tap
+        natural-scroll
+    }
+    touch {
+        map-to-output "eDP-1"
+    }
+}
+
+// Noctalia backdrop must sit inside the backdrop layer
+//layer-rule {
+//  match namespace="^noctalia-backdrop$"
+//  place-within-backdrop true
+//}
+
+layer-rule {
+    match namespace="^wallpaper$"
+    place-within-backdrop true
+}
+
+overview {
+    workspace-shadow {
+        on
+    }
+    zoom 0.50
+}
+
+// --- Animation
+//animations {
+    // Window opening: Slime expanding into place with a subtle overshoot
+// window-open {
+//     spring damping-ratio=0.5 stiffness=400 epsilon=0.0001
+//  }
+
+    // Window closing: Soft deflate
+//  window-close {
+//      spring damping-ratio=0.6 stiffness=450 epsilon=0.0001
+//  }
+
+    // Moving windows / column switching: Maximum slime bounce when dragging/moving
+//  window-movement {
+//      spring damping-ratio=0.52 stiffness=350 epsilon=0.0001
+//  }
+
+    // Workspace scrolling: Smooth gel-like transition
+//  workspace-switch {
+//      spring damping-ratio=0.6 stiffness=300 epsilon=0.0001
+//  }
+
+    // Overview / Horizontal movement
+//  horizontal-view-movement {
+//      spring damping-ratio=0.6 stiffness=250 epsilon=0.0001
+//  }
+//}
+
+// --- Layout ----------------------------------------------------------------
+
+layout {
+    gaps 12
+    center-focused-column "never"
+    background-color "transparent"
+    preset-column-widths {
+        proportion 0.333
+        proportion 0.5
+        proportion 0.667
+        proportion 1.0
+    }
+    default-column-width { proportion 0.5; }
+    shadow {
+        off
+    }
+
+    focus-ring {
+        width 3
+	//off
+    }
+    border {
+        off
+    }
+}
+
+prefer-no-csd
+
+window-rule {
+    match app-id="^(eog|sxiv|feh|mpv|vlc|file-roller|xarchiver|loupe)$"
+    open-floating true
+}
+window-rule {
+    match app-id="org.gnome.Nautilus" title=".*Progress.*"
+    open-floating true
+}
+window-rule {
+    match app-id="org.gnome.Nautilus" title=".*Replace.*"
+    open-floating true
+}
+
+// Rounded corners
+window-rule {
+    geometry-corner-radius 20
+    clip-to-geometry true
+}
+window-rule {
+  background-effect {
+    blur true
+  }
+}
+
+cursor {
+    xcursor-theme "capitaine-cursors"
+    xcursor-size 24
+}
+
+environment {
+    XDG_CURRENT_DESKTOP "niri"
+    PYTHONIOENCODING "utf-8"
+}
+// Fun
+
+blur {
+    // off
+    passes 1
+    offset 1
+    noise 0.02
+    saturation 1.5
+}
+
+window-rule {
+    match app-id="foot" // or "^foot$" for exact matching
+
+    background-effect {
+        blur true
+    }
+}
+
+recent-windows {
+    // off
+    debounce-ms 750
+
+    open-delay-ms 150
+
+    highlight {
+        active-color "#999999ff"
+        urgent-color "#ff9999ff"
+        padding 30
+        corner-radius 0
+    }
+
+    previews {
+        max-height 480
+        max-scale 0.5
+    }
+
+    binds {
+        Alt+Tab         { next-window; }
+        Alt+Shift+Tab   { previous-window; }
+        Alt+grave       { next-window     filter="app-id"; }
+        Alt+Shift+grave { previous-window filter="app-id"; }
+
+        Mod+Tab         { next-window; }
+        Mod+Shift+Tab   { previous-window; }
+        Mod+grave       { next-window     filter="app-id"; }
+        Mod+Shift+grave { previous-window filter="app-id"; }
+    }
+}
+// --- Autostart -------------------------------------------------------------
+// Order matters a little: portals env first, then agents, then the shell.
+
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "--all"
+// polkit agent path on Debian (polkit-kde-authentication-agent-1)
+spawn-at-startup "/usr/libexec/polkit-kde-authentication-agent-1"
+// Noctalia desktop shell (bar, launcher, notifs, lock, wallpaper, …)
+//spawn-at-startup "noctalia"
+// FlutterShell
+//spawn-at-startup "/home/alice/fluttershell/target/release/fluttershell"
+// Wallpaper
+//spawn-at-startup "swaybg" "-o" "HDMI-A-1" "-i" "/home/alice/Pictures/Wallpaper/flutter.png" "-m" "fill"
+//spawn-at-startup "swaybg" "-o" "eDP-1" "-i" "/home/alice/Pictures/Wallpaper/fluts.jpg" "-m" "fill"
+spawn-at-startup "quickshell"
+// Xwayland for legacy apps (package: xwayland-satellite from danklinux)
+xwayland-satellite {
+    path "xwayland-satellite"
+}
+
+// --- Binds -----------------------------------------------------------------
+
+binds {
+    // Terminal / launcher
+    "Mod+Return"      { spawn "foot"; }
+//  "Mod+D"           { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+//  "Mod+D"     { spawn "fuzzel"; }
+//  "Mod+D" { spawn "/home/alice/fluttershell/target/release/fluttershell" "popover" "toggle" "launcher"; }
+    "Mod+D" { spawn "qs" "ipc" "call" "launcher" "toggle"; }
+    "Mod+Shift+D" { spawn "qs" "ipc" "call" "notch" "toggle"; }
+    "Mod+Shift+S" { spawn "qs" "ipc" "call" "notch" "workspaces"; }
+    "Mod+Shift+X" { spawn "qs" "ipc" "call" "notch" "media"; }
+
+
+    // Screenshot (Grim)
+//  "Print"           { spawn "noctalia" "msg" "screenshot-region"; }
+//  "Print"       { spawn "sh" "-c" "grim -g \"$(slurp)\" ~/Pictures/$(date +%Y-%m-%d_%H-%M-%S).png"; }
+    "Print" { screenshot; }
+    "Mod+P" { spawn "qs" "ipc" "call" "notifications" "clear";}
+
+    // Lock via noctalia session
+//  "Mod+L"           { spawn "noctalia" "msg" "session" "lock"; }
+//  "Mod+Alt+L" { spawn "sh" "-c" "gtklock -c ~/.config/gtklock/config.ini -s ~/.config/gtklock/style.css "; }
+    "Mod+L" { spawn "quickshell" "ipc" "call" "lockscreen" "lock"; }
+
+    // Apps  (firefox-esr is the Mozilla package name; binary is still `firefox-esr`)
+    "Mod+W"           { spawn "firefox-esr"; }
+    "Mod+E"           { spawn "nautilus"; }
+    "Mod+A"       { spawn "foot" "yazi";}
+    "Mod+M"           { spawn "spotify"; }
+    "Mod+N"           { spawn "mpv" "--player-operation-mode=pseudo-gui"; }
+
+    // Audio / brightness
+    "XF86AudioRaiseVolume"    { spawn "pactl" "set-sink-volume" "@DEFAULT_SINK@" "+5%"; }
+    "XF86AudioLowerVolume"    { spawn "pactl" "set-sink-volume" "@DEFAULT_SINK@" "-5%"; }
+    "XF86AudioMute"           { spawn "pactl" "set-sink-mute" "@DEFAULT_SINK@" "toggle"; }
+    "XF86MonBrightnessUp"     { spawn "brightnessctl" "set" "+5%"; }
+    "XF86MonBrightnessDown"   { spawn "brightnessctl" "set" "5%-"; }
+
+    // Window management
+    "Mod+C"           { close-window; }
+    "Alt+F4"          { close-window; }
+
+    "Mod+F"           { maximize-column; }
+    "Mod+Shift+F"     { fullscreen-window; }
+    "Mod+Space"       { toggle-window-floating; }
+    "Mod+Shift+Space" { switch-focus-between-floating-and-tiling; }
+
+    // Focus (sway-like arrows)
+    "Mod+Left"        { focus-column-left; }
+    "Mod+Right"       { focus-column-right; }
+    "Mod+Up"          { focus-window-up; }
+    "Mod+Down"        { focus-window-down; }
+    // Keypad
+    "Mod+KP_Left"        { focus-column-left; }
+    "Mod+KP_Right"       { focus-column-right; }
+    "Mod+KP_Up"          { focus-window-up; }
+    "Mod+KP_Down"        { focus-window-down; }
+
+
+    // Move
+    "Mod+Shift+Left"  { move-column-left; }
+    "Mod+Shift+Right" { move-column-right; }
+    "Mod+Shift+Up"    { move-window-up; }
+    "Mod+Shift+Down"  { move-window-down; }
+    // Keypad
+    "Mod+Shift+KP_Left"  { move-column-left; }
+    "Mod+Shift+KP_Right" { move-column-right; }
+    "Mod+Shift+KP_Up"    { move-window-up; }
+    "Mod+Shift+KP_Down"  { move-window-down; }
+
+    // Column consume / expel
+    "Mod+H"           { expel-window-from-column; }
+    "Mod+V"           { consume-window-into-column; }
+    "Mod+BracketLeft"  { consume-or-expel-window-left; }
+    "Mod+BracketRight" { consume-or-expel-window-right; }
+
+    // Workspaces
+    "Mod+Control+Right" { focus-workspace-down; }
+    "Mod+Control+Left"  { focus-workspace-up; }
+    "Mod+Control+Shift+Right" { move-column-to-workspace-down; }
+    "Mod+Control+Shift+Left"  { move-column-to-workspace-up; }
+    // Keypad
+    "Mod+Control+KP_Right" { focus-workspace-down; }
+    "Mod+Control+KP_Left"  { focus-workspace-up; }
+    "Mod+Control+Shift+KP_Right" { move-column-to-workspace-down; }
+
+    "Mod+Control+Shift+KP_Left"  { move-column-to-workspace-up; }
+    "Mod+Ctrl+Page_Down"      { move-column-to-workspace-down; }
+    "Mod+Ctrl+Page_Up"        { move-column-to-workspace-up; }
+    "Mod+1"             { focus-workspace 1; }
+    "Mod+2"             { focus-workspace 2; }
+    "Mod+3"             { focus-workspace 3; }
+    "Mod+4"             { focus-workspace 4; }
+    "Mod+5"             { focus-workspace 5; }
+    "Mod+6"             { focus-workspace 6; }
+    "Mod+Shift+1"       { move-column-to-workspace 1; }
+    "Mod+Shift+2"       { move-column-to-workspace 2; }
+    "Mod+Shift+3"       { move-column-to-workspace 3; }
+    "Mod+Shift+4"       { move-column-to-workspace 4; }
+    "Mod+Shift+5"       { move-column-to-workspace 5; }
+    "Mod+Shift+6"       { move-column-to-workspace 6; }
+
+    // Column sizing
+    "Mod+Minus" { set-column-width "-10%"; }
+    "Mod+Equal" { set-column-width "+10%"; }
+    "Mod+R"     { switch-preset-column-width; }
+
+    // Quit / reload / overview
+    "Mod+Q"           { quit; }
+    "Mod+Shift+C"     { spawn "niri" "msg" "action" "load-config-file"; }
+    "Mod+S"           { toggle-overview; }
+
+    // Show keybind overlay
+    "Mod+Shift+Slash" { show-hotkey-overlay; }
+}
+
+// Dynamic colour template written by Noctalia v5
+//include optional=true "./colors.kdl"
+
+include optional=true "noctalia.kdl"
+include "animations.kdl"
+include "flutterice.kdl"

@@ -101,8 +101,50 @@
 
     # Desktop/Graphical configuration (only for GUI-enabled hosts)
     (lib.mkIf config.nixtop.desktop.enable {
-      # Enable Noctalia Greeter (DM)
-      nixtop.noctalia-greeter.enable = true;
+      # Both hosts' primary user (alice) now runs the kurukuru theme
+      # (Kuru Kuru Bar / Quickshell, see modules/home/themes/kurukuru)
+      # instead of Noctalia Shell, so the greeter that matches it -
+      # flutterquick's own greeter.qml, wired up via its
+      # nixosModules.greeter - replaces Noctalia Greeter here too.
+      # noctalia-greeter.nix is left in the tree (imported, just unused)
+      # for rollback, same as the noctaniri theme module.
+      nixtop.noctalia-greeter.enable = false;
+      programs.kurukurubar.greeter = {
+        enable = true;
+        compositor = "niri"; # matches kurukuru's own niri-based session
+      };
+
+      # Give `greeter` a real, writable $HOME instead of NixOS's default
+      # /var/empty (read-only) - needed so the greeter can find a
+      # wallpaper at all. Without this, ~greeter/.config/... writes
+      # (including the manual `sudo -u greeter quickshell ipc call
+      # config setWallpaper ...` step flutterquick's own
+      # greetd-examples/README.md documents) just fail, since /var/empty
+      # is a root-owned placeholder, not a real home.
+      users.users.greeter = {
+        home = "/var/lib/greeter";
+        createHome = true;
+      };
+
+      # Seed that home's config.json declaratively instead - Data/Config.qml
+      # (flutterquick) reads `wallSrc` from ~/.config/kurukurubar/config.json,
+      # same key your own session's config uses, so this is genuinely the
+      # same mechanism, just pointed at the greeter user's (now real) home
+      # via a build-time symlink rather than an imperative `ipc call` that
+      # wouldn't survive a rebuild anyway.
+      #
+      # Change the filename below to whichever of assets/wallpaper/ you
+      # actually want at the login screen - nix_bg.png was picked as a
+      # reasonable "this is the NixOS box" default, not because it's
+      # definitely the one you want.
+      systemd.tmpfiles.rules = [
+        "d /var/lib/greeter/.config/kurukurubar 0755 greeter greeter -"
+        "L+ /var/lib/greeter/.config/kurukurubar/config.json - - - - ${
+          pkgs.writeText "kurukuru-greeter-config.json" (builtins.toJSON {
+            wallSrc = "${inputs.self}/assets/wallpaper/serial_experiments_lain_server_room.jpg";
+          })
+        }"
+      ];
 
       # Enable Plymouth Boot Splash
       nixtop.plymouth.enable = true;

@@ -1,0 +1,126 @@
+[config]
+# Matugen 4.0 Config File for Flutterice Templates
+
+[templates.antigravity]
+input_path = "templates/antigravity/antigravity.json"
+output_path = "~/.gemini/config/theme.json"
+post_hook = "bash ~/.config/matugen/templates/antigravity/apply.sh"
+
+[templates.bat]
+input_path = "templates/bat/bat.tmTheme"
+output_path = "~/.config/bat/themes/flutterice.tmTheme"
+post_hook = "bash ~/.config/matugen/templates/bat/apply.sh"
+
+[templates.cava]
+input_path = "templates/cava/cava.ini"
+output_path = "~/.config/cava/themes/flutterice"
+post_hook = "bash ~/.config/matugen/templates/cava/apply.sh"
+
+[templates.emacs]
+input_path = "templates/emacs/emacs.el"
+output_path = "~/.config/emacs/themes/flutterice-theme.el"
+post_hook = "bash ~/.config/matugen/templates/emacs/apply.sh"
+
+[templates.foot]
+input_path = "templates/foot/foot"
+output_path = "~/.config/foot/themes/flutterice"
+post_hook = "bash ~/.config/matugen/templates/foot/apply.sh"
+
+[templates.fuzzel]
+input_path = "templates/fuzzel/fuzzel.conf"
+output_path = "~/.config/fuzzel/themes/flutterice"
+post_hook = "bash ~/.config/matugen/templates/fuzzel/apply.sh"
+
+#[templates.fuzzel]
+#input_path = "./templates/fuzzel-colors.ini"
+#output_path = "~/.config/fuzzel/colors.ini"
+
+[templates.gtk3]
+input_path = "templates/gtk/gtk3.css"
+output_path = "~/.config/gtk-3.0/flutterice.css"
+post_hook = "bash ~/.config/matugen/templates/gtk/apply.sh {{ mode }}"
+
+[templates.gtk4]
+input_path = "templates/gtk/gtk4.css"
+output_path = "~/.config/gtk-4.0/flutterice.css"
+post_hook = "bash ~/.config/matugen/templates/gtk/apply.sh {{ mode }}"
+
+[templates.lazygit]
+input_path = "templates/lazygit/lazygit.yml"
+output_path = "~/.config/lazygit/themes/flutterice.yml"
+post_hook = "bash ~/.config/matugen/templates/lazygit/apply.sh"
+
+[templates.niri]
+input_path = "templates/niri/niri.kdl"
+output_path = "~/.config/niri/flutterice.kdl"
+post_hook = "bash ~/.config/matugen/templates/niri/apply.sh"
+
+[templates.papirus_icons]
+input_path = "templates/papirus-icons/colors"
+output_path = "templates/papirus-icons/colors-final"
+post_hook = "bash ~/.config/matugen/templates/papirus-icons/apply.sh"
+
+[templates.pywalfox]
+input_path = "templates/pywalfox/pywalfox.json"
+output_path = "~/.cache/wal/colors.json"
+post_hook = "bash ~/.config/matugen/templates/pywalfox/apply.sh {{ mode }}"
+
+[templates.qt5ct]
+input_path = "templates/qt/qtct.conf"
+output_path = "~/.config/qt5ct/colors/flutterice.conf"
+
+[templates.qt6ct]
+input_path = "templates/qt/qtct.conf"
+output_path = "~/.config/qt6ct/colors/flutterice.conf"
+
+[templates.spicetify]
+input_path = "templates/spicetify/spicetify.ini"
+output_path = "~/.config/spicetify/Themes/Comfy/color.ini"
+post_hook = "bash ~/.config/matugen/templates/spicetify/apply.sh"
+
+[templates.starship]
+input_path = "templates/starship/starship.toml"
+output_path = "~/.config/starship.toml"
+
+#[templates.yazi]
+#input_path = "templates/yazi/yazi.toml"
+#output_path = "~/.config/yazi/flavors/flutterice.yazi/flavor.toml"
+#post_hook = "bash ~/.config/matugen/templates/yazi/apply.sh"
+
+[templates.yazi]
+input_path = "./templates/yazi-theme.toml"
+output_path = "~/.config/yazi/theme.toml"
+
+
+#[templates.yazi_syntax]
+#input_path = "templates/yazi/yazi.tmTheme"
+#output_path = "~/.config/yazi/flavors/flutterice.yazi/tmtheme.xml"
+
+# Optional application templates (uncomment if installed):
+
+# [templates.steam]
+# input_path = "templates/steam/steam.css"
+# output_path = "~/.steam/steam/steamui/skins/Material-Theme/css/main/colors/matugen.css"
+
+# [templates.prismlauncher]
+# input_path = "templates/prismlauncher/prismlauncher.json"
+# output_path = "~/.local/share/PrismLauncher/themes/Matugen/theme.json"
+
+# [templates.vscode]
+# input_path = "templates/vscode/vscode.json"
+# output_path = "~/.vscode/extensions/flutterice.fluttericetheme-0.0.5/themes/FluttericeTheme-color-theme.json"
+[templates.quickshell]
+input_path = "./templates/quickshell-config.json"
+output_path = "~/.config/kurukurubar/colors.json"
+[templates.fastfetch]
+input_path = "templates/fastfetch/config.jsonc"
+output_path = "~/.config/fastfetch/config.jsonc"
+
+[templates.discord_vesktop]
+input_path = "templates/discord/discord-midnight.css"
+output_path = "~/.var/app/dev.vencord.Vesktop/config/vesktop/themes/flutterice-theme.css"
+
+[templates.qutebrowser]
+input_path = "templates/qutebrowser/theme.py"
+output_path = "~/.config/qutebrowser/theme.py"
+
