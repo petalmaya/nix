@@ -39,5 +39,6 @@
     ./themes/rosepine-dark
     ./themes/redpine
     ./themes/noctaniri
+    ./themes/kurukuru
   ];
 }

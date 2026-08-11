@@ -10,7 +10,11 @@
   home.homeDirectory = "/home/alice";
 
   nixtop = {
-    themes.noctaniri.enable = true;
+    # Moved off Noctalia Shell and onto Kuru Kuru Bar (Quickshell) - see
+    # modules/home/themes/kurukuru. themes.noctaniri module is left in the
+    # tree (imported, just unused) in case this needs rolling back.
+    themes.noctaniri.enable = false;
+    themes.kurukuru.enable = true;
     terminal.foot.enable = true;
     terminal.zsh.enable = true;
     # terminal.tmux.enable = true;

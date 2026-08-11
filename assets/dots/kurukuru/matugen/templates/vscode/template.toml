@@ -1,0 +1,18 @@
+[catalog.vscode]
+name = "VSCode"
+category = "editor"
+
+[templates.vscode_code]
+input_path = "vscode.json"
+output_path = "~/.vscode/extensions/flutterice.fluttericetheme-0.0.5/themes/FluttericeTheme-color-theme.json"
+requires_path = "~/.vscode"
+
+[templates.vscode_codium]
+input_path = "vscode.json"
+output_path = "~/.vscode-oss/extensions/flutterice.fluttericetheme-0.0.5-universal/themes/FluttericeTheme-color-theme.json"
+requires_path = "~/.vscode-oss"
+
+[templates.antigravity_ide]
+input_path = "vscode.json"
+output_path = "~/.antigravity-ide/extensions/flutterice.fluttericetheme-0.0.5-universal/themes/FluttericeTheme-color-theme.json"
+requires_path = "~/.antigravity-ide"

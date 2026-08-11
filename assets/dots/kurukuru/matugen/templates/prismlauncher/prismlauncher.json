@@ -1,0 +1,9 @@
+{
+  "name": "Flutterice",
+  "formatVersion": 1,
+  "colors": {
+    "background": "{{colors.surface.dark.hex}}",
+    "foreground": "{{colors.on_surface.dark.hex}}",
+    "primary": "{{colors.primary.dark.hex}}"
+  }
+}

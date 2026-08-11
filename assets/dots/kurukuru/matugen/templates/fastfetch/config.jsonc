@@ -1,0 +1,120 @@
+{
+  /////===== LOGO =====/////
+  "logo": {
+    "type": "chafa",
+    "source": "/home/alice/.config/fastfetch/input.png",
+    "height": 20,
+  },
+
+  "display": {
+    "separator": " ",
+    "color": {
+      "keys": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    }
+  },
+  /////===== MODULES =====/////
+  "modules": [
+    {
+      "type": "custom",
+      "key": "╭────────────╮",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "key": "│  User      │",
+      "type": "title",
+      "format": "{6}{7}{8}",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "type": "custom",
+      "key": "├────────────┤",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "type": "host",
+      "key": "│ 󰌢 Machine  │",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "type": "os",
+      "key": "│ {icon} OS       │",
+      "format": "{#38}{name} ",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "type": "kernel",
+      "key": "│ 󰌽 Kernel   │",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "type": "de",
+      "key": "│  DE       │",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "type": "wm",
+      "key": "│  WM       │",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "type": "terminal",
+      "key": "│  Terminal │",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "type": "custom",
+      "key": "╰────────────╯",
+      "keyColor": "38;2;{{colors.primary.default.red}};{{colors.primary.default.green}};{{colors.primary.default.blue}}"
+    },
+    {
+      "type": "custom",
+      "key": "╭────────────╮",
+      "keyColor": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    },
+    {
+      "type": "display",
+      "key": "│ 󰍹 Display  │",
+      "format": "{1}x{2} @ {3}Hz [{7}]",
+      "keyColor": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    },
+    {
+      "type": "memory",
+      "key": "│ 󰑭 Memory  {#keys} │",
+      "format": "{#38}{used} / {total}{#keys} ",
+      "keyColor": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    },
+    {
+      "type": "disk",
+      "key": "│ 󱛟 Disk    {#keys} │",
+      "format": "{#38}{size-used} / {size-total}{#keys} ",
+      "keyColor": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    },
+    {
+      "type": "cpu",
+      "key": "│  CPU     {#keys} │",
+      "format": "{#38}{name} ({cores-logical}){#keys}",
+      "keyColor": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    },
+    {
+      "type": "gpu",
+      "key": "│  GPU     {#keys} │",
+      "format": "{#38}{vendor} {name} ({type}){#keys}",
+      "keyColor": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    },
+    {
+      "type": "shell",
+      "key": "│  Shell   {#keys} │",
+      "keyColor": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    },
+    {
+      "type": "uptime",
+      "key": "│ 󱫐 Uptime {#keys}  │",
+      "keyColor": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    },
+    {
+      "type": "custom",
+      "key": "╰────────────╯",
+      "keyColor": "38;2;{{colors.on_surface.default.red}};{{colors.on_surface.default.green}};{{colors.on_surface.default.blue}}"
+    },
+  ]
+}

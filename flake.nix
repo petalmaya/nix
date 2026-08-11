@@ -70,6 +70,26 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Kuru Kuru Bar (Quickshell config, personal fork) - replaces Noctalia
+    # Shell. Ships its own quickshell input internally, so we don't pull a
+    # separate one here - see that flake's own flake.nix for why. Also
+    # exports nixosModules.greeter (see hosts/common/default.nix).
+    flutterquick = {
+      url = "github:petalmaya/flutterquick";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Matugen's own upstream flake - provides the declarative
+    # `programs.matugen` Home Manager module (module.nix), used instead of
+    # hand-rolling matugen's config.toml as raw Nix. See
+    # modules/home/themes/kurukuru, which builds its `templates` option
+    # straight from assets/dots/kurukuru/matugen/config.toml via
+    # builtins.fromTOML.
+    matugen = {
+      url = "github:InioX/matugen";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # All flake inputs are collected as `inputs` so they can be forwarded into
@@ -101,6 +121,7 @@
         ./hosts/${hostname}/configuration.nix
         inputs.nix-flatpak.nixosModules.nix-flatpak
         inputs.noctalia-greeter.nixosModules.default
+        inputs.flutterquick.nixosModules.greeter
         ./modules/nixos/tor.nix
         inputs.disko.nixosModules.disko
         sops-nix.nixosModules.sops
@@ -121,6 +142,7 @@
             inputs.niri.homeModules.niri          # niri window manager HM integration
             inputs.zen-browser.homeModules.twilight # Zen browser home module
             inputs.spicetify-nix.homeManagerModules.default # Spicetify Spotify theming
+            inputs.matugen.nixosModules.default    # `programs.matugen` (upstream module, used from HM)
             (import ./modules/home)               # our local modules/home registry
           ];
         }
