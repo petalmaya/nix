@@ -326,5 +326,5 @@ binds {
 //include optional=true "./colors.kdl"
 
 include optional=true "noctalia.kdl"
-include "animations.kdl"
-include "flutterice.kdl"
+include optional=true "animations.kdl"
+include optional=true "flutterice.kdl"
