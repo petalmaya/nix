@@ -22,7 +22,7 @@
       # sops-nix manages secrets.  The key file is stored outside the Nix
       # store (in /var/lib/nixsecrets/) so it never ends up world-readable.
       sops.defaultSopsFile = ../../secrets/secrets.yaml;
-      sops.age.keyFile = "/var/lib/nixsecrets/keys.txt";
+      sops.age.keyFile = "/var/lib/sops-nix/keys.txt";
 
       boot.loader.systemd-boot.enable = true;
       boot.loader.efi.canTouchEfiVariables = true;
