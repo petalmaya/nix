@@ -104,8 +104,9 @@
       # Both hosts' primary user (alice) now runs the kurukuru theme
       # (Kuru Kuru Bar / Quickshell, see modules/home/themes/kurukuru)
       # instead of Noctalia Shell, so the greeter that matches it -
-      # flutterquick's own greeter.qml, wired up via its
-      # nixosModules.greeter - replaces Noctalia Greeter here too.
+      # its own vendored greeter.qml (modules/home/themes/kurukuru/quickshell),
+      # wired up via modules/nixos/kurukuru-greeter.nix - replaces
+      # Noctalia Greeter here too.
       # noctalia-greeter.nix is left in the tree (imported, just unused)
       # for rollback, same as the noctaniri theme module.
       nixtop.noctalia-greeter.enable = false;
@@ -113,6 +114,18 @@
         enable = true;
         compositor = "niri"; # matches kurukuru's own niri-based session
       };
+
+      # noctalia-greeter.nix (unused now) was the only thing registering
+      # niri as a session package. kurukuru's greeter.qml still needs
+      # to find *something* in services.displayManager.sessionPackages -
+      # its sessionScan (quickshell/Data/Greeter.qml) reads .desktop files out of
+      # the aggregated /run/current-system/sw/share/wayland-sessions, and
+      # with nothing registered that dir is empty, so the session picker
+      # shows "(none found)". Re-register it here now that the module
+      # that used to do this is disabled.
+      services.displayManager.sessionPackages = [
+        inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable
+      ];
 
       # Give `greeter` a real, writable $HOME instead of NixOS's default
       # /var/empty (read-only) - needed so the greeter can find a
@@ -137,9 +150,18 @@
       # actually want at the login screen - nix_bg.png was picked as a
       # reasonable "this is the NixOS box" default, not because it's
       # definitely the one you want.
+      # NOTE: this must be a *copy* ("C"), not a symlink ("L+"), into the
+      # store. Config.qml's JsonAdapter backfills any keys missing from
+      # the file (we only seed wallSrc) and writes the merged result
+      # back out via FileView's onAdapterUpdated -> writeAdapter() as
+      # soon as it loads. A symlink resolves into the read-only Nix
+      # store, so that write silently fails - which is why the greeter
+      # never actually showed a background. A copied, greeter-owned
+      # regular file is writable, so the load-time backfill succeeds and
+      # wallSrc sticks.
       systemd.tmpfiles.rules = [
         "d /var/lib/greeter/.config/kurukurubar 0755 greeter greeter -"
-        "L+ /var/lib/greeter/.config/kurukurubar/config.json - - - - ${
+        "C /var/lib/greeter/.config/kurukurubar/config.json 0644 greeter greeter - ${
           pkgs.writeText "kurukuru-greeter-config.json" (builtins.toJSON {
             wallSrc = "${inputs.self}/assets/wallpaper/serial_experiments_lain_server_room.jpg";
           })

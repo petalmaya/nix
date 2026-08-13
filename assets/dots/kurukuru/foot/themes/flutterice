@@ -1,4 +1,4 @@
-[colors]
+[colors-dark]
 foreground=e3e2e9
 background=121318
 regular0=33343a
@@ -19,6 +19,8 @@ bright6=fed6f9
 bright7=c5c6d0
 selection-foreground=dce2f9
 selection-background=404659
-
-[cursor]
-color=182e60 b2c5ff
+# cursor.color under [cursor] was removed from newer foot (nixpkgs
+# unstable already ships >=1.23 where it's a hard error, not just the
+# deprecation warning older docs mention) - moved into colors-dark per
+# upstream's replacement.
+cursor=182e60 b2c5ff

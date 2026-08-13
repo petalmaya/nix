@@ -10,7 +10,10 @@
 let
   cfg = config.nixtop.themes.kurukuru;
   system = pkgs.stdenv.hostPlatform.system;
-  kurukurubar = inputs.flutterquick.packages.${system}.kurukurubar;
+  kurukurubar = import ./package.nix {
+    inherit pkgs;
+    quickshellInput = inputs.quickshell;
+  };
 
   dotsDir = "${inputs.self}/assets/dots/kurukuru";
   matugenDir = "${dotsDir}/matugen";
