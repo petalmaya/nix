@@ -201,9 +201,9 @@ spawn-at-startup "/usr/libexec/polkit-kde-authentication-agent-1"
 //spawn-at-startup "swaybg" "-o" "eDP-1" "-i" "/home/alice/Pictures/Wallpaper/fluts.jpg" "-m" "fill"
 spawn-at-startup "quickshell"
 // Xwayland for legacy apps (package: xwayland-satellite from danklinux)
-xwayland-satellite {
-    path "xwayland-satellite"
-}
+//xwayland-satellite {
+//   path "xwayland-satellite"
+//}
 
 // --- Binds -----------------------------------------------------------------
 
