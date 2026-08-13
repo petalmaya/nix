@@ -32,17 +32,7 @@ let
     (_: t: t // { input_path = "${matugenDir}/${t.input_path}"; })
     parsedMatugenConfig.templates;
 
-  # `papirus_icons` is the one entry in dotsquick's config.toml whose
-  # *output* is also relative-into-the-templates-dir
-  # ("templates/papirus-icons/colors-final", a build artifact matugen
-  # writes back into its own templates tree at runtime) rather than
-  # somewhere under $HOME. Since the templates dir here is a read-only
-  # Nix store symlink (see xdg.configFile."matugen/templates" below),
-  # that write would fail. Dropped rather than silently left broken -
-  # flagged in handoff.md; fixing it properly means giving matugen a
-  # writable templates dir just for this one template, which felt like
-  # more surgery than this pass was asked to do.
-  matugenTemplates = removeAttrs matugenTemplatesRaw [ "papirus_icons" ];
+  matugenTemplates = matugenTemplatesRaw;
 in {
   options.nixtop.themes.kurukuru.enable = lib.mkEnableOption "Kurukuru Theme (Niri + Kuru Kuru Bar / Quickshell)";
   options.nixtop.themes.kurukuru.repoPath = lib.mkOption {
@@ -103,6 +93,14 @@ in {
       pkgs.nerd-fonts.noto
 #     pkgs.librebarcode
       inputs.matugen.packages.${system}.default
+      # dotsquick's own template post_hooks shell out to these -
+      # antigravity/apply.sh uses jq, spicetify/apply.sh needs the actual
+      # `spicetify` CLI (not added here: it's only useful if you actually
+      # run Spotify with spicetify installed, and it wants a real Spotify
+      # config dir to patch, not just the binary present - install it
+      # yourself if/when you want that template's post_hook to do
+      # anything; until then it fails harmlessly, matugen keeps going).
+      pkgs.jq
     ];
 
     # Declarative matugen config (writes ~/.config/matugen/config.toml),
@@ -123,10 +121,16 @@ in {
     # (see the module's own README: "does NOT automatically symlink the
     # files"). So the vendored templates dir still needs linking in
     # separately, for the hooks alone.
-    xdg.configFile."matugen/templates" = {
-      source = "${matugenDir}/templates";
-      recursive = true;
-    };
+    #
+    # NOT xdg.configFile (that was a read-only Nix store symlink tree -
+    # matugen writes build artifacts back *into* its own templates dir at
+    # runtime, e.g. templates/papirus-icons/colors-final, and every one
+    # of those writes was failing with "file is Read-Only"). Same
+    # writable-real-directory trick already used above for
+    # ~/.config/quickshell: symlink to the live git checkout instead of
+    # the store, so matugen's writeback lands in a real, writable place.
+    home.file.".config/matugen/templates".source =
+      config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/assets/dots/kurukuru/matugen/templates";
 
     # Foot/niri get their real config from the same vendored dotsquick
     # tree - see modules/home/terminal/foot's branch (gated on this same

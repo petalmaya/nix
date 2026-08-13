@@ -59,7 +59,18 @@ lib.mkIf config.nixtop.themes.kurukuru.enable {
   # on wallpaper change (see flutterquick's scripts/applyMatugen.sh and
   # this theme's `programs.matugen.templates.niri`).
   xdg.configFile."niri/animations.kdl".source = "${dotsNiriDir}/animations.kdl";
-  xdg.configFile."niri/flutterice.kdl".source = "${dotsNiriDir}/flutterice.kdl";
+
+  # NOT xdg.configFile (read-only Nix store symlink) - flutterice.kdl is
+  # matugen's own live template *output* (programs.matugen.templates.niri),
+  # rewritten on every re-theme. A store symlink here silently blocks
+  # that writeback the same way it did for foot/themes/flutterice (see
+  # ../../terminal/foot/default.nix) - just seed a writable copy of the
+  # vendored version so the config.kdl `include` doesn't error before
+  # matugen has run once; matugen owns the file after that.
+  home.activation.ensureNiriFlutterice = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    $DRY_RUN_CMD mkdir -p $HOME/.config/niri
+    $DRY_RUN_CMD [ -e "$HOME/.config/niri/flutterice.kdl" ] || $DRY_RUN_CMD cp "${dotsNiriDir}/flutterice.kdl" "$HOME/.config/niri/flutterice.kdl"
+  '';
 
   xdg.portal = {
     enable = true;

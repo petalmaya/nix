@@ -170,7 +170,21 @@
       # on a machine that had already booted the greeter once. `r!`
       # forces the stale file gone on every activation, so `C` always
       # has a fresh destination to write the corrected seed into.
+      # `sudo systemd-tmpfiles --create` surfaced the actual reason none
+      # of this was ever landing: "Detected unsafe path transition
+      # /var/lib/greeter (owned by greeter) -> /var/lib/greeter/.config
+      # (owned by root)". Only "kurukurubar" below ever had an explicit
+      # rule of its own - ".config" itself did not, so tmpfiles silently
+      # auto-created it as a root-owned implicit parent the first time
+      # anything touched a path under it. Once that happens, tmpfiles
+      # refuses to walk through the ownership mismatch on every later run
+      # (a symlink-attack guard), so the r!/d/C rules below were never
+      # actually executing - not "running with the wrong seed", just not
+      # running at all. Add an explicit rule for .config itself, owned to
+      # match /var/lib/greeter, so the walk down to kurukurubar/config.json
+      # stays same-owner the whole way.
       systemd.tmpfiles.rules = [
+        "d /var/lib/greeter/.config 0755 greeter greeter -"
         "r! /var/lib/greeter/.config/kurukurubar/config.json"
         "d /var/lib/greeter/.config/kurukurubar 0755 greeter greeter -"
         "C /var/lib/greeter/.config/kurukurubar/config.json 0644 greeter greeter - ${
