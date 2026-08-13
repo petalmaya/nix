@@ -1,4 +1,4 @@
-[colors]
+[colors-dark]
 foreground={{colors.on_surface.default.hex_stripped}}
 background={{colors.surface.default.hex_stripped}}
 regular0={{colors.surface_container_highest.default.hex_stripped}}
@@ -19,6 +19,11 @@ bright6={{colors.on_tertiary_container.default.hex_stripped}}
 bright7={{colors.on_surface_variant.default.hex_stripped}}
 selection-foreground={{colors.on_secondary_container.default.hex_stripped}}
 selection-background={{colors.secondary_container.default.hex_stripped}}
-
-[cursor]
-color={{colors.on_primary.default.hex_stripped}} {{colors.primary.default.hex_stripped}}
+# cursor.color under [cursor] was removed from newer foot (nixpkgs
+# unstable already ships >=1.23 where it's a hard error, not just the
+# deprecation warning older docs mention) - moved into colors-dark per
+# upstream's replacement. Keep this in sync with the committed
+# assets/dots/kurukuru/foot/themes/flutterice fallback, which already
+# had this fix - this template regenerates that same file every time
+# matugen runs and was clobbering it back to the broken [cursor] form.
+cursor={{colors.on_primary.default.hex_stripped}} {{colors.primary.default.hex_stripped}}

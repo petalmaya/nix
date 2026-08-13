@@ -71,12 +71,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Kuru Kuru Bar (Quickshell config, personal fork) - replaces Noctalia
-    # Shell. Ships its own quickshell input internally, so we don't pull a
-    # separate one here - see that flake's own flake.nix for why. Also
-    # exports nixosModules.greeter (see hosts/common/default.nix).
-    flutterquick = {
-      url = "github:petalmaya/flutterquick";
+    # Kuru Kuru Bar (Quickshell config) - vendored directly into
+    # modules/home/themes/kurukuru/quickshell rather than pulled in as a
+    # separate `flutterquick` flake. Used to be its own repo/input; folded
+    # in so it's easier to hack on and debug alongside the rest of the
+    # theme instead of round-tripping through another repo. Still needs
+    # its own `quickshell` input (not in nixpkgs proper yet) - see
+    # modules/home/themes/kurukuru/package.nix for the build.
+    quickshell = {
+      url = "github:quickshell-mirror/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -121,7 +124,7 @@
         ./hosts/${hostname}/configuration.nix
         inputs.nix-flatpak.nixosModules.nix-flatpak
         inputs.noctalia-greeter.nixosModules.default
-        inputs.flutterquick.nixosModules.greeter
+        ./modules/nixos/kurukuru-greeter.nix
         ./modules/nixos/tor.nix
         inputs.disko.nixosModules.disko
         sops-nix.nixosModules.sops
