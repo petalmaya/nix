@@ -16,28 +16,23 @@ let
   # Everything else (outputs, binds, layer-rules, includes) is untouched
   # from dotsquick.
   #
-  # The `qs ipc call ...` binds further down also need patching: bare
-  # `qs ipc call` targets the config named "default" (see qs(1)), but
-  # kurukurubar registers itself under the name "kurukurubar" (see
-  # ../package.nix's manifest) - so every bind needs `-c kurukurubar`
-  # added, or it silently finds no instance to talk to. There's also one
-  # stray `quickshell ipc call lockscreen lock` bind that was never
-  # touched for this fork at all: `quickshell` isn't the binary name here
-  # (`qs` is, per ../package.nix's `getExe`), so that bind was failing to
-  # spawn anything, full stop.
+  # `qs ipc call ...` binds further down are now LEFT AS-IS (no `-c`
+  # patched in): ../package.nix's wrapper launches bare `qs`, which
+  # resolves ~/.config/quickshell (symlinked in ../default.nix) and
+  # registers under the default instance name - exactly what a bare
+  # `qs ipc call ...` with no `-c` already targets. The old manifest
+  # scheme this was compensating for is gone.
   rawConfig = builtins.readFile "${dotsNiriDir}/config.kdl";
   patchedConfig = builtins.replaceStrings
     [
       ''spawn-at-startup "quickshell"''
       ''spawn-at-startup "/usr/libexec/polkit-kde-authentication-agent-1"''
-      ''spawn "qs" "ipc" "call"''
       ''spawn "quickshell" "ipc" "call" "lockscreen" "lock";''
     ]
     [
       ''spawn-at-startup "${kurukurubar}/bin/kurukurubar"''
       ''spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"''
-      ''spawn "qs" "-c" "kurukurubar" "ipc" "call"''
-      ''spawn "qs" "-c" "kurukurubar" "ipc" "call" "lockscreen" "lock";''
+      ''spawn "qs" "ipc" "call" "lockscreen" "lock";''
     ]
     rawConfig;
 in

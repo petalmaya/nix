@@ -45,6 +45,19 @@ let
   matugenTemplates = removeAttrs matugenTemplatesRaw [ "papirus_icons" ];
 in {
   options.nixtop.themes.kurukuru.enable = lib.mkEnableOption "Kurukuru Theme (Niri + Kuru Kuru Bar / Quickshell)";
+  options.nixtop.themes.kurukuru.repoPath = lib.mkOption {
+    type = lib.types.str;
+    default = "${config.home.homeDirectory}/nix";
+    description = ''
+      Absolute path to your actual git checkout of this flake (not the
+      Nix store copy `inputs.self` resolves to). Used to symlink
+      ~/.config/quickshell straight into
+      ''${repoPath}/modules/home/themes/kurukuru/quickshell, so editing
+      QML there takes effect without a rebuild and bare `qs`/`quickshell`
+      finds a real config. Only needs changing if you clone this repo
+      somewhere other than ~/nix.
+    '';
+  };
 
   imports = [
     ./niri
@@ -70,6 +83,15 @@ in {
       size = 24;
       gtk.enable = true;
     };
+
+    # The real fix for "no ~/.config/quickshell" and "qs can't find
+    # shell.qml": an out-of-store symlink straight into your working
+    # tree, not a copy into the store. `qs`/`quickshell` run bare now
+    # find this directly (see package.nix's rewritten wrapper - it no
+    # longer passes -c/-p at all), and edits to the QML here are edits to
+    # your actual repo, live, no rebuild loop.
+    home.file.".config/quickshell".source =
+      config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/home/themes/kurukuru/quickshell";
 
     home.packages = [
       kurukurubar

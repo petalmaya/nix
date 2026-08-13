@@ -163,7 +163,18 @@
         "d /var/lib/greeter/.config/kurukurubar 0755 greeter greeter -"
         "C /var/lib/greeter/.config/kurukurubar/config.json 0644 greeter greeter - ${
           pkgs.writeText "kurukuru-greeter-config.json" (builtins.toJSON {
-            wallSrc = "${inputs.self}/assets/wallpaper/serial_experiments_lain_server_room.jpg";
+            # Every other place that sets wallSrc at runtime goes through
+            # Qt.resolvedUrl() first (Data/Config.qml's setWallpaper/
+            # setWallpaperFor IPC handlers), which produces a proper
+            # file:// URL string. This seed used to write a bare
+            # filesystem path instead - inconsistent with what the QML
+            # `url` property actually expects, and the real reason the
+            # greeter background never showed even though the rest of
+            # the wiring (writable ~greeter, wallSrc being the
+            # lock/greeter image per Data/Config.qml, not a desktop
+            # fallback) was already correct. Match resolvedUrl's format
+            # directly instead.
+            wallSrc = "file://${inputs.self}/assets/wallpaper/serial_experiments_lain_server_room.jpg";
           })
         }"
       ];
