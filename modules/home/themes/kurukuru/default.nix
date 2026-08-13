@@ -132,6 +132,25 @@ in {
     home.file.".config/matugen/templates".source =
       config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/assets/dots/kurukuru/matugen/templates";
 
+    # papirus-icons/apply.sh checks for $HOME/.local/share/icons/Papirus
+    # and bails with "Papirus Icons are not installed" if it's missing -
+    # that check is written for a normal Linux install where the icon
+    # theme's package puts its files there directly. On NixOS,
+    # pkgs.papirus-icon-theme instead lands in the read-only store and is
+    # made available via /run/current-system/sw/share/icons, which isn't
+    # where the script looks, and even a symlink there wouldn't help -
+    # apply.sh's papirus-folders step needs to create new symlinks
+    # *inside* the theme dir, which a store path can't do. Seed a real,
+    # writable copy instead so both the existence check and the later
+    # write both succeed.
+    home.activation.ensurePapirusIconsWritable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD mkdir -p "$HOME/.local/share/icons"
+      if [ ! -d "$HOME/.local/share/icons/Papirus" ]; then
+        $DRY_RUN_CMD cp -r "${pkgs.papirus-icon-theme}/share/icons/Papirus" "$HOME/.local/share/icons/Papirus"
+        $DRY_RUN_CMD chmod -R u+w "$HOME/.local/share/icons/Papirus"
+      fi
+    '';
+
     # Foot/niri get their real config from the same vendored dotsquick
     # tree - see modules/home/terminal/foot's branch (gated on this same
     # option) and ./niri below.
