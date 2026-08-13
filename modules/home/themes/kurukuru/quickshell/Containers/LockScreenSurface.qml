@@ -368,6 +368,15 @@ WlSessionLockSurface {
     id: pam
 
     onCompleted: res => {
+      // Diagnostic-only addition - doesn't change auth behavior, just
+      // logs the actual PamResult/PamError to stderr so `journalctl
+      // --user -f` (or wherever niri's stdout/stderr lands in your
+      // session) shows *why* an unlock attempt failed instead of just
+      // the generic red-flash UI state. Needed real data here rather
+      // than guessing at PamContext's internals blind, especially for
+      // something auth-related.
+      console.log("[LOCKSCREEN][PAM] result=" + res);
+
       if (res === PamResult.Success) {
         surface.unlocking = true;
         surface.inputBuffer = "";
