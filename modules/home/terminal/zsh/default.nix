@@ -8,7 +8,17 @@
       enable = true;
       enableZshIntegration = true;
     };
-    xdg.configFile."starship.toml".source = ./starship.toml;
+    # Skip on a kurukuru host: matugen owns ~/.config/starship.toml there
+    # (programs.matugen.templates.starship in
+    # modules/home/themes/kurukuru/default.nix writes it on every
+    # re-theme) - this xdg.configFile was a read-only Nix store symlink
+    # at the exact same path, so matugen's writes were failing with
+    # "file is Read-Only". Until matugen has run once on a fresh install,
+    # starship just falls back to its own built-in defaults (unstyled but
+    # not broken) rather than this file.
+    xdg.configFile."starship.toml" = lib.mkIf (!(config.nixtop.themes.kurukuru.enable or false)) {
+      source = ./starship.toml;
+    };
 
     programs.zsh = {
       enable            = true;
