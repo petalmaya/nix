@@ -159,7 +159,19 @@
       # never actually showed a background. A copied, greeter-owned
       # regular file is writable, so the load-time backfill succeeds and
       # wallSrc sticks.
+      # `C` only copies "if the destination does not exist yet" - and it
+      # already exists, from BEFORE the file:// fix above landed:
+      # quickshell's own FileView wrote a config.json to this path the
+      # first time the greeter ever ran (with the old, broken bare-path
+      # wallSrc), and that file has been sitting there ever since,
+      # silently winning over every subsequent rebuild's `C` line. This
+      # is the actual reason the background was still missing even after
+      # the file:// fix - the corrected seed never had a chance to land
+      # on a machine that had already booted the greeter once. `r!`
+      # forces the stale file gone on every activation, so `C` always
+      # has a fresh destination to write the corrected seed into.
       systemd.tmpfiles.rules = [
+        "r! /var/lib/greeter/.config/kurukurubar/config.json"
         "d /var/lib/greeter/.config/kurukurubar 0755 greeter greeter -"
         "C /var/lib/greeter/.config/kurukurubar/config.json 0644 greeter greeter - ${
           pkgs.writeText "kurukuru-greeter-config.json" (builtins.toJSON {
