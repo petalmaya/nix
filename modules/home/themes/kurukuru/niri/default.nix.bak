@@ -1,4 +1,15 @@
 { pkgs, lib, config, inputs, ... }:
+# BACKUP - not imported anywhere, kept for reference. This is the version
+# of this file written against Home Manager's own built-in
+# `wayland.windowManager.niri` module (HM's `master` branch only, as of
+# 2026-08 - see flake.nix's comment on the `niri` input). The active
+# `default.nix` next to this file uses epireyn/niri-flake's `programs.niri`
+# instead, so the `home-manager` flake input could move back to the
+# `release-26.05` branch. To switch back: point `home-manager.url` at
+# `master` again, drop the `niri` input, restore
+# `inputs.zen-browser.homeModules.twilight`'s neighbor comment in
+# flake.nix, and `mv default.nix.bak default.nix` here and in
+# ../../noctaniri/niri/.
 let
   kurukurubar = import ../package.nix {
     inherit pkgs;
@@ -36,15 +47,13 @@ let
     rawConfig;
 in
 lib.mkIf config.nixtop.themes.kurukuru.enable {
-  # epireyn/niri-flake's programs.niri module (see flake.nix's `niri`
-  # input comment for why this isn't Home Manager's own built-in module
-  # right now). `config` is niri-flake's option name for what would be
-  # `extraConfig` on the built-in module; same raw-KDL-string approach
-  # either way.
-  programs.niri = {
+  # Home Manager's own built-in module (no niri-flake input needed - see
+  # flake.nix). `config` (niri-flake's option name) is `extraConfig` here;
+  # everything else about the raw-KDL-string approach is unchanged.
+  wayland.windowManager.niri = {
     enable = true;
-    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
-    config = ''
+    package = pkgs.niri;
+    extraConfig = ''
       ${patchedConfig}
 
       spawn-at-startup "dbus-update-activation-environment" "--systemd" "--all"

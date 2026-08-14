@@ -20,7 +20,7 @@ Singleton {
   // name of the mode used when the launcher is first opened / reset
   readonly property string defaultMode: "apps"
   // ordered so Tab can cycle through them - see cycleMode()
-  readonly property var modes: ["apps", "wallpaper"]
+  readonly property var modes: ["apps", "wallpaper", "workspaces"]
 
   property bool open: false
   // which screen currently owns the launcher - only that screen's

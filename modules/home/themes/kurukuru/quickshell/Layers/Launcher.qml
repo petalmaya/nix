@@ -184,6 +184,9 @@ WlrLayershell {
           }, {
             "mode": "wallpaper",
             "icon": "wallpaper"
+          }, {
+            "mode": "workspaces",
+            "icon": "grid_view"
           }]
 
         Rectangle {
@@ -237,7 +240,13 @@ WlrLayershell {
       anchors.rightMargin: 14
       anchors.top: modeSwitcher.bottom
       anchors.topMargin: 10
-      sourceComponent: Dat.Launcher.mode == "wallpaper" ? wallpaperMode : appsMode
+      sourceComponent: {
+        if (Dat.Launcher.mode == "wallpaper")
+          return wallpaperMode;
+        if (Dat.Launcher.mode == "workspaces")
+          return workspacesMode;
+        return appsMode;
+      }
     }
 
     Component {
@@ -251,6 +260,13 @@ WlrLayershell {
       id: wallpaperMode
 
       Gen.LauncherWallpaper {
+      }
+    }
+
+    Component {
+      id: workspacesMode
+
+      Gen.LauncherWorkspaces {
       }
     }
   }

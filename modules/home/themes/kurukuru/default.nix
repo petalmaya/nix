@@ -68,6 +68,7 @@ in {
     };
 
     home.pointerCursor = {
+      enable = true; # deprecation: relying on the option's presence to enable it is deprecated as of HM's newer releases
       name = "capitaine-cursors";
       package = pkgs.capitaine-cursors;
       size = 24;
