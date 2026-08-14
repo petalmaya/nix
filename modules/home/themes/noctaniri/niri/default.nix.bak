@@ -1,13 +1,15 @@
 { pkgs, lib, config, inputs, ... }:
+# BACKUP - not imported anywhere, kept for reference. See the matching
+# comment in ../../kurukuru/niri/default.nix.bak for the full explanation
+# and restore steps.
 
 lib.mkIf config.nixtop.themes.noctaniri.enable {
-  # epireyn/niri-flake's programs.niri module (see flake.nix's `niri`
-  # input comment). `config` is niri-flake's option name for what would
-  # be `extraConfig` on Home Manager's own built-in module.
-  programs.niri = {
+  # Home Manager's own built-in module (no niri-flake input needed - see
+  # flake.nix). `config` (niri-flake's option name) is `extraConfig` here.
+  wayland.windowManager.niri = {
     enable = true;
-    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
-    config = ''
+    package = pkgs.niri;
+    extraConfig = ''
       // Base Niri configuration
       ${builtins.readFile ./config.kdl}
 

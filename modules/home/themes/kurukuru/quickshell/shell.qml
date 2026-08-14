@@ -89,4 +89,11 @@ ShellRoot {
   // scopeRoot like the per-output surfaces do.
   Lay.LockScreen {
   }
+
+  // Same reasoning as LockScreen: one polkit conversation for the whole
+  // system, not one per monitor. Picks its own screen internally (see
+  // Layers/PolkitAgent.qml's _targetScreen()) rather than needing a
+  // modelData passed in.
+  Lay.PolkitAgent {
+  }
 }

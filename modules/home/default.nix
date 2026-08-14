@@ -35,6 +35,7 @@
     ./terminal/zellij
 
     # Themes
+    ./themes/active.nix    # nixtop.activeTheme - switch/case dispatch helper
     ./themes/rosepine-dark
     ./themes/redpine
     ./themes/noctaniri

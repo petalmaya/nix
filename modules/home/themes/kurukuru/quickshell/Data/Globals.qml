@@ -102,6 +102,7 @@ Singleton {
   // (2) directly rather than importing this, since it predates this
   // block - fine to leave as is, just know they need to move together
   // if the tab order in CentralSwipable.qml ever changes.
+  readonly property int tabIndexHome: 0
   readonly property int tabIndexSystem: 2
   readonly property int tabIndexMusic: 3
 
@@ -172,6 +173,16 @@ Singleton {
   IpcHandler {
     function close() {
       root.notchClose("");
+    }
+
+    // jumps straight to the Home tab, where Widgets/GreeterWidget.qml's
+    // "Hello cutie" card lives (see Widgets/HomeView.qml - it's the
+    // StackView's initialItem, so this alone is enough to bring it back
+    // into view even if a tray item's menu had pushed something else on
+    // top, since notchOpenTab always re-affirms FULLY_EXPANDED and
+    // HomeView pops the stack whenever the notch leaves that state)
+    function hello() {
+      root.notchOpenTab("", root.tabIndexHome);
     }
 
     function media() {

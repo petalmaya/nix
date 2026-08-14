@@ -2,14 +2,20 @@
   description = "Alice's Nixtop";
 
   nixConfig = {
+    # NOTE: no niri-epireyn.cachix.org entry here (unlike nix-community/
+    # noctalia below) - don't have a verified public key for it to hand
+    # you, and typing in a signing key I can't verify is worse than not
+    # having the cache. Run `cachix use niri-epireyn` yourself once
+    # (fetches and pins the real key interactively, same prompt-and-write
+    # pattern you saw for the two below) if you want it; otherwise niri
+    # just builds from the nixpkgs cache via pkgs.niri as a fallback,
+    # slower to update but no less trustworthy.
     extra-substituters = [
       "https://nix-community.cachix.org"
-      "https://niri.cachix.org"
       "https://noctalia.cachix.org"
     ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "niri.cachix.org-1:Wv0OmO7PsuocRKzfDoJ3mulSl7Z6oezYhGhR+3W2964="
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
     ];
   };
@@ -53,12 +59,24 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Niri Flake
+    # Niri Flake (epireyn's actively-maintained fork of sodiboo/niri-flake -
+    # see modules/home/themes/{kurukuru,noctaniri}/niri/default.nix.
+    # Home Manager's own built-in wayland.windowManager.niri module (see
+    # git history around this line) would've meant tracking HM's `master`
+    # branch instead of `release-26.05`, which reports itself as a newer
+    # HM version than the pinned nixpkgs and throws a mismatch warning on
+    # every rebuild - plus master's picked up other new defaults
+    # (home.shell.enableNushellIntegration) that don't yet reconcile
+    # cleanly with a stable-branch nixpkgs. Back on a flake input + the
+    # release branch instead, until 26.11 lands and HM's release branch
+    # catches up to master's niri module. The built-in-module version of
+    # these two files is kept as `default.nix.bak` alongside the current
+    # ones - unimported, not deleted - so switching back later is a
+    # rename, not a rewrite.
     niri = {
-      url = "github:sodiboo/niri-flake";
+      url = "github:epireyn/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     # Zen Browser
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
@@ -142,7 +160,7 @@
           # sharedModules are available to all users' home configs.
           # Third-party HM modules are loaded here so user files stay lean.
           home-manager.sharedModules = [
-            inputs.niri.homeModules.niri          # niri window manager HM integration
+            inputs.niri.homeModules.niri          # niri window manager HM integration (epireyn's fork)
             inputs.zen-browser.homeModules.twilight # Zen browser home module
             inputs.spicetify-nix.homeManagerModules.default # Spicetify Spotify theming
             inputs.matugen.nixosModules.default    # `programs.matugen` (upstream module, used from HM)
