@@ -31,7 +31,7 @@ let
 
     aspell
     aspellDicts.en
-    poppler_utils
+    poppler-utils
     imagemagick
     sqlite
     pandoc

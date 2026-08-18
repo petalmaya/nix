@@ -21,6 +21,34 @@ Item {
   property bool pinned: false
   property var toplevel: null
 
+  // Set true by Containers/Dock.qml once this row's toplevel is gone.
+  // Disables the MouseArea's hover *synchronously*, before anything
+  // destroys this item - letting Qt process a clean hover-leave on a
+  // still-alive item instead of segfaulting in
+  // QQuickDeliveryAgentPrivate::clearHover on the next mouse event
+  // after the delegate is gone. See Data/Dock.qml's _syncRunningModel
+  // for the full story.
+  property bool closing: false
+
+  onClosingChanged: if (root.closing) mArea.hoverEnabled = false
+
+  opacity: root.closing ? 0 : 1
+  scale: root.closing ? 0.7 : 1
+
+  Behavior on opacity {
+    NumberAnimation {
+      duration: Dat.MaterialEasing.standardTime
+      easing.bezierCurve: Dat.MaterialEasing.standard
+    }
+  }
+
+  Behavior on scale {
+    NumberAnimation {
+      duration: Dat.MaterialEasing.standardTime
+      easing.bezierCurve: Dat.MaterialEasing.standard
+    }
+  }
+
   readonly property var desktopEntry: Dat.Dock.desktopEntryFor(root.appId)
   readonly property var runningForApp: Dat.Dock.toplevelsByAppId[root.appId.toLowerCase()] ?? []
   readonly property bool isRunning: root.toplevel ? true : root.runningForApp.length > 0
@@ -105,6 +133,7 @@ Item {
 
     acceptedButtons: Qt.LeftButton | Qt.RightButton
     anchors.fill: parent
+    enabled: !root.closing
     hoverEnabled: true
 
     onClicked: mevent => {

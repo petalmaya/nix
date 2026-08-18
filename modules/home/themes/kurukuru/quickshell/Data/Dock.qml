@@ -98,6 +98,16 @@ Singleton {
   // Rows hold appId + a string key only, never the live Toplevel
   // object - ListModel's "var" roles don't track QObject lifetime, so
   // a closed window's row would hold a dangling pointer.
+  //
+  // Closed windows are NOT removed synchronously here anymore. A row
+  // whose toplevel disappeared gets marked `closing: true` instead;
+  // DockItem is responsible for disabling its own MouseArea hover and
+  // fading out *before* calling confirmClosed() to actually drop the
+  // row. Removing the row (and thus destroying the delegate/MouseArea)
+  // while it could still be the hovered item is what was segfaulting
+  // in QQuickDeliveryAgentPrivate::clearHover - Qt walks its hover
+  // item on the next leave/move event, and by then the delegate was
+  // already gone.
   function _syncRunningModel() {
     const desired = [];
     for (const id in root.toplevelsByAppId) {
@@ -113,8 +123,13 @@ Singleton {
     const desiredKeys = new Set(desired.map(d => d.key));
 
     for (let i = runningModel.count - 1; i >= 0; i--) {
-      if (!desiredKeys.has(runningModel.get(i).modelData.key)) {
-        runningModel.remove(i);
+      const row = runningModel.get(i).modelData;
+      if (!desiredKeys.has(row.key) && !row.closing) {
+        // still present in the model, just flagged - DockItem will
+        // call confirmClosed() once it's safe to actually remove it
+        runningModel.setProperty(i, "modelData", Object.assign({}, row, {
+          "closing": true
+        }));
       }
     }
 
@@ -125,8 +140,25 @@ Singleton {
     for (const d of desired) {
       if (!existingKeys.has(d.key)) {
         runningModel.append({
-          "modelData": d
+          "modelData": Object.assign({
+            "closing": false
+          }, d)
         });
+      }
+    }
+  }
+
+  // Called by DockItem once it has disabled hover and finished its
+  // exit animation for a row that's no longer backed by a live
+  // toplevel. Only actually removes the row if it's still marked
+  // closing (it may have already been re-added under the same key by
+  // a later _syncRunningModel, e.g. a very quick close+relaunch).
+  function confirmClosed(key) {
+    for (let i = 0; i < runningModel.count; i++) {
+      const row = runningModel.get(i).modelData;
+      if (row.key == key && row.closing) {
+        runningModel.remove(i);
+        return;
       }
     }
   }
