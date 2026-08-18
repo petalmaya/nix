@@ -23,12 +23,29 @@ RowLayout {
     // Data/Dock.qml) - never the live Toplevel object itself. toplevel
     // is resolved fresh here via toplevelForKey every time it's needed,
     // instead of being stored/passed around directly.
+    //
+    // modelData.closing is true once the backing toplevel is gone -
+    // DockItem handles disabling hover + fading itself out and reports
+    // back via Dat.Dock.confirmClosed() when it's actually safe to
+    // remove the row (see Data/Dock.qml).
     Wid.DockItem {
+      id: dockItem
+
       required property var modelData
 
       appId: modelData.appId
+      closing: modelData.closing ?? false
       pinned: false
       toplevel: Dat.Dock.toplevelForKey(modelData.key)
+
+      onClosingChanged: if (dockItem.closing) closeAnimTimer.restart()
+
+      Timer {
+        id: closeAnimTimer
+
+        interval: Dat.MaterialEasing.standardTime
+        onTriggered: Dat.Dock.confirmClosed(modelData.key)
+      }
     }
   }
 
