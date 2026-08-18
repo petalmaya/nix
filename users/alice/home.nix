@@ -26,6 +26,7 @@
     apps.firefox-esr.enable = true;
     apps.spicetify.enable = true;
     apps.yazi.enable = true;
+    apps.emacs.enable = true;
     apps.gaming.enable = true;
     services.mako.enable = true;
     services.flatpak.enable = true;

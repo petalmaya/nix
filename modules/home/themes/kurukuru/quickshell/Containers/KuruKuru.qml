@@ -62,7 +62,7 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         color: Dat.Colors.current.surface_container
         height: 35
-        radius: 20
+        radius: Dat.Radius.full
       }
     }
 

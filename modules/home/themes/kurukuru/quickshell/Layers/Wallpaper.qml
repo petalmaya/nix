@@ -10,7 +10,7 @@ WlrLayershell {
 
   required property ShellScreen modelData
 
-  readonly property string outputWallSrc: Dat.Config.wallpaperFor(modelData.name)
+  readonly property string outputWallSrc: Dat.Config.wallpaperFor(modelData?.name ?? "")
 
   anchors.bottom: true
   anchors.left: true

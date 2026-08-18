@@ -22,6 +22,7 @@
     ./apps/gaming.nix
     ./apps/rofi.nix
     ./apps/yazi.nix
+    ./apps/emacs
 
     # Background services
     ./services/flatpak.nix

@@ -20,7 +20,7 @@ Item {
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    height: Math.min(inboxItem.screen.height * 0.6, contentHeight)
+    height: Math.min((inboxItem.screen?.height ?? 0) * 0.6, contentHeight)
     model: Dat.NotifServer.notifications
     removeDisplaced: this.addDisplaced
     spacing: 5
@@ -45,7 +45,7 @@ Item {
 
       color: Dat.Colors.current.surface_container
       notif: modelData
-      radius: 20
+      radius: Dat.Radius.xl
       width: inbox.width
     }
     Behavior on height {

@@ -7,22 +7,26 @@ import Quickshell.Bluetooth
 import qs.Data as Dat
 import qs.Generics as Gen
 
+// SUPERSEDED: Wi-Fi's bar icon now opens Layers/QuickOptions.qml,
+// whose "Networks & devices" expander embeds the same
+// Generics/NetworkPanel.qml content in place instead of a popup.
+// Unregistered from shell.qml, left in place in case you want it back -
+// re-add `Lay.NetPanel { modelData: scopeRoot.modelData }` to shell.qml
+// and the wifi icon to Containers/TopBar.qml.
 WlrLayershell {
   id: root
 
   required property ShellScreen modelData
 
-  readonly property bool open: Dat.Globals.networkPanelOpen(root.modelData.name)
-  // kept true for the duration of the close animation so the surface
-  // doesn't just vanish the instant `open` flips - mirrors the
-  // visible/PropertyAction dance the notch does for its own transitions
+  readonly property bool open: Dat.Globals.networkPanelOpen(root.modelData?.name ?? "")
+  // stays true through the close animation, mirrors the notch's own
+  // visible/PropertyAction dance for its transitions
   property bool surfaceVisible: false
 
   function close() {
-    Dat.Globals.setNetworkPanelOpen(root.modelData.name, false);
-    // don't leave a bluetooth scan running once the panel that started it
-    // is gone - Generics/NetworkPanel.qml's device list isn't torn down
-    // on close (no Loader), so nothing else would stop it
+    Dat.Globals.setNetworkPanelOpen(root.modelData?.name ?? "", false);
+    // NetworkPanel.qml isn't torn down on close (no Loader), so
+    // nothing else stops a bluetooth scan it started
     if (Bluetooth.defaultAdapter?.discovering) {
       Bluetooth.defaultAdapter.discovering = false;
     }
@@ -60,9 +64,8 @@ WlrLayershell {
     onTriggered: root.surfaceVisible = false
   }
 
-  // covers the whole output; any click here (outside the panel itself)
-  // closes it. the panel below stops its own clicks from reaching this.
-  // esc does the same, via the focus scope below.
+  // covers the whole output; click outside the panel closes it, Esc
+  // does the same via the focus scope below
   MouseArea {
     anchors.fill: parent
 
@@ -85,15 +88,13 @@ WlrLayershell {
     anchors.rightMargin: 10
     anchors.top: parent.top
     anchors.topMargin: 34
-    // same withAlpha strategy as the notch bar (Layers/Notch.qml) and the
-    // launcher panel (Layers/Launcher.qml) - constant-alpha translucency
-    // rather than the notch's state-dependent alpha, matching Launcher's
-    // simpler case since this panel has no desktop-vs-window state to key off
+    // constant-alpha translucency, same as Launcher.qml - no
+    // desktop-vs-window state to key off here
     color: Dat.Colors.withAlpha(Dat.Colors.current.surface_container_high, 0.89)
     height: content.height + 28
     implicitWidth: 320
     opacity: root.open ? 1 : 0
-    radius: 20
+    radius: Dat.Radius.xl
     scale: root.open ? 1 : 0.88
     transformOrigin: Item.TopRight
 
@@ -118,8 +119,7 @@ WlrLayershell {
       }
     }
 
-    // swallow clicks that land on the panel itself so they don't fall
-    // through to the full-screen close-catcher behind it
+    // swallow clicks so they don't fall through to the close-catcher
     MouseArea {
       anchors.fill: parent
     }

@@ -82,7 +82,7 @@ WlrLayershell {
     color: Dat.Colors.current.surface_container_high
     height: content.implicitHeight + 48
     opacity: root.open ? 1 : 0
-    radius: 24
+    radius: Dat.Radius.xxl
     scale: root.open ? 1 : 0.92
     width: 420
 
@@ -142,7 +142,7 @@ WlrLayershell {
         border.width: 1
         color: "transparent"
         height: 44
-        radius: 12
+        radius: Dat.Radius.md
         width: parent.width
 
         TextInput {
@@ -186,7 +186,7 @@ WlrLayershell {
         Rectangle {
           color: "transparent"
           height: 32
-          radius: 16
+          radius: Dat.Radius.full
           width: 72
 
           Text {
@@ -198,7 +198,7 @@ WlrLayershell {
 
           Gen.MouseArea {
             layerColor: Dat.Colors.current.on_surface
-            layerRadius: 16
+            layerRadius: Dat.Radius.full
 
             onClicked: Dat.Polkit.cancel()
           }
@@ -207,7 +207,7 @@ WlrLayershell {
         Rectangle {
           color: "transparent"
           height: 32
-          radius: 16
+          radius: Dat.Radius.full
           width: 72
 
           Text {
@@ -220,7 +220,7 @@ WlrLayershell {
           Gen.MouseArea {
             enabled: Dat.Polkit.interactionAvailable
             layerColor: Dat.Colors.current.on_surface
-            layerRadius: 16
+            layerRadius: Dat.Radius.full
 
             onClicked: Dat.Polkit.submit(passwordField.text)
           }

@@ -70,7 +70,7 @@ Item {
 
       color: (index == list.currentIndex) ? "white" : Dat.Colors.withAlpha("white", 0.5)
       height: this.width
-      radius: 6
+      radius: Dat.Radius.full
       width: 6
 
       Behavior on color {

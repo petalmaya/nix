@@ -29,7 +29,7 @@ Repeater {
     color: Dat.Colors.current.primary
     implicitHeight: this.implicitWidth
     implicitWidth: 28 * Dat.Globals.notchScale
-    radius: this.implicitWidth
+    radius: Dat.Radius.full
 
     Gen.MouseArea {
       layerColor: Dat.Colors.current.on_primary

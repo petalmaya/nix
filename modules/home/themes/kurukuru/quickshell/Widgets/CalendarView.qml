@@ -25,7 +25,7 @@ Item {
         color: Dat.Colors.current.primary_container
         // Day display
         implicitHeight: 18
-        radius: 20
+        radius: Dat.Radius.full
 
         Text {
           id: weekDayText
@@ -41,7 +41,7 @@ Item {
         Layout.fillHeight: true
         Layout.fillWidth: true
         color: Dat.Colors.current.primary
-        radius: 10
+        radius: Dat.Radius.mdSm
         topLeftRadius: 0
         topRightRadius: 0
 
@@ -76,7 +76,7 @@ Item {
           anchors.centerIn: parent
           color: (monthGrid.currDay == model.day && monthGrid.currMonth == model.month) ? Dat.Colors.current.primary : "transparent"
           height: parent.height
-          radius: 6
+          radius: Dat.Radius.xs
           width: this.height
         }
 

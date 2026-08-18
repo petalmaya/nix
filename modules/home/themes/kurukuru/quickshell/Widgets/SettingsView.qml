@@ -91,7 +91,7 @@ Item {
               anchors.centerIn: parent
               color: Dat.Colors.current.surface_container_high
               height: tabRect.height
-              radius: 10
+              radius: Dat.Radius.mdSm
               width: tabText.contentWidth + 20
             }
 

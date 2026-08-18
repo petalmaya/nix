@@ -22,7 +22,7 @@ RowLayout {
     ClippingRectangle {
       anchors.fill: parent
       color: "transparent"
-      radius: 20
+      radius: Dat.Radius.xl
 
       Image {
         id: faceIcon
@@ -47,7 +47,7 @@ RowLayout {
     Layout.fillHeight: true
     Layout.fillWidth: true
     color: Dat.Colors.current.surface_container
-    radius: 20
+    radius: Dat.Radius.xl
 
     Text {
       anchors.centerIn: parent

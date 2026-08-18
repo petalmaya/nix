@@ -8,15 +8,11 @@ import QtQuick
 import qs.Layers as Lay
 import qs.Data as Dat
 
-// This is the shell's "main()" - the one file Quickshell actually loads on
-// startup. All it does is decide WHAT gets shown and on WHICH monitor; the
-// actual look/behavior of each piece lives in its own file under Layers/.
+// The shell's entry point - decides WHAT gets shown and on WHICH monitor.
+// Each piece's actual look/behavior lives under Layers/.
 ShellRoot {
-  // Variants repeats everything inside it once per entry in `model` - here
-  // that's Quickshell.screens, so you automatically get one full set of
-  // bar/launcher/etc. per connected monitor, with no manual "if 2 screens
-  // do X" logic. Unplug a monitor and its Scope (and everything in it)
-  // just goes away.
+  // one full set of bar/launcher/etc per connected monitor - unplug
+  // one and its Scope goes away automatically
   Variants {
     model: Quickshell.screens
 
@@ -54,7 +50,11 @@ ShellRoot {
         modelData: scopeRoot.modelData
       }
 
-      Lay.NetPanel {
+      Lay.QuickOptions {
+        modelData: scopeRoot.modelData
+      }
+
+      Lay.Dock {
         modelData: scopeRoot.modelData
       }
 

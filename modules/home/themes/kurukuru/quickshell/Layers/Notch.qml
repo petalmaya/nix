@@ -10,11 +10,11 @@ WlrLayershell {
 
   required property ShellScreen modelData
 
-  readonly property string curNotchState: Dat.Globals.notchState(notch.modelData.name)
+  readonly property string curNotchState: Dat.Globals.notchState((notch.modelData?.name ?? ""))
   readonly property bool fullyExpanded: notch.curNotchState == "FULLY_EXPANDED"
 
   function collapse() {
-    Dat.Globals.setNotchState(notch.modelData.name, "EXPANDED");
+    Dat.Globals.setNotchState((notch.modelData?.name ?? ""), "EXPANDED");
   }
 
   anchors.left: true
@@ -44,18 +44,11 @@ WlrLayershell {
     }
   }
 
-  // full-bleed (within the layer's own bounds - it only covers the top
-  // ~65% of the screen) click-off catcher, same idea as NetPanel's.
-  // only actually receives input while fully expanded, since it's only
-  // added to the mask above in that state; the rest of the time clicks
-  // pass straight through to whatever's beneath the shell.
+  // click-off catcher, same idea as NetPanel's - zero-sized unless
+  // fully expanded, otherwise it'd swallow every click in the top 65%
   MouseArea {
     id: clickCatcher
 
-    // zero-sized (and out of the mask's effective area) unless fully
-    // expanded - otherwise this would swallow every click across the
-    // top 65% of the screen at all times, breaking click-through to
-    // whatever's underneath the shell.
     height: notch.fullyExpanded ? parent.height : 0
     width: notch.fullyExpanded ? parent.width : 0
     x: 0
@@ -284,11 +277,8 @@ WlrLayershell {
       property real velocity: 0
 
       function revealOrCollapse() {
-        // crucial for issue #37
-        // basically Do not attempt to change the notchState when the
-        // FULLY_EXPANDED to COLLAPSED transition is running this function
-        // is called both when containsMouse changes as well as when the
-        // aforementioned transition starts and stops running
+        // issue #37: don't touch notchState while the FULLY_EXPANDED ->
+        // EXPANDED transition is running
         if (fExpToExpTS.running) {
           return;
         }
@@ -298,9 +288,9 @@ WlrLayershell {
         }
 
         if (notchArea.containsMouse) {
-          Dat.Globals.setNotchState(notch.modelData.name, "EXPANDED");
+          Dat.Globals.setNotchState((notch.modelData?.name ?? ""), "EXPANDED");
         } else {
-          Dat.Globals.setNotchState(notch.modelData.name, "COLLAPSED");
+          Dat.Globals.setNotchState((notch.modelData?.name ?? ""), "COLLAPSED");
         }
       }
 
@@ -309,7 +299,7 @@ WlrLayershell {
 
       Component.onCompleted: fExpToExpTS.runningChanged.connect(notchArea.revealOrCollapse)
       onContainsMouseChanged: {
-        Dat.Globals.setNotchHovered(notch.modelData.name, notchArea.containsMouse);
+        Dat.Globals.setNotchHovered((notch.modelData?.name ?? ""), notchArea.containsMouse);
         notchArea.revealOrCollapse();
       }
       onPositionChanged: mevent => {
@@ -321,14 +311,14 @@ WlrLayershell {
 
         // swipe down behaviour
         if (velocity < -notchArea.sensitivity) {
-          Dat.Globals.setNotchState(notch.modelData.name, "FULLY_EXPANDED");
+          Dat.Globals.setNotchState((notch.modelData?.name ?? ""), "FULLY_EXPANDED");
           notchArea.tracing = false;
           notchArea.velocity = 0;
         }
 
         // swipe up behaviour
         if (velocity > notchArea.sensitivity) {
-          Dat.Globals.setNotchState(notch.modelData.name, "EXPANDED");
+          Dat.Globals.setNotchState((notch.modelData?.name ?? ""), "EXPANDED");
           notchArea.tracing = false;
           notchArea.velocity = 0;
         }
@@ -356,7 +346,7 @@ WlrLayershell {
           Layout.maximumHeight: notchRect.expandedHeight
           // makes collapse animation look a tiny bit neater
           Layout.minimumHeight: notchRect.expandedHeight - 10
-          outputName: notch.modelData.name
+          outputName: (notch.modelData?.name ?? "")
         }
 
         Con.Primary {
@@ -364,7 +354,7 @@ WlrLayershell {
 
           Layout.fillHeight: true
           Layout.fillWidth: true
-          outputName: notch.modelData.name
+          outputName: (notch.modelData?.name ?? "")
         }
       }
     }
@@ -384,8 +374,8 @@ WlrLayershell {
     anchors.top: notchRect.bottom
     anchors.topMargin: 10
     color: Dat.Colors.current.surface
-    radius: 20
-    state: Dat.Globals.notifState(notch.modelData.name)
+    radius: Dat.Radius.xl
+    state: Dat.Globals.notifState((notch.modelData?.name ?? ""))
 
     states: [
       State {
@@ -653,10 +643,10 @@ WlrLayershell {
       function onCurNotchStateChanged() {
         switch (notch.curNotchState) {
         case "FULLY_EXPANDED":
-          Dat.Globals.setNotifState(notch.modelData.name, "INBOX");
+          Dat.Globals.setNotifState((notch.modelData?.name ?? ""), "INBOX");
           break;
         default:
-          Dat.Globals.setNotifState(notch.modelData.name, (!popupRect?.closed ?? false) ? "POPUP" : "HIDDEN");
+          Dat.Globals.setNotifState((notch.modelData?.name ?? ""), (!popupRect?.closed ?? false) ? "POPUP" : "HIDDEN");
           break;
         }
       }
@@ -672,7 +662,7 @@ WlrLayershell {
 
         Layout.fillHeight: true
         Layout.fillWidth: true
-        outputName: notch.modelData.name
+        outputName: (notch.modelData?.name ?? "")
       }
 
       Con.Inbox {

@@ -7,11 +7,9 @@ import Quickshell.Widgets
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// Content for Dat.Launcher.mode == "apps". Deliberately self-contained
-// (owns its own selection index, filters DesktopEntries itself) so it
-// can be dropped into Layers/Launcher.qml behind a Loader and swapped
-// for a different mode's component without either side needing to know
-// about the other's internals.
+// Content for Dat.Launcher.mode == "apps". Self-contained - owns its
+// own selection index and filters DesktopEntries itself - so it drops
+// into Layers/Launcher.qml's Loader.
 Item {
   id: root
 
@@ -64,7 +62,7 @@ Item {
       Layout.preferredHeight: Math.min(list.contentHeight, 5 * 56) + (list.contentHeight > 0 ? 8 : 0)
       clip: true
       color: Dat.Colors.current.surface_container
-      radius: 16
+      radius: Dat.Radius.lg
       visible: list.contentHeight > 0
 
       Behavior on Layout.preferredHeight {
@@ -97,7 +95,7 @@ Item {
 
           color: (list.currentIndex == index) ? Dat.Colors.current.primary_container : "transparent"
           height: 52
-          radius: 12
+          radius: Dat.Radius.md
           width: list.width
 
           RowLayout {
@@ -111,11 +109,9 @@ Item {
 
               Layout.preferredHeight: 32
               Layout.preferredWidth: 32
-              // explicit implicitSize is what actually constrains the
-              // rasterized buffer - without it IconImage/QtSvg renders
-              // scalable icons at a huge native size first and then
-              // scales down, which is what throws the "requested buffer
-              // size is too big" warnings on some icon themes
+              // constrains the rasterized buffer - without it QtSvg
+              // renders at native size first, throwing "buffer too big"
+              // warnings on some icon themes
               implicitSize: 32
               source: Quickshell.iconPath(entryDelegate.modelData.icon, true)
 
@@ -157,7 +153,13 @@ Item {
             layerColor: Dat.Colors.current.on_surface
             layerRadius: 12
 
-            onClicked: {
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+            onClicked: mevent => {
+              if (mevent.button == Qt.RightButton) {
+                Dat.Dock.togglePin(entryDelegate.modelData.id);
+                return;
+              }
               list.currentIndex = entryDelegate.index;
               root.launchSelected();
             }
@@ -166,6 +168,19 @@ Item {
               if (containsMouse)
                 list.currentIndex = entryDelegate.index;
             }
+          }
+
+          // pin indicator - right-click toggles it. Pinning moved
+          // here from the dock (see Widgets/DockItem.qml)
+          Gen.MatIcon {
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 6
+            anchors.right: parent.right
+            anchors.rightMargin: 8
+            color: (list.currentIndex == entryDelegate.index) ? Dat.Colors.current.on_primary_container : Dat.Colors.current.primary
+            font.pointSize: 11
+            icon: "push_pin"
+            visible: Dat.Dock.isPinned(entryDelegate.modelData.id)
           }
         }
       }
@@ -177,7 +192,7 @@ Item {
       Layout.fillWidth: true
       Layout.preferredHeight: 48
       color: Dat.Colors.current.surface_container
-      radius: 16
+      radius: Dat.Radius.lg
 
       RowLayout {
         anchors.fill: parent

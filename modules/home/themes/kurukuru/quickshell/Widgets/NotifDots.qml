@@ -42,7 +42,7 @@ Rectangle {
       activeIconColor: Dat.Colors.current.on_secondary
       implicitHeight: this.implicitWidth
       implicitWidth: 28
-      radius: this.implicitWidth
+      radius: Dat.Radius.full
 
       icon {
         icon: (this.active) ? "notifications_active" : "notifications_off"
@@ -61,7 +61,7 @@ Rectangle {
       activeIconColor: Dat.Colors.current.on_secondary
       implicitHeight: this.implicitWidth
       implicitWidth: 28
-      radius: this.implicitWidth
+      radius: Dat.Radius.full
 
       icon {
         icon: "coffee"

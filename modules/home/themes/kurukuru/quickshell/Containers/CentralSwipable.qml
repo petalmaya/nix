@@ -22,7 +22,7 @@ Item {
       color: Dat.Colors.current.surface_container_low
       implicitHeight: tabCols.height + 10
       implicitWidth: 28
-      radius: 20
+      radius: Dat.Radius.full
 
       ColumnLayout {
         id: tabCols
@@ -122,7 +122,7 @@ Item {
       // Pages
       clip: true
       color: Dat.Colors.current.surface_container_low
-      radius: 20
+      radius: Dat.Radius.xl
 
       SwipeView {
         id: swipeArea

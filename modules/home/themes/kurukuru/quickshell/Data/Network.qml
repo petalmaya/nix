@@ -60,12 +60,9 @@ Singleton {
     settleTimer.restart();
   }
 
-  // nmcli terse mode escapes literal colons in field values as "\:" -
-  // walk the string manually rather than using a lookbehind regex here:
-  // lookbehind assertions (?<!...) aren't reliably supported across every
-  // QML/QJSEngine version, and when unsupported this throws at runtime
-  // instead of matching - which silently aborted parsing before
-  // root.networks ever got assigned. this version works everywhere.
+  // nmcli terse mode escapes literal colons as "\:" - walked manually
+  // instead of a lookbehind regex, since lookbehind support is spotty
+  // across QJSEngine versions and throws instead of matching when missing
   function _splitTerse(line) {
     const fields = [];
     let cur = "";
@@ -96,14 +93,10 @@ Singleton {
     }
   }
 
-  // Background refresh of wifi status/signal while the panel is open. This
-  // used to run: true unconditionally, which meant an `nmcli` process got
-  // spawned every 15s forever, even with the panel closed and nobody
-  // looking at the network list - wasted work + a bit of needless wakeups.
-  // Gated on Globals.anyNetworkPanelOpen instead (same throttle pattern
-  // Resources.qml/Clock.qml already use for their own pollers), and
-  // triggeredOnStart means opening the panel on any screen fires an
-  // immediate refresh instead of waiting for the next 15s tick.
+  // Background refresh while the panel is open. Used to run
+  // unconditionally, spawning nmcli every 15s even with nobody looking -
+  // gated on anyNetworkPanelOpen now (same pattern as Resources.qml/
+  // Clock.qml). triggeredOnStart fires an immediate refresh on open.
   Timer {
     interval: 15000
     repeat: true
@@ -187,8 +180,8 @@ Singleton {
     }
   }
 
-  // cross-references saved connection names against the scan results so
-  // known networks skip the password prompt
+  // cross-references saved connections against scan results so known
+  // networks skip the password prompt
   Process {
     id: knownProc
 

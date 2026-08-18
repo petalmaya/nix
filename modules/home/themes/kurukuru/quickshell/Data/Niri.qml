@@ -118,11 +118,9 @@ Singleton {
           const w = root.workspaces[activated.id];
           if (w) {
             w.is_active = true;
-            // niri only tells us here whether this activation also
-            // moved global focus (switching workspace on a
-            // non-focused monitor activates it without focusing it) -
-            // is_focused has to be derived from that, it isn't implied
-            // by is_active
+            // niri only tells us if this activation also moved global
+            // focus (activating a non-focused monitor's workspace
+            // doesn't focus it) - is_focused isn't implied by is_active
             w.is_focused = !!activated.focused;
             root._applyWorkspace(w);
           }

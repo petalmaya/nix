@@ -153,7 +153,7 @@ WlSessionLockSurface {
     color: (surface.error) ? Dat.Colors.current.error : (surface.unlocking) ? Dat.Colors.current.primary : Dat.Colors.current.surface
     focus: true
     height: 40
-    radius: 20
+    radius: Dat.Radius.full
     width: inputRow.width
 
     Behavior on color {

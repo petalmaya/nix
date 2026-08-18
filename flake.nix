@@ -32,6 +32,15 @@
       url = "github:petalmaya/nixmacs";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+    # emacs-pgtk (Wayland-native, real alpha-background) isn't in nixpkgs
+    # under that name by default on every channel - this overlay is what
+    # actually provides it. Used by modules/home/apps/emacs, not nixmacs
+    # above (that input's unused right now - flutterice-emacs is vendored
+    # straight into modules/home/apps/emacs/emacs instead).
+    emacs-overlay = {
+      url = "github:nix-community/emacs-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # Home Manger
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
@@ -140,6 +149,7 @@
         modules = [
           ./hosts/${hostname}/hardware-configuration.nix
         ./hosts/${hostname}/configuration.nix
+        { nixpkgs.overlays = [ inputs.emacs-overlay.overlays.default ]; }
         inputs.nix-flatpak.nixosModules.nix-flatpak
         inputs.noctalia-greeter.nixosModules.default
         ./modules/nixos/kurukuru-greeter.nix
