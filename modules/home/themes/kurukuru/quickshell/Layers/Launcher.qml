@@ -6,23 +6,18 @@ import Quickshell.Wayland
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// WlrLayershell is what actually puts a floating panel like this on
-// screen, outside any normal window - it's the Wayland "layer shell"
-// protocol Quickshell wraps for you. The `open`/`surfaceVisible` split
-// below is the standard pattern used by every Layers/*.qml surface: `open`
-// is the *logical* state (should this panel be shown right now?), while
-// `surfaceVisible` is what the layershell itself actually reads for
-// `visible` - it's kept true a little longer via closeLinger so the close
-// animation gets to finish before the surface disappears from the screen.
+// `open`/`surfaceVisible` split used by every Layers/*.qml surface:
+// `open` is logical state, `surfaceVisible` is what layershell reads
+// for `visible` and stays true a bit longer via closeLinger so the
+// close animation finishes before the surface actually disappears.
 WlrLayershell {
   id: root
 
   required property ShellScreen modelData
 
-  readonly property bool open: Dat.Launcher.open && Dat.Launcher.outputName == root.modelData.name
-  // kept mapped for the duration of the close animation, same pattern as
-  // NetPanel/Notch - a WlrLayershell unmaps the instant `visible` flips,
-  // which would otherwise cut the close animation short
+  readonly property bool open: Dat.Launcher.open && Dat.Launcher.outputName == (root.modelData?.name ?? "")
+  // stays mapped through the close animation, same pattern as
+  // NetPanel/Notch - visible flipping instantly would cut it short
   property bool surfaceVisible: false
 
   function close() {
@@ -36,11 +31,9 @@ WlrLayershell {
   color: "transparent"
   exclusionMode: ExclusionMode.Ignore
   focusable: root.open
-  // Exclusive (not OnDemand) is what actually forces the compositor to
-  // hand this surface keyboard focus the instant it maps, so typing
-  // works immediately without first clicking into the search field -
-  // OnDemand only grabs focus once something inside the surface asks
-  // for it, which raced against content.requestFocus() below
+  // Exclusive forces focus the instant the surface maps, so typing
+  // works immediately - OnDemand only grabs focus when something
+  // inside asks, which raced against content.requestFocus() below
   keyboardFocus: root.open ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
   layer: WlrLayer.Overlay
   namespace: "kurukuru-launcher"
@@ -53,12 +46,8 @@ WlrLayershell {
       closeLinger.stop();
       root.surfaceVisible = true;
       content.requestFocus();
-      // belt-and-suspenders: the Wayland surface for a just-shown
-      // layershell isn't guaranteed to be fully mapped by the
-      // compositor in the same tick surfaceVisible flips true, so the
-      // immediate forceActiveFocus() above can occasionally land before
-      // the surface can actually receive keyboard input. Re-request a
-      // moment later once the map has almost certainly gone through.
+      // surface isn't guaranteed fully mapped the same tick, so the
+      // immediate focus request can land too early - retry shortly after
       refocusTimer.restart();
     } else {
       closeLinger.restart();
@@ -81,8 +70,7 @@ WlrLayershell {
     onTriggered: root.surfaceVisible = false
   }
 
-  // covers the whole output; any click here (outside the panel itself)
-  // closes it, same click-off pattern as NetPanel
+  // covers the whole output; click outside the panel closes it
   MouseArea {
     anchors.fill: parent
 
@@ -92,21 +80,15 @@ WlrLayershell {
   Rectangle {
     id: panel
 
-    // this used to live on a separate sibling `Item` next to `panel`,
-    // which meant it was fighting the search field's TextInput for
-    // active focus every time the launcher opened - two unrelated
-    // things in the tree both declaratively claiming focus on the same
-    // root.open change, racing each other. panel is an actual ancestor
-    // of the TextInput (via content/LauncherApps), so putting focus
-    // handling here means there's only one focus claim, and unaccepted
-    // key events (e.g. Escape once the search field is already empty -
-    // see LauncherApps.qml) bubble straight up to it naturally
+    // used to live on a separate sibling Item, which raced the search
+    // field's TextInput for focus on every open. panel is an actual
+    // ancestor of the TextInput, so this is now the only focus claim,
+    // and unaccepted key events bubble up to it naturally
     focus: root.open
 
     Keys.onEscapePressed: root.close()
-    // Tab cycles apps/wallpaper mode - accepted here (not left to
-    // default focus-chain handling) so it never tabs focus out of the
-    // panel to something else on the surface
+    // Tab cycles apps/wallpaper mode, accepted here so it never tabs
+    // focus out of the panel
     Keys.onTabPressed: event => {
       Dat.Launcher.cycleMode();
       content.requestFocus();
@@ -114,19 +96,12 @@ WlrLayershell {
     }
 
     anchors.bottom: parent.bottom
-    // fixed relative to the screen, NOT to the panel's own height - this
-    // is what keeps the search field pinned in place as the results
-    // list grows/shrinks: only `height` above changes, so it's the top
-    // edge that moves, never the bottom. carried the 0.309 you'd tuned
-    // verticalCenterOffset to over as a starting point, but it's a
-    // different reference point now (distance up from the bottom edge,
-    // not offset from center) so it'll likely want re-tuning to land in
-    // the same visual spot
+    // fixed relative to screen height, not the panel's own height -
+    // pins the search field as results grow/shrink, since only
+    // `height` changes and the bottom edge stays put
     anchors.bottomMargin: parent.height * 0.01
     anchors.horizontalCenter: parent.horizontalCenter
-    // same withAlpha strategy as the notch bar (Layers/Notch.qml) - panel
-    // background stays tinted with the theme's surface color but lets some
-    // of the desktop/wallpaper show through instead of being fully opaque
+    // same withAlpha strategy as Layers/Notch.qml - tinted, not opaque
     color: Dat.Colors.withAlpha(Dat.Colors.current.surface_container_high, 0.89)
     // 12 (top margin to modeSwitcher) + 28 (modeSwitcher height) + 10
     // (gap to content) + 12 (bottom padding to match the original
@@ -134,7 +109,7 @@ WlrLayershell {
     height: modeSwitcher.height + content.implicitHeight + 12 + 10 + 12
     implicitWidth: 560
     opacity: root.open ? 1 : 0
-    radius: 24
+    radius: Dat.Radius.xxl
     scale: root.open ? 1 : 0.92
     transformOrigin: Item.Bottom
 
@@ -159,16 +134,13 @@ WlrLayershell {
       }
     }
 
-    // swallow clicks that land on the panel itself so they don't fall
-    // through to the full-screen close-catcher behind it
+    // swallow clicks so they don't fall through to the close-catcher
     MouseArea {
       anchors.fill: parent
     }
 
-    // small mode-switcher row - exactly the extension point the handoff
-    // notes sketched out ("a small mode-switcher row inside the panel
-    // itself"). setMode() clears query but leaves open/outputName alone,
-    // so switching tabs doesn't close the panel.
+    // setMode() clears query but leaves open/outputName alone, so
+    // switching tabs doesn't close the panel
     Row {
       id: modeSwitcher
 
@@ -196,7 +168,7 @@ WlrLayershell {
 
           color: (Dat.Launcher.mode == modelData.mode) ? Dat.Colors.current.primary_container : "transparent"
           height: 28
-          radius: 10
+          radius: Dat.Radius.mdSm
           width: 28
 
           Gen.MatIcon {
@@ -219,10 +191,8 @@ WlrLayershell {
       }
     }
 
-    // mode is what makes this extendable: "apps" and "wallpaper" today,
-    // future modes (command mode) just add a branch here and their own
-    // Generics/Launcher*.qml, everything else on this surface (click-off,
-    // escape, animation, positioning) stays untouched
+    // a future mode just adds a branch here and its own
+    // Generics/Launcher*.qml - everything else stays untouched
     Loader {
       id: content
 

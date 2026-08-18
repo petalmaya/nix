@@ -8,31 +8,22 @@ import qs.Data as Dat
 import qs.Generics as Gen
 
 // Content for Dat.Launcher.mode == "wallpaper". Same self-contained shape
-// as LauncherApps.qml (owns its own model/selection, exposes
-// requestFocus()) so it drops into Layers/Launcher.qml's Loader without
-// either side knowing about the other's internals.
+// as LauncherApps.qml - owns its own model/selection, exposes
+// requestFocus() - so it drops into Layers/Launcher.qml's Loader.
 //
-// This replaces the old Widgets/WallpaperTab.qml + Generics/WallpaperPicker.qml
-// combo that used to live in the Kuru settings panel - grid/model/click
-// wiring is carried over from WallpaperPicker.qml, just reshaped to match
-// the launcher's search-field-at-bottom layout instead of a settings tab.
-//
-// The "This Display" / "Lock Screen" chip pair picks *what you're editing*,
-// not two flavors of the same thing anymore: "This Display" sets that
-// output's desktop background only (Dat.Config.wallpapersByOutput), and
-// "Lock Screen" sets the one shared image the lock screen uses on every
-// monitor (Dat.Config.lockWallpaper). There's no more "shared default
-// desktop wallpaper" concept - every monitor needs its own "This Display"
-// pick or it just has no desktop background.
+// "This Display" sets that output's desktop background only
+// (Dat.Config.wallpapersByOutput); "Lock Screen" sets the one shared
+// image used on every monitor (Dat.Config.lockWallpaper). No shared
+// default desktop wallpaper - each monitor needs its own pick.
 Item {
   id: root
 
   // pulses when the panel wants the search field focused/refocused
   signal requestFocus
 
-  // the output this launcher instance is open on - Layers/Launcher.qml
-  // only ever shows the instance matching Dat.Launcher.outputName, so
-  // this is always "the screen you're looking at"
+  // the output this launcher instance is open on - always "the screen
+  // you're looking at" since Layers/Launcher.qml only shows the
+  // matching instance
   readonly property string outputName: Dat.Launcher.outputName
   property bool editingDefault: false
   readonly property string targetOutput: root.editingDefault ? "" : root.outputName
@@ -78,7 +69,7 @@ Item {
           Layout.preferredHeight: 26
           color: (root.editingDefault == modelData.isDefault) ? Dat.Colors.current.primary : Dat.Colors.current.surface_container
           implicitWidth: chipText.contentWidth + 18
-          radius: 8
+          radius: Dat.Radius.sm
 
           Text {
             id: chipText
@@ -108,7 +99,7 @@ Item {
         Layout.preferredHeight: 26
         Layout.preferredWidth: 26
         color: Dat.Config.data.matugenEnabled ? Dat.Colors.current.primary : Dat.Colors.current.surface_container
-        radius: 8
+        radius: Dat.Radius.sm
 
         Gen.MatIcon {
           anchors.centerIn: parent
@@ -119,7 +110,7 @@ Item {
 
         Gen.MouseArea {
           layerColor: Dat.Config.data.matugenEnabled ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
-          layerRadius: 8
+          layerRadius: Dat.Radius.sm
 
           onClicked: Dat.Config.data.matugenEnabled = !Dat.Config.data.matugenEnabled
         }
@@ -131,7 +122,7 @@ Item {
         Layout.preferredHeight: 26
         Layout.preferredWidth: 26
         color: Dat.Colors.current.surface_container
-        radius: 8
+        radius: Dat.Radius.sm
 
         Gen.MatIcon {
           anchors.centerIn: parent
@@ -154,7 +145,7 @@ Item {
       Layout.preferredHeight: 150
       clip: true
       color: Dat.Colors.current.surface_container
-      radius: 16
+      radius: Dat.Radius.lg
       visible: folderModel.count > 0
 
       ListView {
@@ -163,9 +154,8 @@ Item {
         anchors.fill: parent
         anchors.margins: 6
         boundsBehavior: Flickable.StopAtBounds
-        // same reasoning as LauncherApps.qml - keep a couple thumbnails'
-        // worth cached just off-screen instead of dropping/re-requesting
-        // their pixmaps on small scroll wobbles
+        // same as LauncherApps.qml - keep a few thumbnails cached
+        // just off-screen instead of re-requesting on scroll wobbles
         cacheBuffer: 220
         clip: true
         currentIndex: folderModel.count > 0 ? 0 : -1
@@ -203,7 +193,7 @@ Item {
             anchors.bottomMargin: 20
             clip: true
             color: Dat.Colors.current.surface_container_high
-            radius: 10
+            radius: Dat.Radius.mdSm
 
             Image {
               id: thumbImg
@@ -217,14 +207,10 @@ Item {
               sourceSize.width: 116
             }
 
-            // Drawn *after* (so on top of) the Image, since children paint
-            // over their parent's own border - previously the border lived
-            // on this same Rectangle as the Image's parent, so the Image
-            // (same anchors.fill bounds) painted straight over it and the
-            // selection indicator was invisible underneath. A separate
-            // transparent-fill overlay on top fixes that without touching
-            // how the thumbnail itself renders (a shader-based rounded
-            // mask was tried here and broke thumbnail loading - reverted).
+            // separate overlay drawn on top of the Image, since a
+            // border on the Image's own parent got painted over -
+            // a shader-based rounded mask was tried instead and broke
+            // thumbnail loading, reverted
             Rectangle {
               id: selectionRing
 
@@ -232,7 +218,7 @@ Item {
               border.color: Dat.Colors.current.primary
               border.width: thumbDelegate.isSelected ? 3 : (thumbDelegate.isApplied ? 2 : 0)
               color: "transparent"
-              radius: 10
+              radius: Dat.Radius.mdSm
 
               Behavior on border.width {
                 NumberAnimation {
@@ -285,7 +271,7 @@ Item {
       Layout.fillWidth: true
       Layout.preferredHeight: 48
       color: Dat.Colors.current.surface_container
-      radius: 16
+      radius: Dat.Radius.lg
 
       RowLayout {
         anchors.fill: parent
@@ -313,12 +299,9 @@ Item {
 
           onAccepted: root.pickSelected()
 
-          // TextInput has built-in Left/Right cursor movement, and by
-          // default Keys signal handlers only run *after* an item's own
-          // key handling (Keys.priority: Keys.AfterItem) - so as soon as
-          // there was any text in the field, Left/Right were being eaten
-          // by the cursor move before Keys.onLeftPressed/onRightPressed
-          // below ever saw them. BeforeItem makes our handlers run first.
+          // TextInput eats Left/Right for cursor movement by default
+          // (Keys.AfterItem runs after item key handling) - BeforeItem
+          // makes onLeftPressed/onRightPressed below run first instead
           Keys.priority: Keys.BeforeItem
 
           Keys.onEscapePressed: event => {
@@ -329,9 +312,7 @@ Item {
             }
           }
           // Left/Right move the row selection instead of the text
-          // cursor (there's nothing meaningful to navigate to in a
-          // single-line field otherwise) - same idea as LauncherApps'
-          // Up/Down override for its vertical list
+          // cursor, same idea as LauncherApps' Up/Down override
           Keys.onLeftPressed: {
             list.decrementCurrentIndex();
             if (list.currentIndex >= 0)
@@ -375,11 +356,9 @@ Item {
     }
   }
 
-  // FolderListModel only filters by glob, not substring - wrap the typed
-  // query in *...* against each allowed extension so it behaves like a
-  // live search the same way LauncherApps' name/comment/keyword filter
-  // does. Deliberately skips animated formats (gif/mp4/etc) per the ask
-  // to leave that out for now.
+  // FolderListModel only filters by glob, so wrap the query in *...*
+  // per extension for live-search behavior. Skips animated formats
+  // (gif/mp4) for now.
   function filtersFor(query) {
     const exts = ["png", "jpg", "jpeg", "webp", "bmp"];
     const q = query.trim();

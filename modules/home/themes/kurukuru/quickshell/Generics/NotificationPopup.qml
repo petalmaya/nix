@@ -137,7 +137,7 @@ Item {
                 Layout.fillHeight: true
                 color: Dat.Colors.current.secondary
                 implicitWidth: actionText.contentWidth + 14
-                radius: 20
+                radius: Dat.Radius.full
 
                 Text {
                   id: actionText

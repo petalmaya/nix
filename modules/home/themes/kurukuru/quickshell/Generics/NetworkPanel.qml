@@ -66,7 +66,7 @@ ColumnLayout {
         Layout.preferredHeight: 22
         Layout.preferredWidth: 22
         color: "transparent"
-        radius: 11
+        radius: Dat.Radius.full
 
         Gen.MatIcon {
           anchors.centerIn: parent
@@ -77,7 +77,7 @@ ColumnLayout {
 
         Gen.MouseArea {
           layerColor: Dat.Colors.current.on_surface
-          layerRadius: 11
+          layerRadius: Dat.Radius.full
 
           onClicked: Dat.Network.scan()
         }
@@ -87,14 +87,14 @@ ColumnLayout {
         Layout.preferredHeight: 20
         Layout.preferredWidth: 34
         color: Dat.Network.wifiEnabled ? Dat.Colors.current.primary : Dat.Colors.current.surface_container_high
-        radius: 10
+        radius: Dat.Radius.full
 
         Rectangle {
           anchors.margins: 2
           anchors.verticalCenter: parent.verticalCenter
           color: Dat.Network.wifiEnabled ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
           height: 16
-          radius: 8
+          radius: Dat.Radius.full
           width: 16
           x: Dat.Network.wifiEnabled ? parent.width - width - 2 : 2
 
@@ -135,7 +135,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 34
             color: netEntry.modelData.active ? Dat.Colors.current.primary_container : "transparent"
-            radius: 10
+            radius: Dat.Radius.mdSm
 
             RowLayout {
               anchors.fill: parent
@@ -217,7 +217,7 @@ ColumnLayout {
               Layout.preferredHeight: 28
               Layout.preferredWidth: 60
               color: Dat.Colors.current.primary
-              radius: 8
+              radius: Dat.Radius.sm
 
               Text {
                 anchors.centerIn: parent
@@ -306,7 +306,7 @@ ColumnLayout {
         Layout.preferredHeight: 20
         Layout.preferredWidth: 20
         color: "transparent"
-        radius: 10
+        radius: Dat.Radius.full
         visible: btSection.adapter?.enabled ?? false
 
         Gen.MatIcon {
@@ -318,7 +318,7 @@ ColumnLayout {
 
         Gen.MouseArea {
           layerColor: Dat.Colors.current.on_surface
-          layerRadius: 10
+          layerRadius: Dat.Radius.full
 
           onClicked: {
             const adapter = btSection.adapter;
@@ -332,14 +332,14 @@ ColumnLayout {
         Layout.preferredHeight: 20
         Layout.preferredWidth: 34
         color: (btSection.adapter?.enabled ?? false) ? Dat.Colors.current.primary : Dat.Colors.current.surface_container_high
-        radius: 10
+        radius: Dat.Radius.full
 
         Rectangle {
           anchors.margins: 2
           anchors.verticalCenter: parent.verticalCenter
           color: (btSection.adapter?.enabled ?? false) ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
           height: 16
-          radius: 8
+          radius: Dat.Radius.full
           width: 16
           x: (btSection.adapter?.enabled ?? false) ? parent.width - width - 2 : 2
 
@@ -380,7 +380,7 @@ ColumnLayout {
           Layout.fillWidth: true
           Layout.preferredHeight: 34
           color: btEntry.modelData.connected ? Dat.Colors.current.primary_container : "transparent"
-          radius: 10
+          radius: Dat.Radius.mdSm
 
           RowLayout {
             anchors.fill: parent
@@ -427,7 +427,7 @@ ColumnLayout {
               Layout.preferredHeight: 20
               Layout.preferredWidth: 20
               color: "transparent"
-              radius: 10
+              radius: Dat.Radius.full
               visible: btEntry.modelData.paired
 
               Gen.MatIcon {

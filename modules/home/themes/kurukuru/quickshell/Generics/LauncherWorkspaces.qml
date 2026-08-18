@@ -5,21 +5,14 @@ import QtQuick.Layouts
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// Content for Dat.Launcher.mode == "workspaces" - a numbered grid, one
-// tile per workspace on the output the launcher is currently showing on,
-// current one highlighted, click (or Enter on the selected tile) jumps
-// there and closes the launcher. Deliberately just numbered tiles, not
-// live per-workspace window thumbnails - that'd need wlr-screencopy
-// frames composited per workspace, which is a real chunk of new plumbing
-// (Data/*.qml singleton + scripts/ capture helper) rather than a
-// same-shape extension of what LauncherApps.qml already does. Flagged as
-// a known gap in handoff.md rather than guessed at here.
+// Content for Dat.Launcher.mode == "workspaces" - numbered grid, one
+// tile per workspace on the current output, click or Enter jumps
+// there. Just numbered tiles, not live thumbnails - that'd need
+// wlr-screencopy per workspace, a real chunk of new plumbing, flagged
+// as a known gap in handoff.md.
 //
-// niri-only for now, same as the rest of Data/Niri.qml's per-output
-// workspace tracking - Data/MangoWC.qml only exposes a single
-// `currentWorkspace` tag string with no list of what else exists, so
-// there's nothing to build a grid out of there yet (see handoff.md's
-// mangowc parity notes).
+// niri-only - Data/MangoWC.qml only exposes a single currentWorkspace
+// string with no list, so there's nothing to grid there yet.
 Item {
   id: root
 
@@ -27,9 +20,8 @@ Item {
 
   readonly property string outputName: Dat.Launcher.outputName
 
-  // niri workspace idx are 1-based and dense per-output; this is just
-  // "how many tiles do we know about for this output", not a hardcoded
-  // grid size
+  // just "how many tiles do we know about for this output", not a
+  // hardcoded grid size
   readonly property var workspacesForOutput: {
     const list = [];
     for (const id in Dat.Niri.workspaces) {
@@ -42,10 +34,9 @@ Item {
   }
 
   readonly property int currentIdx: Dat.Niri.workspaceFor(root.outputName)
-  // keyboard cursor into workspacesForOutput - separate from currentIdx
-  // (which workspace niri is actually on) so arrowing around doesn't
-  // switch anything until Enter, same "browse, then commit" shape as
-  // LauncherApps.qml's list.currentIndex
+  // keyboard cursor into workspacesForOutput, separate from currentIdx
+  // so arrowing doesn't switch anything until Enter - same "browse,
+  // then commit" shape as LauncherApps.qml's list.currentIndex
   property int selectedIndex: -1
   readonly property int columns: grid.columns
 
@@ -60,9 +51,8 @@ Item {
       root.switchTo(w.idx);
   }
 
-  // lands the cursor on whatever workspace is actually current, so the
-  // first arrow press moves relative to "where you are" rather than
-  // jumping from some arbitrary corner
+  // lands the cursor on the current workspace, so the first arrow
+  // press moves relative to "where you are"
   function _resetSelection() {
     const idx = root.workspacesForOutput.findIndex(w => w.idx == root.currentIdx);
     root.selectedIndex = idx >= 0 ? idx : (root.workspacesForOutput.length > 0 ? 0 : -1);
@@ -120,7 +110,7 @@ Item {
         border.color: tile.current ? Dat.Colors.current.primary : (tile.selected ? Dat.Colors.current.outline : "transparent")
         border.width: 2
         color: tile.current ? Dat.Colors.current.primary_container : (tile.selected ? Dat.Colors.current.surface_container_high : Dat.Colors.current.surface_container)
-        radius: 14
+        radius: Dat.Radius.lgSm
 
         Text {
           anchors.centerIn: parent

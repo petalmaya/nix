@@ -5,15 +5,10 @@ import Quickshell.Io
 
 import qs.Data as Dat
 
-// Central state for the app launcher popup. Mirrors the
-// networkPanelOpenByOutput pattern in Globals.qml but lives on its own
-// singleton since the launcher carries more state (search query, mode)
-// than a plain bool, and is meant to grow: `mode` is what makes this
-// extendable - "apps" today, "wallpaper" / "command" later on, each
-// driven by its own Generics/Launcher*.qml content component picked by
-// Layers/Launcher.qml. Adding a mode later means adding a value here and
-// a branch in the Loader, not touching the surface/animation/click-off
-// plumbing at all.
+// Central state for the app launcher popup. Own singleton (not just a
+// bool on Globals.qml) since it carries more state - search query,
+// mode - and is meant to grow: adding a mode means adding a value here
+// and a branch in Layers/Launcher.qml's Loader, nothing else.
 Singleton {
   id: root
 
@@ -29,11 +24,8 @@ Singleton {
   property string mode: root.defaultMode
   property string query: ""
 
-  // best-effort guess at "the screen the user is currently on", used
-  // when show()/toggle() is called without an explicit output (e.g. a
-  // global IPC keybind, which has no idea which monitor you're looking
-  // at). Falls back to the first screen if the compositor integration
-  // isn't reporting anything yet.
+  // best guess at "the monitor you're on", for calls with no explicit
+  // output (e.g. a global IPC keybind). Falls back to the first screen.
   function _guessOutput() {
     if (Dat.Niri.active && Dat.Niri.focusedOutput) {
       return Dat.Niri.focusedOutput;
@@ -60,16 +52,14 @@ Singleton {
     }
   }
 
-  // switches mode without closing the launcher (e.g. a future
-  // "command mode" toggle inside the launcher itself)
+  // switches mode without closing the launcher
   function setMode(m) {
     root.mode = m;
     root.query = "";
   }
 
-  // Tab cycles forward through `modes`, wrapping around - bound to
-  // Keys.onTabPressed on the launcher panel (Layers/Launcher.qml), so
-  // it works no matter which mode's content currently has focus
+  // Tab cycles forward through `modes`, wrapping - bound to
+  // Keys.onTabPressed on the launcher panel
   function cycleMode() {
     const idx = root.modes.indexOf(root.mode);
     const next = root.modes[(idx + 1) % root.modes.length];

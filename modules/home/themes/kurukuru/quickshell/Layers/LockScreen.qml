@@ -15,6 +15,32 @@ Scope {
   // restores every monitor's bar to how it was, not just one
   property var prevStateByOutput: ({})
 
+  // shared by both trigger paths below (external `qs ipc call lockscreen
+  // lock`, and the in-process Globals.lockRequested signal the
+  // quick-options lock button now uses) so the double-invocation guard
+  // only has to live in one place
+  function doLock() {
+    if (lock.locked || locker.running) {
+      return;
+    }
+
+    const saved = {};
+    for (const screen of Quickshell.screens) {
+      saved[screen.name] = Dat.Globals.notchState(screen.name);
+      Dat.Globals.setNotchState(screen.name, "COLLAPSED");
+    }
+    root.prevStateByOutput = saved;
+    locker.start();
+  }
+
+  Connections {
+    function onLockRequested() {
+      root.doLock();
+    }
+
+    target: Dat.Globals
+  }
+
   WlSessionLock {
     id: lock
 
@@ -33,14 +59,12 @@ Scope {
   }
 
   IpcHandler {
+    // external trigger - `qs ipc call lockscreen lock` (or `quickshell
+    // ipc call lockscreen lock`, depending what your Quickshell install
+    // actually names its CLI - see Globals.qml's lockRequested comment)
+    // from outside the running shell process, e.g. a niri keybind
     function lock() {
-      const saved = {};
-      for (const screen of Quickshell.screens) {
-        saved[screen.name] = Dat.Globals.notchState(screen.name);
-        Dat.Globals.setNotchState(screen.name, "COLLAPSED");
-      }
-      root.prevStateByOutput = saved;
-      locker.start();
+      root.doLock();
     }
 
     function unlock() {

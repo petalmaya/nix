@@ -7,21 +7,16 @@ import qs.Data as Dat
 import qs.Widgets as Wid
 import qs.Generics as Gen
 
-// The actual login UI, shown once per greeter.qml invocation (see
-// Layers/Greeter.qml's `primary` gating - only one monitor gets this,
-// the rest just get wallpaper, same idea as most DMs' multi-monitor
-// behavior). Deliberately modeled after Containers/LockScreenSurface.qml
-// (same wallpaper + blur backdrop) since it's the closest existing
-// analog in this tree, but there's no PAM/WlSessionLock here - auth goes
-// through Dat.Greeter (greetd), not Quickshell.Services.Pam.
+// The login UI, shown once per greeter.qml invocation (Layers/Greeter.qml's
+// `primary` gating - only one monitor gets this, others just get
+// wallpaper). Modeled after Containers/LockScreenSurface.qml (same
+// wallpaper + blur backdrop), but auth goes through Dat.Greeter
+// (greetd), not Quickshell.Services.Pam.
 Item {
   id: root
 
-  // Second way out of `scripts/test-greeter.sh`, on top of the
-  // OnDemand-not-Exclusive fix in Layers/Greeter.qml - only active in
-  // mock mode. A real greetd session deliberately does NOT get an
-  // Escape-quits shortcut (that would just be a way to kill the greeter
-  // process at an actual login screen, not something to offer there).
+  // Escape-quits, mock mode only - a real greetd session shouldn't
+  // let Escape kill the greeter process at an actual login screen
   focus: Dat.Greeter.mockMode
 
   Keys.onEscapePressed: if (Dat.Greeter.mockMode)
@@ -30,9 +25,8 @@ Item {
   Wid.Wallpaper {
     id: wallpaper
 
-    // same "always the lock/greeter wallpaper, not any per-output
-    // desktop one" choice LockScreenSurface makes - outputName
-    // deliberately left unset
+    // outputName deliberately unset - always the lock/greeter
+    // wallpaper, same choice LockScreenSurface makes
     anchors.fill: parent
 
     layer.enabled: true
@@ -48,10 +42,8 @@ Item {
     color: Dat.Colors.withAlpha(Dat.Colors.current.background, 0.25)
   }
 
-  // top-left clock, chunky/oversized like a DM greeter rather than the
-  // notch's small pill treatment (Widgets/TimePill.qml) - this is a
-  // full-screen surface with room to spare, and it's the first thing
-  // meant to be readable from across the room
+  // top-left clock, oversized like a DM greeter rather than the
+  // notch's small pill (Widgets/TimePill.qml)
   ColumnLayout {
     anchors.left: parent.left
     anchors.leftMargin: 48
@@ -74,8 +66,7 @@ Item {
     }
   }
 
-  // the login card itself - bottom-left, matching the reference SDDM
-  // layout in the handoff request rather than the launcher/net panel's
+  // login card - bottom-left, unlike the launcher/net panel's
   // centered/top-right placement, since a greeter has no "current
   // context" to anchor near
   ColumnLayout {
@@ -93,7 +84,7 @@ Item {
       Layout.fillWidth: true
       Layout.preferredHeight: 44
       color: Dat.Colors.withAlpha(Dat.Colors.current.surface_container_high, 0.72)
-      radius: 22
+      radius: Dat.Radius.full
 
       RowLayout {
         anchors.fill: parent
@@ -125,14 +116,13 @@ Item {
       }
     }
 
-    // password row - same shape, plus an eye toggle that flips
-    // TextInput.echoMode rather than a separate "reveal" overlay, so
-    // cursor position/selection survive the toggle
+    // password row - eye toggle flips TextInput.echoMode rather than
+    // a separate reveal overlay, so cursor/selection survive it
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 44
       color: Dat.Colors.withAlpha(Dat.Colors.current.surface_container_high, 0.72)
-      radius: 22
+      radius: Dat.Radius.full
 
       RowLayout {
         anchors.fill: parent
@@ -169,7 +159,7 @@ Item {
 
           Gen.MouseArea {
             layerColor: eyeIcon.color
-            layerRadius: 14
+            layerRadius: Dat.Radius.full
 
             onClicked: Dat.Greeter.passwordVisible = !Dat.Greeter.passwordVisible
           }
@@ -177,9 +167,8 @@ Item {
       }
     }
 
-    // inline error, only takes up space once there's something to say -
-    // avoids the card jumping around on every keystroke like it would if
-    // this were always-visible-but-empty
+    // only takes up space once there's an error, so the card doesn't
+    // jump around on every keystroke
     Text {
       Layout.fillWidth: true
       Layout.leftMargin: 14
@@ -198,7 +187,7 @@ Item {
       Layout.topMargin: 4
       color: Dat.Colors.current.primary
       opacity: Dat.Greeter.busy ? 0.6 : 1
-      radius: 20
+      radius: Dat.Radius.full
 
       Text {
         anchors.centerIn: parent
@@ -216,10 +205,8 @@ Item {
       }
     }
 
-    // session picker - click to cycle, same "tap to cycle" interaction
-    // as the reference screenshot's bottom-left "Session (Niri)" label,
-    // rather than a dropdown (keeps this whole card keyboard-first: tab
-    // order never needs to leave the two text fields + button)
+    // click-to-cycle instead of a dropdown, keeps the card
+    // keyboard-first (tab never needs to leave the two fields + button)
     Text {
       Layout.alignment: Qt.AlignHCenter
       Layout.topMargin: 6

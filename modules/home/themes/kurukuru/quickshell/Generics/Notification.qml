@@ -75,7 +75,7 @@ Rectangle {
       ClippingRectangle {
         anchors.fill: parent
         color: "transparent"
-        radius: 10
+        radius: Dat.Radius.mdSm
 
         Image {
           anchors.fill: parent
@@ -118,7 +118,7 @@ Rectangle {
             color: "transparent"
             implicitHeight: appText.contentHeight + 2
             implicitWidth: appText.contentWidth + 10
-            radius: 20
+            radius: Dat.Radius.full
 
             Text {
               id: appText
@@ -189,7 +189,7 @@ Rectangle {
               Layout.fillHeight: true
               color: Dat.Colors.current.secondary
               implicitWidth: actionText.contentWidth + 14
-              radius: 20
+              radius: Dat.Radius.full
 
               Text {
                 id: actionText

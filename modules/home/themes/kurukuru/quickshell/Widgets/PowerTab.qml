@@ -10,7 +10,7 @@ import qs.Widgets as Wid
 
 Rectangle {
   color: Dat.Colors.current.surface_container_high
-  radius: 20
+  radius: Dat.Radius.xl
 
   RowLayout {
     anchors.fill: parent
@@ -23,7 +23,7 @@ Rectangle {
       Rectangle {
         anchors.fill: parent
         color: Dat.Colors.current.surface_container
-        radius: 20
+        radius: Dat.Radius.xl
       }
 
       ColumnLayout {
@@ -93,7 +93,7 @@ Rectangle {
                   anchors.rightMargin: 5
                   color: Dat.Colors.current.primary
                   height: this.width
-                  radius: this.width
+                  radius: Dat.Radius.full
                   width: 35
 
                   Gen.NerdIcon {
@@ -115,7 +115,7 @@ Rectangle {
           Layout.fillWidth: true
           color: Dat.Colors.current.surface_container_highest
           implicitHeight: 28
-          radius: 20
+          radius: Dat.Radius.full
           topLeftRadius: 0
           topRightRadius: 0
           visible: UPower.displayDevice.percentage > 0
@@ -175,7 +175,7 @@ Rectangle {
           anchors.horizontalCenter: parent.horizontalCenter
           color: Dat.Colors.current.primary
           height: this.width
-          radius: this.width
+          radius: Dat.Radius.full
           visible: true
           width: slider.width
           y: slider.visualPosition * (slider.availableHeight - height)

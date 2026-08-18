@@ -13,7 +13,7 @@ Rectangle {
 
   clip: true
   color: Dat.Colors.current.surface_container
-  radius: 20
+  radius: Dat.Radius.xl
 
   Behavior on trayMenu {
     SequentialAnimation {
@@ -58,7 +58,7 @@ Rectangle {
 
       color: (modelData?.isSeparator) ? Dat.Colors.current.outline : "transparent"
       height: (modelData?.isSeparator) ? 2 : 28
-      radius: 20
+      radius: Dat.Radius.full
       width: root.width
 
       Gen.MouseArea {

@@ -10,7 +10,7 @@ Rectangle {
   property string outputName: ""
 
   color: Dat.Colors.withAlpha(Dat.Colors.current.surface, 0.9)
-  radius: 20
+  radius: Dat.Radius.xl
 
   RowLayout {
     anchors.fill: parent

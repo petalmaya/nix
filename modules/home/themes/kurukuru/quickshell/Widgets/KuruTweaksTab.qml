@@ -6,7 +6,7 @@ import qs.Data as Dat
 
 Rectangle {
   color: Dat.Colors.current.surface_container_high
-  radius: 20
+  radius: Dat.Radius.xl
 
   Flickable {
     id: flickableRoot

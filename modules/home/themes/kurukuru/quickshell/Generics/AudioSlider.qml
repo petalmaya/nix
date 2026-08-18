@@ -54,7 +54,7 @@ Item {
         Layout.fillHeight: true
         active: (root.node?.isSink) ? root.node == Pipewire.defaultAudioSink : root.node == Pipewire.defaultAudioSource
         implicitWidth: this.height
-        radius: this.height
+        radius: Dat.Radius.full
         visible: !root.node?.isStream
 
         icon {
@@ -102,7 +102,7 @@ Item {
           antialiasing: true
           color: root.bgColor
           layer.smooth: true
-          radius: 5
+          radius: Dat.Radius.full
 
           Rectangle {
             id: progRect
@@ -128,7 +128,7 @@ Item {
             anchors.centerIn: parent
             color: root.fgColor
             height: parent.height
-            radius: 10
+            radius: Dat.Radius.full
             width: 5
           }
         }

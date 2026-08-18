@@ -26,7 +26,7 @@ Item {
       Layout.fillWidth: true
       clip: true
       color: Dat.Colors.current.surface_container_high
-      radius: 10
+      radius: Dat.Radius.mdSm
 
       Image {
         id: nixLogo
@@ -79,7 +79,7 @@ Item {
           Layout.fillWidth: true
           clip: true
           color: Dat.Colors.current.surface_container
-          radius: 10
+          radius: Dat.Radius.mdSm
 
           RowLayout {
             anchors.fill: parent
@@ -122,7 +122,7 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     color: (workspace == this.index + 1) ? Dat.Colors.current.primary : Dat.Colors.current.surface_container_high
-                    radius: this.width
+                    radius: Dat.Radius.full
 
                     Gen.MouseArea {
                       layerColor: Dat.Colors.current.primary
@@ -149,7 +149,7 @@ Item {
           color: Dat.Colors.current.outline
           implicitHeight: 10 * Dat.Globals.notchScale
           implicitWidth: 80 * Dat.Globals.notchScale
-          radius: 10
+          radius: Dat.Radius.full
         }
       }
     }

@@ -23,7 +23,7 @@ Item {
       Layout.fillHeight: true
       Layout.fillWidth: true
       color: Dat.Colors.current.surface_container
-      radius: 20
+      radius: Dat.Radius.xl
 
       StackView {
         // visible: false

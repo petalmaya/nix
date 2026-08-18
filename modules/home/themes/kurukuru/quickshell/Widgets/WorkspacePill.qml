@@ -12,9 +12,15 @@ Rectangle {
 
   clip: true
   color: Dat.Colors.current.primary_container
+  // radius intentionally height/2, not Dat.Radius.full - implicitWidth is
+  // animated (see Behavior below) and a radius as large as `full` has to
+  // get clamped down to size every frame while width is mid-animation,
+  // which visibly loses the clamp for a frame or two (square corners for
+  // ~250ms when switching workspaces). height is fixed here, so height/2
+  // is always exactly the right capsule radius with nothing to clamp.
   height: 20
   implicitWidth: workRow.width + 8
-  radius: 20
+  radius: height / 2
 
   Behavior on implicitWidth {
     NumberAnimation {
@@ -35,7 +41,7 @@ Rectangle {
       color: Dat.Colors.current.primary
       implicitHeight: 20
       implicitWidth: 20
-      radius: 20
+      radius: Dat.Radius.full
 
       Text {
         id: workspaceNumText

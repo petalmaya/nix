@@ -13,7 +13,7 @@ Rectangle {
 
   color: Dat.Colors.current.surface_container
   implicitHeight: 28
-  radius: 10
+  radius: Dat.Radius.mdSm
 
   RowLayout {
     anchors.fill: parent
@@ -44,7 +44,7 @@ Rectangle {
       Layout.fillHeight: true
       color: root.active ? Dat.Colors.current.primary : "transparent"
       implicitWidth: this.height
-      radius: 10
+      radius: Dat.Radius.full
 
       Behavior on color {
         ColorAnimation {

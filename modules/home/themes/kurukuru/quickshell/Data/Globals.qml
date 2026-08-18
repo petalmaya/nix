@@ -9,9 +9,8 @@ import qs.Data as Dat
 Singleton {
   id: root
 
-  // the currently focused app is a single compositor-wide concept (there's
-  // only one focused toplevel at a time), so this one stays global on
-  // purpose - every bar showing the same "currently focused app" is correct
+  // only one focused toplevel compositor-wide, so this stays global on
+  // purpose - every bar showing the same focused app is correct
   property string actWinName: activeWindow?.activated ? activeWindow?.appId : "desktop"
   readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
   property string hostName: "KuruMi"
@@ -31,6 +30,10 @@ Singleton {
   property var settingsTabIndexByOutput: ({})
   property var swipeIndexByOutput: ({})
   property var networkPanelOpenByOutput: ({})
+  // quick-options popover (Layers/QuickOptions.qml) - same per-output
+  // open/closed pattern as the net panel above, just a separate flag so
+  // the two popovers can be shown independently
+  property var quickOptionsOpenByOutput: ({})
 
   function networkPanelOpen(outputName) {
     return root.networkPanelOpenByOutput[outputName] ?? false;
@@ -40,6 +43,16 @@ Singleton {
     const updated = Object.assign({}, root.networkPanelOpenByOutput);
     updated[outputName] = value;
     root.networkPanelOpenByOutput = updated;
+  }
+
+  function quickOptionsOpen(outputName) {
+    return root.quickOptionsOpenByOutput[outputName] ?? false;
+  }
+
+  function setQuickOptionsOpen(outputName, value) {
+    const updated = Object.assign({}, root.quickOptionsOpenByOutput);
+    updated[outputName] = value;
+    root.quickOptionsOpenByOutput = updated;
   }
 
   function notchState(outputName) {
@@ -94,23 +107,30 @@ Singleton {
     root.swipeIndexByOutput = updated;
   }
 
+  // --- lock request (in-process, no shell-out) ---
+  // Quick-options' lock button used to shell out to `qs ipc call
+  // lockscreen lock` on itself, which failed silently if `qs` wasn't
+  // on PATH (see Data/SessionActions.qml for the same execDetached()
+  // gotcha). No need to shell out to our own process - just signal
+  // Layers/LockScreen.qml directly. External `qs ipc call lockscreen
+  // lock` (keybinds, scripts) is untouched, only this internal path.
+  signal lockRequested
+
+  function requestLock() {
+    root.lockRequested();
+  }
+
   // --- notch IPC (keybindable via `qs ipc call notch <fn>`) ---
-  // swipe indices into CentralSwipable.qml's tab model
-  // (["Home", "Calendar", "System", "Music", "Settings"]) - named here so
-  // the IPC functions below don't read as arbitrary magic numbers.
-  // WorkspacePill.qml's click handler hardcodes tabIndexSystem's value
-  // (2) directly rather than importing this, since it predates this
-  // block - fine to leave as is, just know they need to move together
-  // if the tab order in CentralSwipable.qml ever changes.
+  // indices into CentralSwipable.qml's tab model, named so the IPC
+  // functions below aren't magic numbers. WorkspacePill.qml hardcodes
+  // tabIndexSystem's value (2) directly instead of importing it -
+  // keep both in sync if CentralSwipable's tab order ever changes.
   readonly property int tabIndexHome: 0
   readonly property int tabIndexSystem: 2
   readonly property int tabIndexMusic: 3
 
-  // best-effort guess at "the screen the user is currently on", for IPC
-  // calls that don't specify an output (a global keybind has no idea
-  // which monitor you're looking at). Mirrors Data/Launcher.qml's
-  // _guessOutput() - kept as a separate copy rather than shared since
-  // Launcher's version is private to that singleton.
+  // best guess at "the monitor you're on", for IPC calls that don't
+  // specify an output. Mirrors Data/Launcher.qml's private copy.
   function _guessOutput() {
     if (Dat.Niri.active && Dat.Niri.focusedOutput) {
       return Dat.Niri.focusedOutput;
@@ -118,29 +138,17 @@ Singleton {
     return Quickshell.screens[0]?.name ?? "";
   }
 
-  // opens the notch to its full pane (tabs + KuruKuru), on whichever tab
-  // was last showing - doesn't touch swipeIndex, so repeated calls (or a
-  // toggle keybind) land back where you left it.
+  // opens to full pane on whichever tab was last showing; doesn't
+  // touch swipeIndex, so repeat calls land back where you left it.
   function notchOpen(outputName) {
     root.setNotchState(outputName || root._guessOutput(), "FULLY_EXPANDED");
   }
 
-  // same "where should this collapse to" fallback used by
-  // onActWinNameChanged below - EXPANDED (small pill-with-content) if
-  // there's no focused window to get out of the way of, COLLAPSED
-  // otherwise.
-  //
-  // When reservedShell is on, the bar's whole point is to always occupy
-  // its reserved strip of screen space - COLLAPSED sets notchRect's
-  // opacity to 0 (see Layers/Notch.qml's state table), which reads as
-  // the bar just vanishing, and nothing was reliably re-expanding it
-  // afterwards (onActWinNameChanged below bails out early whenever
-  // reservedShell is on, so it never got a second chance to fix this up
-  // itself - only a keybind calling notchOpen()/notchToggle() again
-  // would). So: never let an IPC/keybind-driven close go all the way to
-  // COLLAPSED while reservedShell is enabled, floor it at EXPANDED
-  // instead, same as the reservedShellChanged handler below already
-  // does when the setting is first turned on.
+  // Same collapse target onActWinNameChanged uses: EXPANDED if no
+  // focused window, COLLAPSED otherwise. With reservedShell on, never
+  // let a keybind/IPC close reach COLLAPSED (opacity 0 there just
+  // makes the always-reserved bar vanish, and nothing re-expands it) -
+  // floor at EXPANDED instead, same as reservedShellChanged below.
   function notchClose(outputName) {
     const output = outputName || root._guessOutput();
     if (Dat.Config.data.reservedShell) {
@@ -159,11 +167,9 @@ Singleton {
     }
   }
 
-  // opens straight to a specific tab, e.g. for a "media keys should also
-  // reveal the media tab" keybind. Always jumps to FULLY_EXPANDED even if
-  // already open on a different tab, rather than toggling, since a
-  // dedicated media/workspace keybind firing twice in a row should
-  // re-affirm that tab, not close the notch out from under you.
+  // jumps to a specific tab, always to FULLY_EXPANDED rather than
+  // toggling - firing a media/workspace keybind twice should re-affirm
+  // that tab, not close the notch.
   function notchOpenTab(outputName, tabIndex) {
     const output = outputName || root._guessOutput();
     root.setSwipeIndex(output, tabIndex);
@@ -175,12 +181,8 @@ Singleton {
       root.notchClose("");
     }
 
-    // jumps straight to the Home tab, where Widgets/GreeterWidget.qml's
-    // "Hello cutie" card lives (see Widgets/HomeView.qml - it's the
-    // StackView's initialItem, so this alone is enough to bring it back
-    // into view even if a tray item's menu had pushed something else on
-    // top, since notchOpenTab always re-affirms FULLY_EXPANDED and
-    // HomeView pops the stack whenever the notch leaves that state)
+    // jumps to the Home tab (Widgets/HomeView.qml's initialItem) -
+    // re-affirming FULLY_EXPANDED also pops any stacked tray menu
     function hello() {
       root.notchOpenTab("", root.tabIndexHome);
     }
@@ -204,10 +206,8 @@ Singleton {
     target: "notch"
   }
 
-  // true if any monitor currently satisfies the given state / swipe /
-  // settings-tab combo. used purely to throttle background polling
-  // (Resources, Clock) - doesn't matter *which* monitor, just whether
-  // any bar currently needs the data.
+  // true if any monitor matches the given state/swipe/tab combo - used
+  // to throttle background polling (Resources, Clock).
   function anyOutputAt(state, swipeIdx, tabIdx) {
     for (const output in root.notchStateByOutput) {
       if (root.notchStateByOutput[output] !== state)
@@ -221,10 +221,8 @@ Singleton {
     return false;
   }
 
-  // true if the net panel is open on ANY monitor. same throttling idea as
-  // anyOutputAt above, just for networkPanelOpenByOutput instead of
-  // notchStateByOutput - lets Data/Network.qml stop polling `nmcli` every
-  // 15s in the background when nobody's actually looking at the wifi list.
+  // true if the net panel is open anywhere - lets Data/Network.qml
+  // stop polling nmcli when nobody's looking at the wifi list.
   readonly property bool anyNetworkPanelOpen: {
     for (const output in root.networkPanelOpenByOutput) {
       if (root.networkPanelOpenByOutput[output])
@@ -241,8 +239,7 @@ Singleton {
     return false;
   }
 
-  // fixes issue where bar starts collapsed when reserved shell is turned on
-  // thanks syncqtc for noticing it :>
+  // fix: bar started collapsed when reserved shell was turned on (thanks syncqtc)
   Component.onCompleted: {
     Dat.Config.data.reservedShellChanged.connect(() => {
       if (!Dat.Config.data.reservedShell)
@@ -258,10 +255,7 @@ Singleton {
     if (Dat.Config.data.reservedShell) {
       return;
     }
-    // the newly focused app could be on any monitor, and we don't get told
-    // which - so this reacts uniformly across every bar, same as it always
-    // implicitly did, just applied per-output now instead of via one
-    // shared variable.
+    // focus change could be on any monitor, so react uniformly across all of them
     for (const screen of Quickshell.screens) {
       const state = root.notchState(screen.name);
       if (root.actWinName == "desktop" && state == "COLLAPSED") {

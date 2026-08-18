@@ -15,7 +15,7 @@ Rectangle {
 
   clip: true
   color: Dat.Colors.current.surface_container_low
-  radius: 20
+  radius: Dat.Radius.xl
 
   Image {
     id: imgDisk

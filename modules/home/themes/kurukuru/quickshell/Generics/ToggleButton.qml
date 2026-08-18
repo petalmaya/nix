@@ -101,7 +101,7 @@ Rectangle {
 
     anchors.centerIn: parent
     height: this.width
-    radius: this.width
+    radius: Dat.Radius.full
   }
 
   Gen.MatIcon {

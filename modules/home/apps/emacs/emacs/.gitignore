@@ -1,0 +1,8 @@
+elpaca/
+etc/
+var/
+eln-cache/
+custom.el
+*.elc
+result
+.direnv/

@@ -70,7 +70,7 @@ Rectangle {
       Layout.fillHeight: true
       color: Dat.Colors.current.primary
       implicitWidth: this.height
-      radius: this.height
+      radius: Dat.Radius.full
 
       Gen.NerdIcon {
         anchors.centerIn: parent
