@@ -91,10 +91,28 @@ output_path = "~/.config/starship.toml"
 input_path = "./templates/yazi-theme.toml"
 output_path = "~/.config/yazi/theme.toml"
 
-
 #[templates.yazi_syntax]
 #input_path = "templates/yazi/yazi.tmTheme"
 #output_path = "~/.config/yazi/flavors/flutterice.yazi/tmtheme.xml"
+
+[templates.terminal-sequences]
+input_path = '~/.config/matugen/templates/terminal-sequences'
+output_path = '~/.cache/terminal-sequences'
+post_hook = 'tee /dev/pts/[0-9]* < ~/.cache/terminal-sequences'
+
+[templates.cozy_ui_definitions]
+input_path = "templates/cozy-ui/definitions.rpy"
+output_path = "~/.var/app/com.usebottles.bottles/data/bottles/bottles/Doki/drive_c/users/steamuser/Desktop/Monika/game/Submods/CozyUI/themes/active/definitions.rpy"
+
+[templates.cozy_ui_colors]
+input_path = "templates/cozy-ui/colors-template.sh"
+output_path = "~/.config/matugen/templates/cozy-ui/colors.sh"
+post_hook = "bash ~/.config/matugen/templates/cozy-ui/apply.sh"
+
+[templates.blacklingerie_colors]
+input_path  = "templates/blacklingerie/colors-template.sh"
+output_path = "~/.config/matugen/templates/blacklingerie/colors.sh"
+post_hook   = "bash ~/.config/matugen/templates/blacklingerie/apply.sh"
 
 # Optional application templates (uncomment if installed):
 

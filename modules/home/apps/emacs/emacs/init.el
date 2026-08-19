@@ -14,6 +14,7 @@
 ;;   lisp/my-dev.el        eglot, treesit, magit, project.el, flymake, terminal
 ;;   lisp/my-qml.el        Quickshell/QML editing support (tree-sitter + qmlls)
 ;;   lisp/my-org.el        org-mode + org-modern
+;;   lisp/my-media.el       empv/nov/elfeed/ement/elcord — media & comms
 ;;   themes/flutterice-theme.el   your matugen-generated theme, dropped in as-is
 ;;
 ;; Files are loaded in the exact order listed below — that order is
@@ -23,10 +24,6 @@
 ;; are also feature names real packages use (`org', `completion',
 ;; `elpaca' itself), and a same-named `(provide ...)` here would
 ;; shadow the real package and break everything that (require)s it.
-;;
-;; Everything elisp-related is managed by Elpaca (see lisp/my-elpaca.el),
-;; NOT by Nix. Nix (flake.nix) only provides Emacs itself and external
-;; binaries (ripgrep, fd, language servers, ghostty, etc).
 ;;
 ;;; Code:
 
@@ -49,5 +46,6 @@
 (require 'my-dev)        ; eglot/treesit/magit/project/terminal
 (require 'my-qml)        ; Quickshell/QML editing
 (require 'my-org)        ; org-mode
+(require 'my-media)      ; empv/nov/elfeed/ement/elcord
 
 ;;; init.el ends here
