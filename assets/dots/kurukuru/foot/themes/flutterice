@@ -1,24 +1,24 @@
 [colors-dark]
-foreground=dee3e5
-background=0e1416
-regular0=303637
+foreground=e6e1e9
+background=141318
+regular0=36343a
 regular1=ffb4ab
-regular2=83d2e5
-regular3=bdc5eb
-regular4=b2cbd2
-regular5=004e5b
-regular6=3d4565
-regular7=dee3e5
-bright0=899295
+regular2=cdbdff
+regular3=eeb8ca
+regular4=cbc3dc
+regular5=4b3e76
+regular6=633b4a
+regular7=e6e1e9
+bright0=938f99
 bright1=93000a
-bright2=a6eeff
-bright3=dce1ff
-bright4=334a50
-bright5=a6eeff
-bright6=dce1ff
-bright7=bfc8cb
-selection-foreground=cde7ee
-selection-background=334a50
+bright2=e8deff
+bright3=ffd9e4
+bright4=494458
+bright5=e8deff
+bright6=ffd9e4
+bright7=cac4cf
+selection-foreground=e7def8
+selection-background=494458
 # cursor.color under [cursor] was removed from newer foot (nixpkgs
 # unstable already ships >=1.23 where it's a hard error, not just the
 # deprecation warning older docs mention) - moved into colors-dark per
@@ -26,4 +26,4 @@ selection-background=334a50
 # assets/dots/kurukuru/foot/themes/flutterice fallback, which already
 # had this fix - this template regenerates that same file every time
 # matugen runs and was clobbering it back to the broken [cursor] form.
-cursor=00363f 83d2e5
+cursor=34275e cdbdff

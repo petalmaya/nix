@@ -1,0 +1,9 @@
+[catalog.blacklingerie]
+name = "Kroniichiiwa Blacklingerie Jacket Sprites"
+category = "vtuber-assets"
+
+# Step 1: matugen fills in hex values → colors.sh (lives next to apply.sh)
+[templates.blacklingerie_colors]
+input_path  = "colors-template.sh"
+output_path = "{{ config_dir }}/colors.sh"
+post_hook   = "bash '{{ config_dir }}/apply.sh'"

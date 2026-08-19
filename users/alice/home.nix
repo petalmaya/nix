@@ -47,6 +47,7 @@
     krita gimp # Photo editing
     cinny-desktop weechat # Non Discord chat
     blockbench tree bitwarden-cli
+    adw-gtk3
 
     # Media
     rmpc

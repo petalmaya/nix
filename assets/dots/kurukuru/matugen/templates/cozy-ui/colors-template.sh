@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+PRIMARY_LIGHT="{{colors.primary.light.hex}}"
+PRIMARY_CONTAINER_LIGHT="{{colors.primary_container.light.hex}}"
+SECONDARY_LIGHT="{{colors.secondary.light.hex}}"
+SURFACE_LIGHT="{{colors.surface.light.hex}}"
+SURFACE_CONTAINER_LIGHT="{{colors.surface_container.light.hex}}"
+SURFACE_CONTAINER_HIGH_LIGHT="{{colors.surface_container_high.light.hex}}"
+OUTLINE_LIGHT="{{colors.outline.light.hex}}"
+OUTLINE_VARIANT_LIGHT="{{colors.outline_variant.light.hex}}"
+
+PRIMARY_DARK="{{colors.primary.dark.hex}}"
+PRIMARY_CONTAINER_DARK="{{colors.primary_container.dark.hex}}"
+SECONDARY_DARK="{{colors.secondary.dark.hex}}"
+SURFACE_DARK="{{colors.surface.dark.hex}}"
+SURFACE_CONTAINER_DARK="{{colors.surface_container.dark.hex}}"
+SURFACE_CONTAINER_HIGH_DARK="{{colors.surface_container_high.dark.hex}}"
+OUTLINE_DARK="{{colors.outline.dark.hex}}"
+OUTLINE_VARIANT_DARK="{{colors.outline_variant.dark.hex}}"

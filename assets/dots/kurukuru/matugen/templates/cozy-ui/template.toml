@@ -1,0 +1,12 @@
+[catalog.cozy-ui]
+name = "MAS Cozy UI Theme"
+category = "game"
+
+[templates.cozy_ui_definitions]
+input_path = "definitions.rpy"
+output_path = "~/.var/app/com.usebottles.bottles/data/bottles/bottles/Doki/drive_c/users/steamuser/Desktop/Monika/game/Submods/CozyUI/themes/active/definitions.rpy"
+
+[templates.cozy_ui_colors]
+input_path = "colors-template.sh"
+output_path = "{{ config_dir }}/colors.sh"
+post_hook = "bash '{{ config_dir }}/apply.sh'"

@@ -124,6 +124,22 @@
     "c c" '(project-compile :wk "compile")
     "c x" '(embark-act :wk "act on thing"))
 
+  ;; --- m: media / comms (empv, nov, elfeed, ement, elcord) -------
+  (my/leader
+    "m"   '(:ignore t :wk "media/comms")
+    "m p" '(empv-play-or-enqueue :wk "play/enqueue")
+    "m y" '(empv-youtube :wk "youtube search")
+    "m r" '(empv-play-radio :wk "radio")
+    "m SPC" '(empv-toggle :wk "play/pause")
+    "m n" '(empv-playlist-next :wk "next track")
+    "m N" '(empv-playlist-prev :wk "prev track")
+    "m e" '(find-file :wk "open epub") ; nov-mode auto-activates on .epub
+    "m F" '(elfeed :wk "rss feeds")
+    "m u" '(elfeed-update :wk "update feeds")
+    "m M" '(ement-connect :wk "matrix connect")
+    "m l" '(ement-list-rooms :wk "matrix rooms")
+    "m d" '(elcord-mode :wk "toggle discord presence"))
+
   ;; --- h: help (mirrors C-h, but reachable without Ctrl) ------------------
   (my/leader
     "h"   '(:ignore t :wk "help")
