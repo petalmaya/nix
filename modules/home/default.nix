@@ -20,7 +20,7 @@
     # Desktop apps
     ./apps/spicetify.nix
     ./apps/gaming.nix
-    ./apps/rofi.nix
+    ./apps/rofi
     ./apps/yazi.nix
     ./apps/emacs
 
