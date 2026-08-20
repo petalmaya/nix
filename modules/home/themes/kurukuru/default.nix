@@ -1,6 +1,9 @@
 # Kurukuru theme: Niri compositor + Kuru Kuru Bar (Quickshell, personal
 # `flutterquick` fork) desktop shell, themed via matugen off vendored
-# `dotsquick` config/templates (assets/dots/kurukuru).
+# `dotsquick` config/templates (./matugen, ./foot, ./niri - previously
+# scattered under a top-level assets/dots/kurukuru, folded in here so
+# this module is self-contained and nothing toggles half of a feature
+# from a file no one remembers exists).
 #
 # Replaces `themes.noctaniri` (Niri + Noctalia Shell) as the desktop
 # shell. The matching login manager swap (Noctalia Greeter -> flutterquick's
@@ -15,8 +18,7 @@ let
     quickshellInput = inputs.quickshell;
   };
 
-  dotsDir = "${inputs.self}/assets/dots/kurukuru";
-  matugenDir = "${dotsDir}/matugen";
+  matugenDir = "${inputs.self}/modules/home/themes/kurukuru/matugen";
 
   # dotsquick's matugen/config.toml is the source of truth for what gets
   # themed and how (18-odd app templates + post_hooks) - rather than
@@ -131,7 +133,7 @@ in {
     # ~/.config/quickshell: symlink to the live git checkout instead of
     # the store, so matugen's writeback lands in a real, writable place.
     home.file.".config/matugen/templates".source =
-      config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/assets/dots/kurukuru/matugen/templates";
+      config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/home/themes/kurukuru/matugen/templates";
 
     # papirus-icons/apply.sh checks for $HOME/.local/share/icons/Papirus
     # and bails with "Papirus Icons are not installed" if it's missing -

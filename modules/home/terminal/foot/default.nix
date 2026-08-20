@@ -13,8 +13,8 @@ let
   cases = {
     kurukuru = {
       configFile = {
-        "foot/foot.ini".source = "${inputs.self}/assets/dots/kurukuru/foot/foot.ini";
-        "foot/colors.ini".source = "${inputs.self}/assets/dots/kurukuru/foot/colors.ini";
+        "foot/foot.ini".source = "${inputs.self}/modules/home/themes/kurukuru/foot/foot.ini";
+        "foot/colors.ini".source = "${inputs.self}/modules/home/themes/kurukuru/foot/colors.ini";
         # NOT "foot/themes" as a whole recursive dir - "themes/flutterice"
         # is matugen's own live *output* (programs.matugen.templates.foot
         # in ../../themes/kurukuru/default.nix writes
@@ -27,7 +27,7 @@ let
         # way - "themes/flutterice" gets a real, writable, copy-if-missing
         # file below instead, same pattern already used for the default
         # branch's own theme file.
-        "foot/themes/noctalia".source = "${inputs.self}/assets/dots/kurukuru/foot/themes/noctalia";
+        "foot/themes/noctalia".source = "${inputs.self}/modules/home/themes/kurukuru/foot/themes/noctalia";
       };
       # dotsquick's foot.ini `include`s "themes/flutterice", which matugen
       # (re)writes on every theme run - see comment above. Seed a real,
@@ -37,7 +37,7 @@ let
       # never touches it again (not managed here).
       activation = ''
         $DRY_RUN_CMD mkdir -p $HOME/.config/foot/themes
-        $DRY_RUN_CMD [ -e "$HOME/.config/foot/themes/flutterice" ] || $DRY_RUN_CMD cp "${inputs.self}/assets/dots/kurukuru/foot/themes/flutterice" "$HOME/.config/foot/themes/flutterice"
+        $DRY_RUN_CMD [ -e "$HOME/.config/foot/themes/flutterice" ] || $DRY_RUN_CMD cp "${inputs.self}/modules/home/themes/kurukuru/foot/themes/flutterice" "$HOME/.config/foot/themes/flutterice"
       '';
     };
 

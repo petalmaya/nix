@@ -4,9 +4,13 @@ let
     inherit pkgs;
     quickshellInput = inputs.quickshell;
   };
-  dotsNiriDir = "${inputs.self}/assets/dots/kurukuru/niri";
+  # config.kdl/animations.kdl/flutterice.kdl are vendored siblings of this
+  # file now (used to live under a top-level assets/dots/kurukuru/niri -
+  # moved in here so the whole kurukuru niri integration is one directory,
+  # not this default.nix plus an easy-to-forget sibling tree elsewhere).
+  dotsNiriDir = ./.;
 
-  # Vendored (assets/dots/kurukuru/niri/config.kdl) from dotsquick, written
+  # Vendored (config.kdl, right next to this file) from dotsquick, written
   # for Alice's Debian machine - it spawns bare `quickshell` (assumes a
   # manually-copied ~/.config/quickshell) and a Debian-path polkit agent.
   # Swap both for the NixOS-native equivalents - the packaged `kurukurubar`
@@ -67,7 +71,7 @@ lib.mkIf config.nixtop.themes.kurukuru.enable {
   # into the live git checkout instead, so tweaking animation curves is
   # edit-and-see, not edit-rebuild-see.
   home.file.".config/niri/animations.kdl".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.nixtop.themes.kurukuru.repoPath}/assets/dots/kurukuru/niri/animations.kdl";
+    config.lib.file.mkOutOfStoreSymlink "${config.nixtop.themes.kurukuru.repoPath}/modules/home/themes/kurukuru/niri/animations.kdl";
 
   # NOT xdg.configFile (read-only Nix store symlink) - flutterice.kdl is
   # matugen's own live template *output* (programs.matugen.templates.niri),
