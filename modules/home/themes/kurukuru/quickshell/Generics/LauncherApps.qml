@@ -18,31 +18,37 @@ Item {
   signal requestFocus
 
   function launchSelected() {
-    const entry = filtered[list.currentIndex];
-    if (!entry)
+    const item = filtered[list.currentIndex];
+    if (!item)
       return;
-    entry.execute();
+    item.entry.execute();
     Dat.Launcher.hide();
   }
 
+  // allApps used to just be a sorted DesktopEntry array, with
+  // `filtered` below doing 4x toLowerCase() + an array join per entry
+  // on *every keystroke*. That's the same class of "redo expensive
+  // work every entry, every time, instead of once" issue Data/Dock.qml
+  // ran into with the running-apps model - here it's cheap to fix:
+  // precompute each entry's lowercased search blob once, when the
+  // DesktopEntries list itself changes (rare), not once per keypress.
   readonly property var allApps: {
     const apps = [...DesktopEntries.applications.values].filter(e => e.name && !e.noDisplay);
     apps.sort((a, b) => a.name.localeCompare(b.name));
-    return apps;
+    return apps.map(e => ({
+          "entry": e,
+          "search": [e.name, e.comment, ...(e.keywords ?? []), e.genericName].filter(Boolean).join(" ").toLowerCase()
+        }));
   }
 
+  // filtered still holds {entry, search} wrappers, not raw
+  // DesktopEntry objects - the delegate below reads modelData.entry.
   readonly property var filtered: {
     const q = Dat.Launcher.query.trim().toLowerCase();
     if (q == "")
       return root.allApps;
 
-    return root.allApps.filter(e => {
-        const name = (e.name ?? "").toLowerCase();
-        const comment = (e.comment ?? "").toLowerCase();
-        const keywords = (e.keywords ?? []).join(" ").toLowerCase();
-        const generic = (e.genericName ?? "").toLowerCase();
-        return name.includes(q) || comment.includes(q) || keywords.includes(q) || generic.includes(q);
-      });
+    return root.allApps.filter(a => a.search.includes(q));
   }
 
   implicitHeight: col.implicitHeight
@@ -85,6 +91,12 @@ Item {
         clip: true
         currentIndex: root.filtered.length > 0 ? 0 : -1
         model: root.filtered
+        // Recycles delegates into the pool instead of destroying and
+        // recreating them - `model` is a fresh JS array on every
+        // keystroke (it has to be, `filtered` is a filter() result),
+        // so without this every keystroke was tearing down and
+        // rebuilding every visible row's IconImage from scratch.
+        reuseItems: true
         spacing: 2
 
         delegate: Rectangle {
@@ -109,11 +121,17 @@ Item {
 
               Layout.preferredHeight: 32
               Layout.preferredWidth: 32
+              // decoding on the main thread was the other half of the
+              // "typing feels laggy" problem alongside the reuseItems
+              // change above - reused delegates still have to load a
+              // *different* icon as they're recycled between rows, and
+              // that decode was blocking a frame each time
+              asynchronous: true
               // constrains the rasterized buffer - without it QtSvg
               // renders at native size first, throwing "buffer too big"
               // warnings on some icon themes
               implicitSize: 32
-              source: Quickshell.iconPath(entryDelegate.modelData.icon, true)
+              source: Quickshell.iconPath(entryDelegate.modelData.entry.icon, true)
 
               Gen.MatIcon {
                 anchors.centerIn: parent
@@ -133,7 +151,7 @@ Item {
                 color: (list.currentIndex == entryDelegate.index) ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
                 elide: Text.ElideRight
                 font.pointSize: 10
-                text: entryDelegate.modelData.name
+                text: entryDelegate.modelData.entry.name
               }
 
               Text {
@@ -142,7 +160,7 @@ Item {
                 elide: Text.ElideRight
                 font.pointSize: 8
                 opacity: 0.8
-                text: entryDelegate.modelData.comment ?? ""
+                text: entryDelegate.modelData.entry.comment ?? ""
                 visible: text.length > 0
               }
             }
@@ -157,7 +175,7 @@ Item {
 
             onClicked: mevent => {
               if (mevent.button == Qt.RightButton) {
-                Dat.Dock.togglePin(entryDelegate.modelData.id);
+                Dat.Dock.togglePin(entryDelegate.modelData.entry.id);
                 return;
               }
               list.currentIndex = entryDelegate.index;
@@ -180,7 +198,7 @@ Item {
             color: (list.currentIndex == entryDelegate.index) ? Dat.Colors.current.on_primary_container : Dat.Colors.current.primary
             font.pointSize: 11
             icon: "push_pin"
-            visible: Dat.Dock.isPinned(entryDelegate.modelData.id)
+            visible: Dat.Dock.isPinned(entryDelegate.modelData.entry.id)
           }
         }
       }
