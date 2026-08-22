@@ -21,6 +21,20 @@ Item {
   property bool pinned: false
   property var toplevel: null
 
+  // Row-local pointer x from Containers/Dock.qml's HoverHandler, or -1
+  // when the pointer isn't over the row at all.
+  property real containerMouseX: -1
+
+  // Row-local x of this item, for the magnify distance calc below.
+  // Defaults to root.x, which is correct when DockItem sits directly
+  // in the RowLayout (the pinnedEntries loop in Containers/Dock.qml).
+  // The runningModel loop there wraps DockItem in a plain Item to get
+  // required-property role binding, which puts an extra coordinate
+  // frame between DockItem and the row - that wrapper overrides this
+  // with its own x instead, since root.x would otherwise just be 0
+  // (DockItem's position *within the wrapper*, not the row).
+  property real rowX: root.x
+
   // Set true by Containers/Dock.qml once this row's toplevel is gone.
   // Disables the MouseArea's hover *synchronously*, before anything
   // destroys this item - letting Qt process a clean hover-leave on a
@@ -54,6 +68,19 @@ Item {
   readonly property bool isRunning: root.toplevel ? true : root.runningForApp.length > 0
   readonly property bool isFocused: root.toplevel ? !!root.toplevel.activated : root.runningForApp.some(t => t.activated)
 
+  // Distance from the pointer to this icon's own center, in the same
+  // row-local space as containerMouseX. -1 (pointer off the row)
+  // reads as "infinitely far", so influence below falls out to 0
+  // without a separate branch.
+  readonly property real distanceFromPointer: root.containerMouseX < 0 ? Dat.Dock.magnifyRadius : Math.abs((root.rowX + root.width / 2) - root.containerMouseX)
+
+  // 1 dead-center under the pointer, easing down to 0 at
+  // magnifyRadius px away. Cosine falloff rather than linear so
+  // neighbours taper off instead of the row looking like a tent -
+  // ASSUMPTION: no reference for the exact curve/radius, tuned by eye
+  // against Data/Dock.qml's magnifyRadius/magnifyScale.
+  readonly property real influence: Math.max(0, Math.cos((Math.min(root.distanceFromPointer, Dat.Dock.magnifyRadius) / Dat.Dock.magnifyRadius) * (Math.PI / 2)))
+
   implicitHeight: 48
   implicitWidth: 48
 
@@ -61,13 +88,19 @@ Item {
   // also grew the MouseArea's hit area into the neighbouring icon and
   // caused a hover bounce as adjacent items fought over the overlap.
   // Fix: root stays a fixed 48x48 hit target, only the inner `visual`
-  // Item grows on hover.
+  // Item grows on hover - and now on proximity to the pointer, not
+  // just direct hover, for the macOS-style magnify. transformOrigin
+  // is pinned to the bottom so icons grow upward off the dock's
+  // baseline instead of from their center - the pill itself doesn't
+  // clip (see Layers/Dock.qml), so the overflow above the bar is the
+  // point, not a bug.
   Item {
     id: visual
 
     anchors.centerIn: parent
     height: parent.height
-    scale: mArea.containsMouse ? 1.12 : 1
+    scale: 1 + Dat.Dock.magnifyScale * root.influence
+    transformOrigin: Item.Bottom
     width: parent.width
 
     Behavior on scale {

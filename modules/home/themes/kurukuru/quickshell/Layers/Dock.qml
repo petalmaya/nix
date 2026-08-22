@@ -194,6 +194,11 @@ WlrLayershell {
 
       anchors.centerIn: parent
       outputName: root.modelData?.name ?? ""
+      // pill's own width/height, handed back down so the Apps button's
+      // click handler can snapshot them into Dat.Launcher right before
+      // opening - see Layers/Launcher.qml's morph-in animation.
+      pillHeight: pill.height
+      pillWidth: pill.width
     }
   }
 }

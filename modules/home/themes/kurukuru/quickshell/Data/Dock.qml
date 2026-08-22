@@ -13,6 +13,17 @@ import qs.Data as Dat
 Singleton {
   id: root
 
+  // Magnify-on-hover tuning, shared by every DockItem via
+  // Containers/Dock.qml's containerMouseX - pulled out here instead of
+  // being hardcoded per-item so both numbers live in one obvious spot.
+  // ASSUMPTION: values picked by eye, not measured against anything -
+  // nudge freely. radius was 90, brought in to 60 - neighbors were
+  // picking up too much of the hovered icon's magnify at the original
+  // radius; the hovered icon's own peak scale is unaffected, only how
+  // far it reaches into its neighbors.
+  readonly property real magnifyRadius: 60
+  readonly property real magnifyScale: 0.4
+
   property alias pinned: jsonData.pinnedApps
 
   // appId -> list of Toplevel, from ToplevelManager.toplevels. Only
@@ -95,6 +106,14 @@ Singleton {
   // in sync incrementally instead, touching only the rows that
   // actually changed.
   //
+  // Rows are flat roles (appId/key/closing), not one row nested under
+  // a single "modelData" object - a nested var/object role's type gets
+  // inferred from its first append and QML can warn/misbehave
+  // ("Can't assign to existing role... of different type") on later
+  // writes that don't structurally match byte-for-byte. Flat
+  // string/bool roles don't have that problem - each one's type is
+  // locked in once and every future write is the same primitive type.
+  //
   // Rows hold appId + a string key only, never the live Toplevel
   // object - ListModel's "var" roles don't track QObject lifetime, so
   // a closed window's row would hold a dangling pointer.
@@ -123,26 +142,24 @@ Singleton {
     const desiredKeys = new Set(desired.map(d => d.key));
 
     for (let i = runningModel.count - 1; i >= 0; i--) {
-      const row = runningModel.get(i).modelData;
+      const row = runningModel.get(i);
       if (!desiredKeys.has(row.key) && !row.closing) {
         // still present in the model, just flagged - DockItem will
         // call confirmClosed() once it's safe to actually remove it
-        runningModel.setProperty(i, "modelData", Object.assign({}, row, {
-          "closing": true
-        }));
+        runningModel.setProperty(i, "closing", true);
       }
     }
 
     const existingKeys = new Set();
     for (let i = 0; i < runningModel.count; i++) {
-      existingKeys.add(runningModel.get(i).modelData.key);
+      existingKeys.add(runningModel.get(i).key);
     }
     for (const d of desired) {
       if (!existingKeys.has(d.key)) {
         runningModel.append({
-          "modelData": Object.assign({
-            "closing": false
-          }, d)
+          "appId": d.appId,
+          "key": d.key,
+          "closing": false
         });
       }
     }
@@ -155,7 +172,7 @@ Singleton {
   // a later _syncRunningModel, e.g. a very quick close+relaunch).
   function confirmClosed(key) {
     for (let i = 0; i < runningModel.count; i++) {
-      const row = runningModel.get(i).modelData;
+      const row = runningModel.get(i);
       if (row.key == key && row.closing) {
         runningModel.remove(i);
         return;

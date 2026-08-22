@@ -13,38 +13,76 @@ RowLayout {
   id: root
 
   property string outputName: ""
+  // Exposed for Layers/Dock.qml so it can hand this row's current pill
+  // geometry to Dat.Launcher right before the launcher opens - see the
+  // Apps button below and Layers/Launcher.qml's morph-in animation.
+  property real pillWidth: 0
+  property real pillHeight: 0
+
+  // Mac-style magnify: every DockItem reads this back to compute how
+  // close it is to the pointer, in *row-local* coordinates. -1 means
+  // "pointer isn't over the row", which every DockItem treats as
+  // "no magnification".
+  //
+  // A HoverHandler here rather than a MouseArea - same reasoning as
+  // Layers/Dock.qml's hoverZone: it's non-exclusive, so it keeps
+  // reporting position even while a DockItem's own MouseArea
+  // underneath has hover/click. A MouseArea covering the row would
+  // just steal hover from every DockItem instead.
+  readonly property real hoverX: rowHover.hovered ? rowHover.point.position.x : -1
 
   spacing: 6
+
+  HoverHandler {
+    id: rowHover
+
+    target: root
+  }
 
   Repeater {
     model: Dat.Dock.runningModel
 
-    // modelData only ever carries appId + a plain string key (see
-    // Data/Dock.qml) - never the live Toplevel object itself. toplevel
-    // is resolved fresh here via toplevelForKey every time it's needed,
-    // instead of being stored/passed around directly.
+    // Flat ListModel roles (appId/key/closing) - bound via required
+    // properties on this Item wrapper rather than DockItem itself,
+    // since DockItem already declares its own (non-required)
+    // appId/closing properties and can't re-declare them as required
+    // to receive the row directly. toplevel is resolved fresh via
+    // toplevelForKey every time it's needed, instead of being stored/
+    // passed around directly - see Data/Dock.qml for why the raw
+    // Toplevel object never goes into the ListModel.
     //
-    // modelData.closing is true once the backing toplevel is gone -
-    // DockItem handles disabling hover + fading itself out and reports
-    // back via Dat.Dock.confirmClosed() when it's actually safe to
-    // remove the row (see Data/Dock.qml).
-    Wid.DockItem {
-      id: dockItem
+    // row.closing is true once the backing toplevel is gone - DockItem
+    // handles disabling hover + fading itself out and reports back via
+    // Dat.Dock.confirmClosed() when it's actually safe to remove the
+    // row (see Data/Dock.qml).
+    Item {
+      id: row
 
-      required property var modelData
+      required property string appId
+      required property bool closing
+      required property string key
 
-      appId: modelData.appId
-      closing: modelData.closing ?? false
-      pinned: false
-      toplevel: Dat.Dock.toplevelForKey(modelData.key)
+      implicitHeight: dockItem.implicitHeight
+      implicitWidth: dockItem.implicitWidth
 
-      onClosingChanged: if (dockItem.closing) closeAnimTimer.restart()
+      Wid.DockItem {
+        id: dockItem
 
-      Timer {
-        id: closeAnimTimer
+        appId: row.appId
+        closing: row.closing
+        containerMouseX: root.hoverX
+        pinned: false
+        rowX: row.x
+        toplevel: Dat.Dock.toplevelForKey(row.key)
 
-        interval: Dat.MaterialEasing.standardTime
-        onTriggered: Dat.Dock.confirmClosed(modelData.key)
+        onClosingChanged: if (dockItem.closing) closeAnimTimer.restart()
+
+        Timer {
+          id: closeAnimTimer
+
+          interval: Dat.MaterialEasing.standardTime
+          onTriggered: Dat.Dock.confirmClosed(row.key)
+        }
       }
     }
   }
@@ -67,11 +105,14 @@ RowLayout {
       required property var modelData
 
       appId: modelData.appId
+      containerMouseX: root.hoverX
       pinned: true
     }
   }
 
   Rectangle {
+    id: appsButton
+
     Layout.alignment: Qt.AlignVCenter
     color: (Dat.Launcher.open && Dat.Launcher.outputName == root.outputName) ? Dat.Colors.current.primary : Dat.Colors.current.surface_container
     implicitHeight: 40
@@ -89,7 +130,7 @@ RowLayout {
       layerColor: Dat.Colors.current.on_surface
       layerRadius: 14
 
-      onClicked: Dat.Launcher.toggle(root.outputName)
+      onClicked: Dat.Launcher.toggleFromDock(root.outputName, root.pillWidth, root.pillHeight)
     }
   }
 }

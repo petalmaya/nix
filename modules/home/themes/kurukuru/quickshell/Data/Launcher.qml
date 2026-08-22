@@ -24,6 +24,23 @@ Singleton {
   property string mode: root.defaultMode
   property string query: ""
 
+  // Snapshot of the dock pill's geometry at the moment it was clicked
+  // - Layers/Launcher.qml animates its panel open from this size
+  // instead of just popping in, so it reads as the pill morphing into
+  // the launcher instead of one hiding while the other appears.
+  property real dockOriginWidth: 200
+  property real dockOriginHeight: 68
+
+  // Only true when this open came from actually clicking the dock's
+  // Apps button - see showFromDock(). The IPC keybind (a global
+  // shortcut, not a click on a visible pill) has nothing on screen to
+  // morph out of, so Layers/Launcher.qml skips the grow animation
+  // entirely for that path rather than animating from a stale/default
+  // dockOrigin size that doesn't correspond to anything visible - that
+  // mismatch, not the animation's actual cost, was the "launcher feels
+  // slower now" complaint.
+  property bool morphFromDock: false
+
   // best guess at "the monitor you're on", for calls with no explicit
   // output (e.g. a global IPC keybind). Falls back to the first screen.
   function _guessOutput() {
@@ -37,6 +54,22 @@ Singleton {
     root.outputName = outputName || root._guessOutput();
     root.mode = root.defaultMode;
     root.query = "";
+    root.morphFromDock = false;
+    root.open = true;
+  }
+
+  // Called by Containers/Dock.qml's Apps button instead of show() -
+  // takes the pill's current width/height right along with opening, so
+  // there's no window where dockOrigin could be read stale.
+  function showFromDock(outputName, pillWidth, pillHeight) {
+    if (pillWidth > 0)
+      root.dockOriginWidth = pillWidth;
+    if (pillHeight > 0)
+      root.dockOriginHeight = pillHeight;
+    root.outputName = outputName || root._guessOutput();
+    root.mode = root.defaultMode;
+    root.query = "";
+    root.morphFromDock = true;
     root.open = true;
   }
 
@@ -49,6 +82,14 @@ Singleton {
       root.hide();
     } else {
       root.show(outputName);
+    }
+  }
+
+  function toggleFromDock(outputName, pillWidth, pillHeight) {
+    if (root.open) {
+      root.hide();
+    } else {
+      root.showFromDock(outputName, pillWidth, pillHeight);
     }
   }
 

@@ -1,5 +1,6 @@
 //@ pragma Env QSG_RENDER_LOOP=threaded
 //@ pragma Env QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
+//@ pragma IconTheme Papirus-Dark
 
 pragma ComponentBehavior: Bound
 import Quickshell
