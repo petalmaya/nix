@@ -6,9 +6,23 @@ COLOR_FILE="${SCRIPT_DIR}/colors.sh"
 ASSETS_DIR="${SCRIPT_DIR}/assets"
 TARGET_DIR="${COZY_UI_DIR:-/home/alice/.var/app/com.usebottles.bottles/data/bottles/bottles/Doki/drive_c/users/steamuser/Desktop/Monika/game/Submods/CozyUI/themes/active}"
 
+# ── Seed pristine base assets on first run ─────────────────────────────────
+# Mirrors blacklingerie/apply.sh's originals/ trick: keep a pristine copy of
+# CozyUI's untouched button/scrollbar/slider/replacers outside git (see
+# .gitignore) instead of vendoring them as a committed asset dump, so every
+# matugen run restores from a known-clean base rather than re-recoloring
+# already-recolored PNGs. If $ASSETS_DIR is missing (fresh clone, or first
+# run ever) but $TARGET_DIR still has the mod's original four asset dirs,
+# back them up here first; only bail if there's truly nothing to seed from.
 if [[ ! -d "$ASSETS_DIR" ]]; then
-    echo "Error: Base assets directory not found at $ASSETS_DIR" >&2
-    exit 1
+    if [[ -d "$TARGET_DIR/button" && -d "$TARGET_DIR/scrollbar" && -d "$TARGET_DIR/slider" && -d "$TARGET_DIR/replacers" ]]; then
+        echo "First run: backing up pristine Cozy UI assets to $ASSETS_DIR ..."
+        mkdir -p "$ASSETS_DIR"
+        cp -r "$TARGET_DIR/button" "$TARGET_DIR/scrollbar" "$TARGET_DIR/slider" "$TARGET_DIR/replacers" "$ASSETS_DIR/"
+    else
+        echo "Error: Base assets directory not found at $ASSETS_DIR, and $TARGET_DIR has no pristine button/scrollbar/slider/replacers to seed from either." >&2
+        exit 1
+    fi
 fi
 
 if [[ -f "$COLOR_FILE" ]]; then

@@ -1,2 +1,11 @@
 .tor-config/
 modules/home/apps/emacs/emacs.zip
+
+# matugen post_hook seeded assets - pristine PNGs backed up on first run by
+# cozy-ui/apply.sh and blacklingerie/apply.sh from the actual game install
+# (~/.var/.../CozyUI, ~/.var/.../kroniichiiwa_blacklingerie_jacket). They
+# need to live on disk next to the scripts (matugen's post_hook reads them
+# every run), but they're binary asset dumps sourced from a mod install,
+# not config - don't want them committed/diffed here.
+modules/home/themes/kurukuru/matugen/templates/cozy-ui/assets/
+modules/home/themes/kurukuru/matugen/templates/blacklingerie/originals/
