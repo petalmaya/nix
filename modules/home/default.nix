@@ -27,6 +27,7 @@
     # Background services
     ./services/flatpak.nix
     ./services/mako
+    ./services/matugen
     ./services/mpd.nix
 
     # Terminal environment
