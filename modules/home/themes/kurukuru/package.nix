@@ -70,6 +70,7 @@ let
     fontDirectories = [
       pkgs.material-symbols
       pkgs.nerd-fonts.noto
+      pkgs.rubik
     ];
   };
 
