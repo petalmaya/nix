@@ -7,8 +7,7 @@
 * What?
 my main nixos configuration! this is what runs my cozy daily setup on wonderland (my main laptop) and rabbit (my test machine) ♡
 
-i like niri :3
-
+i like niri oh and emacs :3
 * Why?
 wouldnt you like to know!
 
