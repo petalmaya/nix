@@ -113,8 +113,8 @@
     # Matugen's own upstream flake - provides the declarative
     # `programs.matugen` Home Manager module (module.nix), used instead of
     # hand-rolling matugen's config.toml as raw Nix. See
-    # modules/home/themes/kurukuru, which builds its `templates` option
-    # straight from modules/home/themes/kurukuru/matugen/config.toml via
+    # modules/home/services/matugen, which builds its `templates` option
+    # straight from modules/home/services/matugen/config.toml via
     # builtins.fromTOML.
     matugen = {
       url = "github:InioX/matugen";
