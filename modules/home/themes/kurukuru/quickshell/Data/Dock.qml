@@ -258,9 +258,13 @@ Singleton {
   Component.onCompleted: root._rebuildToplevels()
 
   // Polls rather than hooking a ToplevelManager change signal - cheap
-  // since _rebuildToplevels only reassigns on an actual diff.
+  // since _rebuildToplevels only reassigns on an actual diff. Runs for
+  // the whole session regardless of whether the dock is even visible
+  // (it isn't behind a Loader), so bumped from 1000->2000ms - open/close/
+  // focus reflecting a bit under 2s later instead of under 1s is not
+  // noticeable, and it halves a wakeup that runs forever.
   Timer {
-    interval: 1000
+    interval: 2000
     repeat: true
     running: true
     triggeredOnStart: true

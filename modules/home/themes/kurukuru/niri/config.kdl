@@ -189,9 +189,13 @@ recent-windows {
 // --- Autostart -------------------------------------------------------------
 // Order matters a little: portals env first, then agents, then the shell.
 
-spawn-at-startup "dbus-update-activation-environment" "--systemd" "--all"
-// polkit agent path on Debian (polkit-kde-authentication-agent-1)
-spawn-at-startup "/usr/libexec/polkit-kde-authentication-agent-1"
+// dbus-update-activation-environment and the polkit agent both need a
+// real Nix store path (polkit_gnome on NixOS, not the Debian
+// polkit-kde path this file used to hardcode) - those two spawns live
+// in the small store-built stub in default.nix instead, which
+// `include`s this file. Keeping them out of here means this file has
+// zero Nix-specific/store-path content left, so it can be a plain
+// out-of-store symlink - edit-and-reload, no rebuild.
 // Noctalia desktop shell (bar, launcher, notifs, lock, wallpaper, …)
 //spawn-at-startup "noctalia"
 // FlutterShell
@@ -199,7 +203,10 @@ spawn-at-startup "/usr/libexec/polkit-kde-authentication-agent-1"
 // Wallpaper
 //spawn-at-startup "swaybg" "-o" "HDMI-A-1" "-i" "/home/alice/Pictures/Wallpaper/flutter.png" "-m" "fill"
 //spawn-at-startup "swaybg" "-o" "eDP-1" "-i" "/home/alice/Pictures/Wallpaper/fluts.jpg" "-m" "fill"
-spawn-at-startup "quickshell"
+// "kurukurubar" (not the raw "quickshell"/"qs" binary) resolves via
+// PATH - default.nix puts the packaged wrapper in home.packages so
+// this needs no store path either.
+spawn-at-startup "kurukurubar"
 // Xwayland for legacy apps (package: xwayland-satellite from danklinux)
 //xwayland-satellite {
 //   path "xwayland-satellite"
@@ -228,7 +235,7 @@ binds {
     // Lock via noctalia session
 //  "Mod+L"           { spawn "noctalia" "msg" "session" "lock"; }
 //  "Mod+Alt+L" { spawn "sh" "-c" "gtklock -c ~/.config/gtklock/config.ini -s ~/.config/gtklock/style.css "; }
-    "Mod+L" { spawn "quickshell" "ipc" "call" "lockscreen" "lock"; }
+    "Mod+L" { spawn "qs" "ipc" "call" "lockscreen" "lock"; }
 
     // Apps  (firefox-esr is the Mozilla package name; binary is still `firefox-esr`)
     "Mod+W"           { spawn "firefox-esr"; }
