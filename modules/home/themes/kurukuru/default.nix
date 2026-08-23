@@ -1,14 +1,14 @@
 # Kurukuru theme: Niri compositor + Kuru Kuru Bar (Quickshell, personal
 # `flutterquick` fork) desktop shell, themed via matugen off vendored
-# `dotsquick` config/templates (./matugen, ./foot, ./niri - previously
-# scattered under a top-level assets/dots/kurukuru, folded in here so
-# this module is self-contained and nothing toggles half of a feature
-# from a file no one remembers exists). The matugen *service* itself
-# (what actually runs it, on by default) has since moved out to
-# modules/home/services/matugen - ./matugen here is just the vendored
-# config.toml + templates data that service reads; foot's actual
-# `programs.foot` wiring lives in modules/home/terminal/foot, ./foot
-# here is likewise just this theme's own foot.ini/colors.ini data.
+# `dotsquick` config/templates (./foot, ./niri - previously scattered
+# under a top-level assets/dots/kurukuru, folded in here so this module
+# is self-contained and nothing toggles half of a feature from a file
+# no one remembers exists). Matugen itself - both the service that runs
+# it and its vendored config.toml/templates data - has since moved out
+# to modules/home/services/matugen entirely, since none of it was
+# actually kurukuru-specific. Foot's actual `programs.foot` wiring
+# lives in modules/home/terminal/foot; ./foot here is just this
+# theme's own foot.ini/colors.ini data.
 #
 # Replaces `themes.noctaniri` (Niri + Noctalia Shell) as the desktop
 # shell. The matching login manager swap (Noctalia Greeter -> flutterquick's

@@ -10,21 +10,21 @@
 # `mkEnableOption`'s usual off-by-default) since every currently-shipped
 # template set assumes it's running.
 #
-# The vendored template tree it drives (config.toml + templates/) still
-# physically lives under ../../themes/kurukuru/matugen - it's the only
-# template set that exists right now (dotsquick's, themed "flutterice"),
-# and moving 700K of vendored templates to a new path for a rename alone
-# isn't worth the churn. If a second theme ever wants its own matugen
-# templates, this is the file to teach a `nixtop.activeTheme`-keyed
-# `cases` dispatch (same pattern as terminal/foot/default.nix) - for now
-# there's only one case, so pointing straight at it is simpler and no
-# less correct.
+# The vendored template tree it drives (config.toml + templates/) lives
+# right alongside this module now (dotsquick's, themed "flutterice") -
+# it used to sit under ../../themes/kurukuru/matugen, which made this
+# service reach into a theme's directory for its own data even after
+# the theme stopped owning it. If a second theme ever wants its own
+# matugen templates, this is the file to teach a
+# `nixtop.activeTheme`-keyed `cases` dispatch (same pattern as
+# terminal/foot/default.nix) - for now there's only one case, so
+# pointing straight at it is simpler and no less correct.
 { config, lib, pkgs, inputs, ... }:
 let
   cfg = config.nixtop.services.matugen;
   system = pkgs.stdenv.hostPlatform.system;
 
-  templatesSrcDir = "${inputs.self}/modules/home/themes/kurukuru/matugen";
+  templatesSrcDir = "${inputs.self}/modules/home/services/matugen";
 
   # config.toml is the source of truth for what gets themed and how
   # (18-odd app templates + post_hooks) - rather than hand-transcribing
@@ -59,7 +59,7 @@ in {
       Absolute path to your actual git checkout of this flake (not the
       Nix store copy `inputs.self` resolves to). Used to symlink
       ~/.config/matugen/templates straight into
-      ''${repoPath}/modules/home/themes/kurukuru/matugen/templates, so
+      ''${repoPath}/modules/home/services/matugen/templates, so
       editing a template/apply.sh takes effect without a rebuild, and so
       matugen's own writeback into that tree (see comment below) lands
       somewhere writable. Only needs changing if you clone this repo
@@ -109,7 +109,7 @@ in {
     # instead of the store, so matugen's writeback lands in a real,
     # writable place.
     home.file.".config/matugen/templates".source =
-      config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/home/themes/kurukuru/matugen/templates";
+      config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/home/services/matugen/templates";
 
     # papirus-icons/apply.sh checks for $HOME/.local/share/icons/Papirus
     # and bails with "Papirus Icons are not installed" if it's missing -
