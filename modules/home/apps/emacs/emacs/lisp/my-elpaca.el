@@ -1,9 +1,9 @@
 ;;; my-elpaca.el --- package manager bootstrap -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;; Elpaca: async, git-based package manager. Chosen over package.el
-;; because it can pull straight from GitHub (one-off forks, packages
-;; not on MELPA, etc.) and over straight.el because it's faster and
-;; has cleaner use-package integration in 2025/2026.
+;; because it can pull straight from GitHub (needed for ryo-modal's
+;; extra bindings, one-off forks, etc.) and over straight.el because
+;; it's faster and has cleaner use-package integration in 2025/2026.
 ;;; Code:
 
 (defvar elpaca-installer-version 0.12)

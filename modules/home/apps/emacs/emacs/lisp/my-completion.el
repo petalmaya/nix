@@ -73,11 +73,6 @@
   (corfu-cycle t)
   (corfu-preselect 'prompt)
   (corfu-popupinfo-delay '(0.3 . 0.15))
-  ;; Without this, corfu-auto (via cape-dabbrev) also fires in
-  ;; *Messages*, the minibuffer, help buffers, etc., where dabbrev
-  ;; has nothing sane to scan and throws "setting-constant nil" —
-  ;; shows up as "Corfu detected an error" in *Messages*.
-  (global-corfu-modes '((not messages-buffer-mode help-mode special-mode) t))
   :config
   (corfu-popupinfo-mode 1))
 
