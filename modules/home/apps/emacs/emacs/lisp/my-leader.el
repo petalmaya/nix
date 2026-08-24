@@ -1,20 +1,9 @@
-;;; my-leader.el --- M-SPC leader menu -*- lexical-binding: t; -*-
+;;; my-leader.el --- SPC leader menu -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;
-;; Spacemacs/Doom-style leader via general.el, no evil. Groups mirror
-;; Doom's SPC menu (f=files b=buffers p=project g=git s=search
+;; Spacemacs/Doom-style SPC leader via general.el, no evil. Groups
+;; mirror Doom's SPC menu (f=files b=buffers p=project g=git s=search
 ;; w=windows o=open c=code); commands underneath are vanilla Emacs.
-;;
-;; Bound on M-SPC, on the plain global keymap, rather than SPC on
-;; god-local-mode-map. god-mode (unlike ryo-modal) claims every
-;; printable key directly in its own keymap, SPC included — space is
-;; part of its own chord grammar (e.g. "x SPC b" = C-x b), so there's
-;; no free SPC left in there to repurpose as a leader; trying to
-;; anyway just throws "Key sequence SPC SPC starts with non-prefix
-;; key SPC" and silently drops every leader binding. M-SPC isn't
-;; touched by any of that, so one binding works identically whether
-;; god-local-mode is on or off. (M-SPC is `just-one-space' by
-;; default — unbound below before general claims it as a prefix.)
 ;;
 ;;; Code:
 
@@ -22,10 +11,11 @@
   :ensure (:wait t)
   :demand t
   :config
-  (global-unset-key (kbd "M-SPC")) ; else general can't turn it into a prefix
-
   (general-create-definer my/leader
-    :prefix "M-SPC")
+    :states nil
+    :keymaps '(ryo-modal-mode-map)
+    :prefix "SPC"
+    :global-prefix "M-SPC") ; also reachable from insert mode / non-modal buffers
 
   (my/leader
     "SPC" '(execute-extended-command :wk "M-x")

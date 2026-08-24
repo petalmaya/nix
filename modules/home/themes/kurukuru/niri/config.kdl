@@ -29,6 +29,11 @@ input {
     touch {
         map-to-output "eDP-1"
     }
+    keyboard {
+        xkb {
+            options "ctrl:nocaps"
+        }
+    }
 }
 
 // Noctalia backdrop must sit inside the backdrop layer

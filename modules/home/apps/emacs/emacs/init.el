@@ -9,7 +9,7 @@
 ;;   lisp/my-core.el       sane Emacs defaults (no evil, no vim emulation)
 ;;   lisp/my-ui.el         fonts, theme loading, modeline, which-key, transparency, dashboard
 ;;   lisp/my-completion.el vertico/consult/embark/corfu minibuffer+in-buffer completion
-;;   lisp/my-modal.el      god-mode "command mode" — stock Emacs binds, typed modally
+;;   lisp/my-modal.el      ryo-modal "command mode" — the home-row layout you drew
 ;;   lisp/my-leader.el     general.el SPC leader menu, xah-fly-keys-inspired
 ;;   lisp/my-dev.el        eglot, treesit, magit, project.el, flymake, terminal
 ;;   lisp/my-qml.el        Quickshell/QML editing support (tree-sitter + qmlls)
@@ -41,7 +41,7 @@
 (require 'my-core)       ; editing defaults
 (require 'my-ui)         ; theme, fonts, modeline, transparency, dashboard
 (require 'my-completion) ; vertico/corfu/consult/embark
-(require 'my-modal)      ; god-mode command-mode layout
+(require 'my-modal)      ; ryo-modal command-mode layout
 (require 'my-leader)     ; general.el SPC leader + which-key
 (require 'my-dev)        ; eglot/treesit/magit/project/terminal
 (require 'my-qml)        ; Quickshell/QML editing
