@@ -1,5 +1,7 @@
 [config]
 # Matugen 4.0 Config File for Flutterice Templates
+prefer = "saturation"
+source_color_index = 0
 
 [templates.antigravity]
 input_path = "templates/antigravity/antigravity.json"
