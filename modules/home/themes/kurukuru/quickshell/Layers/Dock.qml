@@ -32,7 +32,34 @@ WlrLayershell {
   // instead of relying on z-order (which was never the actual problem).
   readonly property bool launcherOpenHere: Dat.Launcher.open && Dat.Launcher.outputName == (root.modelData?.name ?? "")
 
-  readonly property bool revealed: !root.launcherOpenHere && (root.desktopSettled || hoverZone.hovered || revealEdge.containsMouse)
+  // Only revealEdge (the flush-to-the-literal-bottom-pixel strip) may
+  // *initiate* a reveal. hoverTarget spans nearly the whole pill
+  // footprint, so letting it initiate too meant hovering anywhere in
+  // the lower ~80px of the screen popped the dock open - it only gets
+  // a say in *sustaining* an already-open dock (so moving the mouse up
+  // onto the visible pill doesn't immediately re-trigger the hide
+  // timer).
+  readonly property bool revealed: !root.launcherOpenHere && (root.desktopSettled || root.contactMade)
+
+  property bool contactMade: false
+
+  Connections {
+    function onContainsMouseChanged() {
+      if (revealEdge.containsMouse)
+        root.contactMade = true;
+    }
+
+    target: revealEdge
+  }
+
+  Connections {
+    function onHoveredChanged() {
+      if (!hoverZone.hovered && !revealEdge.containsMouse)
+        root.contactMade = false;
+    }
+
+    target: hoverZone
+  }
 
   onDesktopFocusedChanged: desktopSettleTimer.restart()
 
@@ -116,16 +143,19 @@ WlrLayershell {
   }
 
   // Thin always-on strip so the pill can reveal itself even while
-  // hidden. The only part of the dock that accepts input outside the
-  // pill's own bounds.
+  // hidden - the only part of the dock that accepts input outside the
+  // pill's own bounds. Flush against the literal bottom edge and no
+  // wider than the pill itself (notch-style), so it takes an actual
+  // touch of the screen edge under the dock to wake it, not just a
+  // pass through the general bottom-of-screen area.
   MouseArea {
     id: revealEdge
 
     anchors.bottom: parent.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
-    height: 6
+    anchors.horizontalCenter: parent.horizontalCenter
+    height: 2
     hoverEnabled: true
+    width: pill.width
   }
 
   // Same footprint as `pill`, but pinned at the fully-revealed

@@ -14,7 +14,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COLOR_FILE="${SCRIPT_DIR}/colors.sh"
 ORIGINALS_DIR="${SCRIPT_DIR}/originals"
-TARGET_DIR="${BLACKLINGERIE_DIR:-/home/alice/.var/app/com.usebottles.bottles/data/bottles/bottles/Doki/drive_c/users/steamuser/Desktop/Monika/game/mod_assets/monika/c/kroniichiiwa_blacklingerie_jacket}"
+TARGET_DIR="${BLACKLINGERIE_DIR:-/home/alice/Monika/game/mod_assets/monika/c/kroniichiiwa_blacklingerie_jacket}"
 
 # ── Load matugen-generated colors ──────────────────────────────────────────
 if [[ -f "$COLOR_FILE" ]]; then
