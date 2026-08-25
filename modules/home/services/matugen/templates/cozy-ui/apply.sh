@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COLOR_FILE="${SCRIPT_DIR}/colors.sh"
 ASSETS_DIR="${SCRIPT_DIR}/assets"
-TARGET_DIR="${COZY_UI_DIR:-/home/alice/.var/app/com.usebottles.bottles/data/bottles/bottles/Doki/drive_c/users/steamuser/Desktop/Monika/game/Submods/CozyUI/themes/active}"
+TARGET_DIR="${COZY_UI_DIR:-/home/alice/Monika/game/Submods/CozyUI/themes/active}"
 
 # ── Seed pristine base assets on first run ─────────────────────────────────
 # Mirrors blacklingerie/apply.sh's originals/ trick: keep a pristine copy of

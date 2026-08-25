@@ -229,6 +229,7 @@ binds {
     "Mod+Shift+D" { spawn "qs" "ipc" "call" "notch" "toggle"; }
     "Mod+Shift+S" { spawn "qs" "ipc" "call" "notch" "workspaces"; }
     "Mod+Shift+X" { spawn "qs" "ipc" "call" "notch" "media"; }
+    "Ctrl+Shift+D" { spawn "qs" "ipc" "call" "dual" "toggle"; }
 
 
     // Screenshot (Grim)

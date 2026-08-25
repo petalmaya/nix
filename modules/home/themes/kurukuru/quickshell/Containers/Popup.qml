@@ -35,14 +35,22 @@ Item {
     }
   }
 
-  Component.onCompleted: {
-    Dat.NotifServer.server.onNotification.connect(e => {
-      pushNotif(e);
+  // Named (not inline) so it can be disconnected in onDestruction below -
+  // Popup.qml is instantiated per-screen, but NotifServer.server is a
+  // singleton, so a screen going away (monitor unplugged, Variants
+  // rebuilding) left its old handler connected to a now-destroyed
+  // popupRect, which is where the "pushNotif of object [null]" spam
+  // came from.
+  function onNotifServerNotification(e) {
+    popupRect.pushNotif(e);
 
-      // issue #30 where spotify updates a notification
-      e.bodyChanged.connect(() => pushNotif(e));
-      e.summaryChanged.connect(() => pushNotif(e));
-    });
+    // issue #30 where spotify updates a notification
+    e.bodyChanged.connect(() => popupRect.pushNotif(e));
+    e.summaryChanged.connect(() => popupRect.pushNotif(e));
+  }
+
+  Component.onCompleted: {
+    Dat.NotifServer.server.onNotification.connect(popupRect.onNotifServerNotification);
 
     stack.depthChanged.connect(() => {
       if (stack.depth == 0 && Dat.Globals.notifState(popupRect.outputName) == "POPUP") {
@@ -50,6 +58,10 @@ Item {
         Dat.Globals.setNotifState(popupRect.outputName, "HIDDEN");
       }
     });
+  }
+
+  Component.onDestruction: {
+    Dat.NotifServer.server.onNotification.disconnect(popupRect.onNotifServerNotification);
   }
 
   StackView {
