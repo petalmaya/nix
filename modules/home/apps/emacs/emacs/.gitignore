@@ -1,8 +1,49 @@
+# Elpaca (package manager) build output
 elpaca/
+
+# Runtime state (no-littering style dirs)
 etc/
 var/
+
+# Native compilation cache
 eln-cache/
+
+# Generated / personal files
 custom.el
+custom-post.el
+custom-post.org
+env.el
 *.elc
+
+# Centaur-derived runtime state (merged from upstream .gitignore)
+*.db
+*.sqlite
+*.log
+*.tmp
+transient/
+tabspaces/
+tabsession.el
+tree-sitter/
+auto-save-list/
+server/
+url/
+image-dired/
+nov-places
+places
+recentf
+bookmarks
+history
+.org-id-locations
+.pdf-view-restore
+.last-package-update-day
+.persistent-scratch
+.dap-*
+.agent-shell/
+
+# Eshell: keep alias tracked, ignore the history/lastdir files
+eshell/history
+eshell/lastdir
+
+# Misc
 result
 .direnv/

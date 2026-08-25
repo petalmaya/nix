@@ -1,0 +1,151 @@
+;; init-shell.el --- Initialize shell configurations.	-*- lexical-binding: t -*-
+
+;; Copyright (C) 2006-2026 Vincent Zhang
+
+;; Author: Vincent Zhang <seagle0128@gmail.com>
+;; URL: https://github.com/seagle0128/.emacs.d
+
+;; This file is not part of GNU Emacs.
+;;
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 3, or
+;; (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+;; Floor, Boston, MA 02110-1301, USA.
+;;
+
+;;; Commentary:
+;;
+;; Shell configurations.
+;;
+
+;;; Code:
+
+(eval-when-compile
+  (require 'init-const))
+
+(use-package shell
+  :ensure nil
+  :hook ((shell-mode . my/shell-mode-hook)
+         (comint-output-filter-functions . comint-strip-ctrl-m))
+  :init
+  (setq system-uses-terminfo nil)
+
+  (with-no-warnings
+    (defun my/shell-simple-send (proc command)
+      "Various PROC COMMANDs pre-processing before sending to shell."
+      (cond
+       ;; Checking for clear command and execute it.
+       ((string-match "^[ \t]*clear[ \t]*$" command)
+        (comint-send-string proc "\n")
+        (erase-buffer))
+       ;; Checking for man command and execute it.
+       ((string-match "^[ \t]*man[ \t]*" command)
+        (comint-send-string proc "\n")
+        (setq command (replace-regexp-in-string "^[ \t]*man[ \t]*" "" command))
+        (setq command (replace-regexp-in-string "[ \t]+$" "" command))
+        ;;(message (format "command %s command" command))
+        (funcall 'man command))
+       ;; Send other commands to the default handler.
+       (t (comint-simple-send proc command))))
+
+    (defun my/shell-mode-hook ()
+      "Shell mode customization."
+      (local-set-key '[up] 'comint-previous-input)
+      (local-set-key '[down] 'comint-next-input)
+      (local-set-key '[(shift tab)] 'comint-next-matching-input-from-input)
+
+      (ansi-color-for-comint-mode-on)
+      (setq comint-input-sender 'my/shell-simple-send))))
+
+;; ANSI & XTERM 256 color support
+(use-package xterm-color
+  :defines (compilation-environment
+            eshell-preoutput-filter-functions
+            eshell-output-filter-functions)
+  :functions (compilation-filter my/advice-compilation-filter xterm-color-filter)
+  :init
+  ;; For shell and interpreters
+  (setenv "TERM" "xterm-256color")
+  (setq comint-output-filter-functions
+        (remove 'ansi-color-process-output comint-output-filter-functions))
+  (add-hook 'comint-preoutput-filter-functions 'xterm-color-filter)
+  (add-hook 'shell-mode-hook
+            (lambda ()
+              ;; Disable font-locking to improve performance
+              (font-lock-mode -1)
+              ;; Prevent font-locking from being re-enabled
+              (make-local-variable 'font-lock-function)
+              (setq font-lock-function #'ignore)))
+
+  ;; For eshell
+  (with-eval-after-load 'esh-mode
+    (add-hook 'eshell-before-prompt-hook
+              (lambda ()
+                (setq xterm-color-preserve-properties t)))
+    (add-to-list 'eshell-preoutput-filter-functions 'xterm-color-filter)
+    (setq eshell-output-filter-functions
+          (remove 'eshell-handle-ansi-color eshell-output-filter-functions)))
+
+  ;; For compilation buffers
+  (setq compilation-environment '("TERM=xterm-256color"))
+  (defun my/advice-compilation-filter (fn proc string)
+    (funcall fn proc
+             (if (eq major-mode 'rg-mode) ; compatible with `rg'
+                 string
+               (xterm-color-filter string))))
+  (advice-add 'compilation-filter :around #'my/advice-compilation-filter)
+  (advice-add 'gud-filter :around #'my/advice-compilation-filter))
+
+;; Better terminal emulator
+(use-package ghostel
+  :functions ghostel-send-key
+  :custom
+  (ghostel-module-directory (expand-file-name ".cache" user-emacs-directory))
+  (ghostel-shell (or (executable-find "pwsh") (getenv "SHELL") "/bin/sh"))
+  (ghostel-term (if sys/win32p "xterm-256color" "xterm-ghostty"))
+  :bind (("C-x m" . ghostel)
+         :map ghostel-semi-char-mode-map
+         ("C-s" . consult-line)
+         ("C-k" . my/ghostel-send-C-k-and-kill)
+         ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
+         ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl")))
+         :map project-prefix-map
+         ("m" . ghostel-project)
+         ("M" . ghostel-project-list-buffers))
+  :config
+  (defun my/ghostel-send-C-k-and-kill ()
+    "Send `C-k' to ghostel.
+Like normal Emacs `C-k'.  Kill to end of line and put content in kill-ring."
+    (interactive)
+    (kill-ring-save (point) (line-end-position))
+    (ghostel-send-key "k" "ctrl"))
+
+  (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
+  (add-to-list 'project-switch-commands '(ghostel-project-list-buffers "Ghostel buffers") t)
+  (add-to-list 'ghostel-eval-cmds '("magit-status-setup-buffer" magit-status-setup-buffer)))
+
+;; Shell Pop
+(when emacs/>=29p
+  (use-package popterm
+    :functions childframe-workable-p
+    :bind (("C-`"   . popterm-toggle)
+           ("C-M-`" . popterm-toggle-cd)
+           ([f9]    . popterm-window-toggle))
+    :hook (after-init . popterm-global-mode)
+    :init (setq popterm-backend 'ghostel
+                popterm-scope 'project)))
+
+(provide 'init-shell)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; init-shell.el ends here
