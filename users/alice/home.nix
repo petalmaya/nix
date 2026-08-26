@@ -1,8 +1,3 @@
-# Alice's Home Manager configuration.
-#
-# All modules are defined under modules/home/ and registered in
-# modules/home/default.nix.  This file just flips the enable switches and
-# adds any packages/settings that don't belong in a dedicated module.
 { config, pkgs, lib, inputs, unstable-pkgs, ... }:
 
 {
@@ -10,10 +5,6 @@
   home.homeDirectory = "/home/alice";
 
   nixtop = {
-    # Moved off Noctalia Shell and onto Kuru Kuru Bar (Quickshell) - see
-    # modules/home/themes/kurukuru. themes.noctaniri module is left in the
-    # tree (imported, just unused) in case this needs rolling back.
-    themes.noctaniri.enable = false;
     themes.kurukuru.enable = true;
     terminal.foot.enable = true;
     terminal.zsh.enable = true;
@@ -34,18 +25,17 @@
   };
 
   home.packages = with pkgs; [
-    # Misc
-    links2 # Side Browsers
-    unstable-pkgs.tutanota-desktop keepassxc steam # Mail & Gaming
-    mousepad nautilus # Acker
+    links2 # side browser
+    unstable-pkgs.tutanota-desktop keepassxc steam # mail & gaming
+    mousepad nautilus # acker
     mpvpaper hyprpicker
-    foot # Terminal Emulator's
-    fastfetch hyfetch # Fetch
-    chafa libsixel ripgrep btop # Terminal things
-    transmission_4-gtk nicotine-plus # Legal things
-    stack # Idk i don rembere
-    krita gimp # Photo editing
-    cinny-desktop weechat # Non Discord chat
+    foot # terminal emulator's
+    fastfetch hyfetch # fetch
+    chafa libsixel ripgrep btop # terminal things
+    transmission_4-gtk nicotine-plus # legal things
+    stack # idk i don rembere
+    krita gimp # photo editing
+    cinny-desktop weechat # non discord chat
     blockbench tree bitwarden-cli
     adw-gtk3
 
@@ -59,31 +49,27 @@
     loupe
 
     # Utilities
-    swaybg          # Wallpaper
-    libnotify # Notifications handled by Mako module
-    grim slurp      # Screenshots
-    swaylock        # Lockscreen
-    brightnessctl   # Brightness keys
-    wl-clipboard    # Clipboard
+    swaybg
+    libnotify
+    grim slurp # screenshots
+    swaylock
+    brightnessctl
+    wl-clipboard
     playerctl gvfs
-    pulseaudio      # For 'pactl' volume commands
-    capitaine-cursors # Cursor
-    git # Its git
-    unzip p7zip     # The zippers
+    pulseaudio # for pactl
+    capitaine-cursors
+    git # its git
+    unzip p7zip # the zippers
     wget curl # -.-
     polkit_gnome
-    age sops # Secrets and encryption
+    age sops
 
-    # Unstable
     unstable-pkgs.ani-cli
-    unstable-pkgs.antigravity-ide #AI Tool
+    unstable-pkgs.antigravity-ide # ai tool
     unstable-pkgs.yt-dlp
   ];
-  # gtk4.theme must be explicitly nulled here because redpine/noctaniri both
-  # set it, and HM currently warns if it's set to any value for GTK4.
   gtk.gtk4.theme = null;
   programs.yazi.shellWrapperName = "y";
-  # Keep zsh config in XDG_CONFIG_HOME instead of the home directory root.
   programs.zsh.dotDir = "${config.xdg.configHome}/zsh";
 
   programs.mpv = {

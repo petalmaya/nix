@@ -1,23 +1,16 @@
 { pkgs, lib, config, inputs, ... }:
 
 lib.mkIf config.nixtop.themes.noctaniri.enable {
-  # epireyn/niri-flake's programs.niri module (see flake.nix's `niri`
-  # input comment). `config` is niri-flake's option name for what would
-  # be `extraConfig` on Home Manager's own built-in module.
   programs.niri = {
     enable = true;
     package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
     config = ''
-      // Base Niri configuration
       ${builtins.readFile ./config.kdl}
 
-      // Dynamic/Nix-specific extra options
       spawn-at-startup "dbus-update-activation-environment" "--systemd" "--all"
-      // spawn-at-startup "swaybg" "-i" "${inputs.self}/assets/wallpaper/cute_bg.png" "-m" "fill"
       spawn-at-startup "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
       spawn-at-startup "noctalia"
 
-      // XWayland satellite configuration
       xwayland-satellite {
           path "${pkgs.xwayland-satellite}/bin/xwayland-satellite"
       }

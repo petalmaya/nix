@@ -1,45 +1,42 @@
 #+author: Alice Liddell
 #+options: toc:nil
 
-#+CAPTION: screenie of noctniri
+#+CAPTION: a screenie
 [[file:noctaniri.png]]
 
 * What?
-my main nixos configuration! this is what runs my cozy daily setup on wonderland (my main laptop) and rabbit (my test machine) ♡
+my nixos configuration! this is what runs my cozy daily setup on wonderland (my main laptop) and rabbit (my test machine) ♡
 
-i like niri oh and emacs :3
-* Why?
-wouldnt you like to know!
+i'm big on declarability, so everything lives here — the desktop shell, the terminal, emacs, even the login greeter. i like niri oh and emacs :3
 
 * Where?
-here is how everything is organized in my little wonderland:
+here is how everything is organized:
 
 - =hosts/= — machine configurations
-  - =common/= — shared config for all my systems (base config, users, audio, custom fonts, openssh, etc.)
-  - =wonderland/= — my main laptop (x86_64-linux, cozy swayfx/niri desktop setup)
-  - =rabbit/= — my test machine (x86_64-linux, for experimenting without breaking things!)
+  - =common/= — shared config for all my systems
+  - =wonderland/= — my main laptop
+  - =rabbit/= — my test machine, for experimenting without breaking things!
 
 - =modules/= — my custom nixos and home manager modules
-  - =nixos/= — system-level modules (cachix, flatpak, tor, etc.)
+  - =nixos/= — system level stuff (cachix, podman, the greetd greeter, etc.)
   - =home/= — home manager configuration:
-    - =apps/= — fetch, gaming, rofi, spacemacs, yazi, zen, etc.
-    - =services/= — flatpak, mako, mpd
-    - =terminal/= — foot terminal emulator, plus my shell & multiplexer setup (zsh, tmux, zellij)
-    - =wm/= — niri and sway configs
-    - =themes/= — custom visual themes (noctaniri, pureniri, loveniri, etc.)
+    - =apps/= — browsers, emacs, gaming, yazi, fetch, etc.
+    - =services/= — mako, mpd, matugen theming, flatpaks
+    - =terminal/= — foot, zsh, zellij, tmux
+    - =themes/= — kurukuru (niri + quickshell), noctaniri, redpine, rosepine-dark
 
 - =users/= — home manager user configs
-  - =alice/= — my main profile (used on wonderland and rabbit)
-  - =lewis/= — secondary user setup for testing and multitasking
+  - =alice/= — me! (used on wonderland and rabbit)
+  - =lewis/= — secondary user for testing and multitasking
 
-- =secrets/= — sops-encrypted secrets (ssh keys, passwords, wifi configurations, etc.)
+- =secrets/= — sops-encrypted secrets
 
 * How?
 
 ** Quickstart (for me ofc)
 if i ever need to rebuild my system in a hurry:
 #+begin_src sh
-  git clone https://codeberg.org/sheep/nix.git
+  git clone https://github.com/petalmaya/nix.git
   cd nix
   nixsw
 #+end_src
@@ -72,13 +69,12 @@ my actual secrets are ignored by git, so you should create your own using the te
   sops secrets/secrets.yaml
 #+end_src
 
-*** 4. copy your keys where nixos-activate expects them
-the system activation script looks for the key at =/var/lib/nixsecrets/keys.txt=.
-before you run your first rebuild, put the key there:
+*** 4. copy your key where sops-nix expects it
+before your first rebuild, put the key at =/var/lib/sops-nix/keys.txt= :
 #+begin_src sh
-  sudo mkdir -p /var/lib/nixsecrets
-  sudo cp ~/.config/sops/age/keys.txt /var/lib/nixsecrets/keys.txt
-  sudo chmod 600 /var/lib/nixsecrets/keys.txt
+  sudo mkdir -p /var/lib/sops-nix
+  sudo cp ~/.config/sops/age/keys.txt /var/lib/sops-nix/keys.txt
+  sudo chmod 600 /var/lib/sops-nix/keys.txt
 #+end_src
 
 *** 5. build!

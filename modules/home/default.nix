@@ -1,43 +1,31 @@
-# modules/home/default.nix — Home Manager module registry
-#
-# This file is the single entry-point imported by flake.nix as a shared
-# Home Manager module.  Every sub-module is listed here so individual user
-# home.nix files only need to toggle options (nixtop.<category>.<name>.enable)
-# without worrying about importing the underlying files themselves.
 { ... }:
 
 {
   imports = [
-    # Fetch / system info
     ./apps/fetch
 
-    # Browsers
     ./apps/floorp.nix
     ./apps/librewolf.nix
     ./apps/firefox-esr.nix
     ./apps/zen.nix
 
-    # Desktop apps
     ./apps/spicetify.nix
     ./apps/gaming.nix
     ./apps/rofi
     ./apps/yazi.nix
     ./apps/emacs
 
-    # Background services
     ./services/flatpak.nix
     ./services/mako
     ./services/matugen
     ./services/mpd.nix
 
-    # Terminal environment
     ./terminal/foot
     ./terminal/zsh
     ./terminal/tmux
     ./terminal/zellij
 
-    # Themes
-    ./themes/active.nix    # nixtop.activeTheme - switch/case dispatch helper
+    ./themes/active.nix
     ./themes/rosepine-dark
     ./themes/redpine
     ./themes/noctaniri

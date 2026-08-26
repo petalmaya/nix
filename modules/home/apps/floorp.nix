@@ -22,7 +22,7 @@
       };
     };
 
-    # Symlink Floorp config to Firefox config so it picks up the managed profile
+    # floorp reads its profile from the firefox dir
     home.file.".floorp".source = config.lib.file.mkOutOfStoreSymlink "${config.xdg.configHome}/mozilla/firefox";
   };
 }

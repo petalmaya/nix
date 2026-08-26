@@ -1,4 +1,3 @@
-# Gaming tools and launchers.
 { pkgs, lib, config, unstable-pkgs, ... }:
 
 {
