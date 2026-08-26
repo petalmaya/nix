@@ -1,11 +1,9 @@
 { config, lib, ... }:
 
 {
-  # WiFi password managed via sops-nix
   sops.secrets.wifi_password = {};
 
-  # Activation script: writes a NetworkManager keyfile using the sops secret
-  # so the PSK is never stored in plain text in the Nix store.
+  # nm keyfile written at activation so the psk never hits the store
   system.activationScripts.wifiKeyfile = {
     deps = [ "setupSecrets" ];
     text = ''

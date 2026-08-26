@@ -8,14 +8,7 @@
       enable = true;
       enableZshIntegration = true;
     };
-    # Skip on a kurukuru host: matugen owns ~/.config/starship.toml there
-    # (programs.matugen.templates.starship in
-    # modules/home/themes/kurukuru/default.nix writes it on every
-    # re-theme) - this xdg.configFile was a read-only Nix store symlink
-    # at the exact same path, so matugen's writes were failing with
-    # "file is Read-Only". Until matugen has run once on a fresh install,
-    # starship just falls back to its own built-in defaults (unstyled but
-    # not broken) rather than this file.
+    # matugen owns starship.toml on kurukuru hosts
     xdg.configFile."starship.toml" = lib.mkIf (!(config.nixtop.themes.kurukuru.enable or false)) {
       source = ./starship.toml;
     };
@@ -57,11 +50,9 @@
       initContent = builtins.readFile ./zshrc;
 
       shellAliases = {
-        # Nix
         nixsw = "sudo nixos-rebuild switch --flake .#${if config ? osConfig then config.osConfig.networking.hostName else "wonderland"}";
         nixup = "nix flake update";
 
-        # Convenience
         ls  = "ls --color=auto";
         ll  = "ls -lah --color=auto";
         ".." = "cd ..";
@@ -70,20 +61,18 @@
       };
     };
 
-    # Zoxide (smart cd)
     programs.zoxide = {
       enable = true;
       enableZshIntegration = true;
     };
 
-    # Direnv
     programs.direnv = {
       enable = true;
       enableZshIntegration = true;
       nix-direnv.enable = true;
     };
 
-    # Fzf – gruvbox dark colours
+    # gruvbox dark
     programs.fzf = {
       enable = true;
       enableZshIntegration = true;
@@ -94,7 +83,6 @@
       ];
     };
 
-    # bat (pretty cat)
     programs.bat = {
       enable = true;
       config.theme = "gruvbox-dark";

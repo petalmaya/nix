@@ -11,10 +11,7 @@
   networking.hostName = "wonderland";
   networking.extraHosts = "127.0.0.1 wonderland";
 
-  # Enable desktop environment and graphical configuration
   nixtop.desktop.enable = true;
-
-  # Enable tor/nginx service
   nixtop.tor.enable = false;
 
   boot.initrd.kernelModules = [ "i915" ];
@@ -26,7 +23,6 @@
       intel-compute-runtime
   ];
 
-  # Locale / Encoding
   i18n = {
     defaultLocale = "en_US.UTF-8";
     supportedLocales = [
@@ -36,7 +32,6 @@
 
   hardware.enableAllFirmware = true;
 
-  # Enable Bluetooth
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
@@ -48,6 +43,6 @@
   };
   services.blueman.enable = true;
 
-  # Fix TPM0 systemd boot timeout (Old device.)
+  # old laptop, tpm0 hangs the boot for ages otherwise
   systemd.tpm2.enable = false;
 }

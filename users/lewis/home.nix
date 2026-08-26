@@ -4,7 +4,6 @@
   home.username = "lewis";
   home.homeDirectory = "/home/lewis";
 
-  # Enable desired modules via options
   nixtop = {
     themes.noctaniri.enable = true;
     terminal.foot.enable = true;

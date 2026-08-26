@@ -11,7 +11,6 @@
         themePackages = [ pkgs.plymouth-blahaj-theme ];
       };
 
-      # Suppress boot logs for a cleaner Plymouth transition
       consoleLogLevel = 0;
       initrd.verbose = false;
 

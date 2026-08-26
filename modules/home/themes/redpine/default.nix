@@ -1,7 +1,12 @@
-# Redpine theme: Rose Pine GTK colours with Papirus icons and Capitaine cursors,
-# paired with a Sway/Waybar/Wofi desktop stack.
+# rose pine gtk + sway/waybar/wofi
 { config, lib, pkgs, ... }: {
   options.nixtop.themes.redpine.enable = lib.mkEnableOption "Redpine Theme";
+
+  imports = [
+    ./sway
+    ./waybar
+    ./wofi
+  ];
 
   config = lib.mkIf config.nixtop.themes.redpine.enable {
     gtk = {
@@ -14,23 +19,15 @@
         name = "Papirus-Dark";
         package = pkgs.papirus-icon-theme;
       };
-      # Null-out GTK4 theme to silence HM's deprecation warning.
       gtk4.theme = null;
     };
 
     home.pointerCursor = {
-      enable = true; # deprecation: relying on the option's presence to enable it is deprecated as of HM's newer releases
+      enable = true;
       name = "capitaine-cursors";
       package = pkgs.capitaine-cursors;
       size = 24;
-      gtk.enable = true;  # propagate cursor to GTK apps as well
+      gtk.enable = true;
     };
   };
-
-  # Desktop environment sub-modules for this theme's compositor stack.
-  imports = [
-    ./sway
-    ./waybar
-    ./wofi
-  ];
 }
