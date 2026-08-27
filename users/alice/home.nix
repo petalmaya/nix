@@ -5,7 +5,7 @@
   home.homeDirectory = "/home/alice";
 
   nixtop = {
-    themes.kurukuru.enable = true;
+    themes.manguru.enable = true;
     terminal.foot.enable = true;
     terminal.zsh.enable = true;
     # terminal.tmux.enable = true;

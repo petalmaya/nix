@@ -57,6 +57,14 @@ input_path = "templates/niri/niri.kdl"
 output_path = "~/.config/niri/flutterice.kdl"
 post_hook = "bash ~/.config/matugen/templates/niri/apply.sh"
 
+[templates.mango]
+input_path = "templates/mango/mango.conf"
+output_path = "~/.config/mango/flutterice.conf"
+# manguru.conf already sources flutterice.conf statically (version
+# controlled, unlike niri's include-injection apply.sh), so this only
+# needs to kick mango into picking the new colours up
+post_hook = "mmsg dispatch reload_config 2>/dev/null || true"
+
 [templates.papirus_icons]
 input_path = "templates/papirus-icons/colors"
 output_path = "templates/papirus-icons/colors-final"

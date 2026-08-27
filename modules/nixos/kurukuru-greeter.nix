@@ -1,5 +1,5 @@
 # greetd session running kurukurubar's greeter.qml
-{ lib, pkgs, config, inputs, ... }:
+{ lib, pkgs, config, inputs, unstable-pkgs, ... }:
 let
   cfg = config.programs.kurukurubar.greeter;
   system = pkgs.stdenv.hostPlatform.system;
@@ -26,12 +26,17 @@ let
     ${greeterBin} &
     EOF
   '';
+
+  mangoGreeterConf = pkgs.writeText "mango-greeter.conf" ''
+    exec-once=${lib.getExe pkgs.swaybg} -i ${greeterWallpaper} -m fill
+    exec-once=${greeterBin}
+  '';
 in
 {
   options.programs.kurukurubar.greeter = {
     enable = lib.mkEnableOption "greetd session running kurukurubar's greeter.qml";
     compositor = lib.mkOption {
-      type = lib.types.enum [ "niri" "labwc" ];
+      type = lib.types.enum [ "niri" "labwc" "mango" ];
       default = "niri";
       description = "Which compositor runs the greeter session itself.";
     };
@@ -46,6 +51,8 @@ in
         command =
           if cfg.compositor == "niri"
           then "${lib.getExe pkgs.niri} --config ${niriGreeterConf}"
+          else if cfg.compositor == "mango"
+          then "${lib.getExe unstable-pkgs.mango} -c ${mangoGreeterConf}"
           else "${lib.getExe' pkgs.labwc "labwc"} -C ${labwcGreeterConf}";
       };
     };

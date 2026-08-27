@@ -7,6 +7,7 @@
     "${inputs.self}/modules/nixos/nix-ld.nix"
     "${inputs.self}/modules/nixos/noctalia-greeter.nix"
     "${inputs.self}/modules/nixos/plymouth.nix"
+    "${inputs.self}/modules/nixos/mango-session.nix"
   ];
 
   options = {
@@ -88,15 +89,11 @@
 
     (lib.mkIf config.nixtop.desktop.enable {
       nixtop.noctalia-greeter.enable = false;
+      nixtop.mango-session.enable = true;
       programs.kurukurubar.greeter = {
         enable = true;
-        compositor = "niri";
+        compositor = "mango";
       };
-
-      # nothing else registers a wayland session for the greeter to find
-      services.displayManager.sessionPackages = [
-        inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable
-      ];
 
       # /var/empty isn't writable, greeter needs a real home for its config
       users.users.greeter = {
