@@ -24,6 +24,11 @@ WlrLayershell {
       if (match)
         return match;
     }
+    if (Dat.MangoWC.active && Dat.MangoWC.focusedOutput) {
+      const match = Quickshell.screens.find(s => s.name == Dat.MangoWC.focusedOutput);
+      if (match)
+        return match;
+    }
     return Quickshell.screens[0] ?? null;
   }
 

@@ -85,13 +85,14 @@ Rectangle {
       }
     }
     onWheel: event => {
-      if (!Dat.Niri.active) {
+      const backend = Dat.Niri.active ? Dat.Niri : (Dat.MangoWC.active ? Dat.MangoWC : null);
+      if (!backend) {
         return;
       }
       if (event.angleDelta.y > 0) {
-        Dat.Niri.focusPrev(root.outputName);
+        backend.focusPrev(root.outputName);
       } else {
-        Dat.Niri.focusNext(root.outputName);
+        backend.focusNext(root.outputName);
       }
     }
   }

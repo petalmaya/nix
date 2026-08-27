@@ -11,21 +11,26 @@ import qs.Generics as Gen
 // wlr-screencopy per workspace, a real chunk of new plumbing, flagged
 // as a known gap in handoff.md.
 //
-// niri-only - Data/MangoWC.qml only exposes a single currentWorkspace
-// string with no list, so there's nothing to grid there yet.
+// Works against whichever backend is active - Niri.workspaces and
+// MangoWC.workspaces are both keyed maps of niri-shaped workspace objects.
 Item {
   id: root
 
   signal requestFocus
 
   readonly property string outputName: Dat.Launcher.outputName
+  readonly property bool backendActive: Dat.Niri.active || Dat.MangoWC.active
+  readonly property var backend: Dat.Niri.active ? Dat.Niri : Dat.MangoWC
 
   // just "how many tiles do we know about for this output", not a
   // hardcoded grid size
   readonly property var workspacesForOutput: {
+    if (!root.backendActive)
+      return [];
+
     const list = [];
-    for (const id in Dat.Niri.workspaces) {
-      const w = Dat.Niri.workspaces[id];
+    for (const id in root.backend.workspaces) {
+      const w = root.backend.workspaces[id];
       if (w.output == root.outputName)
         list.push(w);
     }
@@ -33,7 +38,7 @@ Item {
     return list;
   }
 
-  readonly property int currentIdx: Dat.Niri.workspaceFor(root.outputName)
+  readonly property int currentIdx: root.backendActive ? root.backend.workspaceFor(root.outputName) : 0
   // keyboard cursor into workspacesForOutput, separate from currentIdx
   // so arrowing doesn't switch anything until Enter - same "browse,
   // then commit" shape as LauncherApps.qml's list.currentIndex
@@ -41,7 +46,7 @@ Item {
   readonly property int columns: grid.columns
 
   function switchTo(idx) {
-    Dat.Niri.setCurrentTag(idx, root.outputName);
+    root.backend.setCurrentTag(idx, root.outputName);
     Dat.Launcher.hide();
   }
 
@@ -58,7 +63,7 @@ Item {
     root.selectedIndex = idx >= 0 ? idx : (root.workspacesForOutput.length > 0 ? 0 : -1);
   }
 
-  implicitHeight: Dat.Niri.active ? grid.implicitHeight : fallback.implicitHeight
+  implicitHeight: root.backendActive ? grid.implicitHeight : fallback.implicitHeight
 
   Keys.onLeftPressed: root.selectedIndex = Math.max(0, root.selectedIndex - 1)
   Keys.onRightPressed: root.selectedIndex = Math.min(root.workspacesForOutput.length - 1, root.selectedIndex + 1)
@@ -78,8 +83,8 @@ Item {
     color: Dat.Colors.current.on_surface_variant
     font.pointSize: 10
     horizontalAlignment: Text.AlignHCenter
-    text: "Workspace switching needs niri"
-    visible: !Dat.Niri.active
+    text: "Workspace switching needs niri or mango"
+    visible: !root.backendActive
     width: parent.width
     wrapMode: Text.Wrap
   }
@@ -90,7 +95,7 @@ Item {
     columns: 5
     columnSpacing: 8
     rowSpacing: 8
-    visible: Dat.Niri.active
+    visible: root.backendActive
     width: parent.width
 
     Repeater {
@@ -104,10 +109,13 @@ Item {
 
         readonly property bool current: tile.modelData.idx == root.currentIdx
         readonly property bool selected: tile.index == root.selectedIndex
+        // mango-only field - always undefined (falsy) on niri, so this
+        // just never lights up there
+        readonly property bool urgent: !!tile.modelData.is_urgent
 
         Layout.fillWidth: true
         Layout.preferredHeight: 64
-        border.color: tile.current ? Dat.Colors.current.primary : (tile.selected ? Dat.Colors.current.outline : "transparent")
+        border.color: tile.urgent ? Dat.Colors.current.error : (tile.current ? Dat.Colors.current.primary : (tile.selected ? Dat.Colors.current.outline : "transparent"))
         border.width: 2
         color: tile.current ? Dat.Colors.current.primary_container : (tile.selected ? Dat.Colors.current.surface_container_high : Dat.Colors.current.surface_container)
         radius: Dat.Radius.lgSm

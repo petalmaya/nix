@@ -47,6 +47,9 @@ Singleton {
     if (Dat.Niri.active && Dat.Niri.focusedOutput) {
       return Dat.Niri.focusedOutput;
     }
+    if (Dat.MangoWC.active && Dat.MangoWC.focusedOutput) {
+      return Dat.MangoWC.focusedOutput;
+    }
     return Quickshell.screens[0]?.name ?? "";
   }
 
