@@ -19,6 +19,21 @@ let
       '';
     };
 
+    # same foot theme as kurukuru, just under mango instead of niri - the
+    # look isn't changing, so this reuses kurukuru's files rather than
+    # forking a copy
+    manguru = {
+      configFile = {
+        "foot/foot.ini".source = "${inputs.self}/modules/home/themes/kurukuru/foot/foot.ini";
+        "foot/colors.ini".source = "${inputs.self}/modules/home/themes/kurukuru/foot/colors.ini";
+        "foot/themes/noctalia".source = "${inputs.self}/modules/home/themes/kurukuru/foot/themes/noctalia";
+      };
+      activation = ''
+        $DRY_RUN_CMD mkdir -p $HOME/.config/foot/themes
+        $DRY_RUN_CMD [ -e "$HOME/.config/foot/themes/flutterice" ] || $DRY_RUN_CMD cp "${inputs.self}/modules/home/themes/kurukuru/foot/themes/flutterice" "$HOME/.config/foot/themes/flutterice"
+      '';
+    };
+
     default = {
       configFile."foot/foot.ini".source = ./foot.ini;
       activation = ''

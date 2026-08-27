@@ -30,5 +30,6 @@
     ./themes/redpine
     ./themes/noctaniri
     ./themes/kurukuru
+    ./themes/manguru
   ];
 }
