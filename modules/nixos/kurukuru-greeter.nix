@@ -37,7 +37,7 @@ in
     enable = lib.mkEnableOption "greetd session running kurukurubar's greeter.qml";
     compositor = lib.mkOption {
       type = lib.types.enum [ "niri" "labwc" "mango" ];
-      default = "niri";
+      default = "mango";
       description = "Which compositor runs the greeter session itself.";
     };
   };
