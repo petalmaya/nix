@@ -106,7 +106,7 @@ Singleton {
     }
 
     function onReadyToLaunch() {
-      const cmd = root.selectedSession?.exec ?? ["niri", "--session"];
+      const cmd = root.selectedSession?.exec ?? ["mango"];
       Greetd.launch(cmd);
     }
   }
