@@ -118,10 +118,12 @@ Item {
                   Rectangle {
                     required property int index
                     property int workspace: Dat.MangoWC.active ? Dat.MangoWC.currentWorkspace : Dat.Niri.workspaceFor(root.outputName)
+                    // mango-only, always undefined on niri
+                    property bool urgent: !!(Dat.MangoWC.workspaces[`${root.outputName}-${index + 1}`]?.is_urgent)
 
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-                    color: (workspace == this.index + 1) ? Dat.Colors.current.primary : Dat.Colors.current.surface_container_high
+                    color: urgent ? Dat.Colors.current.error : ((workspace == this.index + 1) ? Dat.Colors.current.primary : Dat.Colors.current.surface_container_high)
                     radius: Dat.Radius.full
 
                     Gen.MouseArea {
