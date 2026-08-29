@@ -29,7 +29,7 @@
     ./themes/rosepine-dark
     ./themes/redpine
     ./themes/noctaniri
-    ./themes/kurukuru
+    ./themes/nagare
     ./themes/manguru
   ];
 }

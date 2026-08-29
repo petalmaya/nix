@@ -7,8 +7,8 @@
       enable = true;
     };
     
-    # matugen owns this file on kurukuru/manguru hosts
-    xdg.configFile."fastfetch/config.jsonc" = lib.mkIf (!(config.nixtop.themes.kurukuru.enable or false) && !(config.nixtop.themes.manguru.enable or false)) {
+    # matugen owns this file on nagare/manguru hosts
+    xdg.configFile."fastfetch/config.jsonc" = lib.mkIf (!(config.nixtop.themes.nagare.enable or false) && !(config.nixtop.themes.manguru.enable or false)) {
       source = ./config.jsonc;
     };
   };

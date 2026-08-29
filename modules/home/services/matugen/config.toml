@@ -139,7 +139,7 @@ post_hook   = "bash ~/.config/matugen/templates/blacklingerie/apply.sh"
 # output_path = "~/.vscode/extensions/flutterice.fluttericetheme-0.0.5/themes/FluttericeTheme-color-theme.json"
 [templates.quickshell]
 input_path = "./templates/quickshell-config.json"
-output_path = "~/.config/kurukurubar/colors.json"
+output_path = "~/.config/nagarebar/colors.json"
 [templates.fastfetch]
 input_path = "templates/fastfetch/config.jsonc"
 output_path = "~/.config/fastfetch/config.jsonc"

@@ -4,33 +4,33 @@ let
 
   # per-theme foot config, falls through to default for themes without one
   cases = {
-    kurukuru = {
+    nagare = {
       configFile = {
-        "foot/foot.ini".source = "${inputs.self}/modules/home/themes/kurukuru/foot/foot.ini";
-        "foot/colors.ini".source = "${inputs.self}/modules/home/themes/kurukuru/foot/colors.ini";
+        "foot/foot.ini".source = "${inputs.self}/modules/home/themes/nagare/foot/foot.ini";
+        "foot/colors.ini".source = "${inputs.self}/modules/home/themes/nagare/foot/colors.ini";
         # themes/flutterice is matugen's output, managed below instead
-        "foot/themes/noctalia".source = "${inputs.self}/modules/home/themes/kurukuru/foot/themes/noctalia";
+        "foot/themes/noctalia".source = "${inputs.self}/modules/home/themes/nagare/foot/themes/noctalia";
       };
       # seed a writable copy so the include doesn't error before matugen's
       # first run; matugen owns the file after that
       activation = ''
         $DRY_RUN_CMD mkdir -p $HOME/.config/foot/themes
-        $DRY_RUN_CMD [ -e "$HOME/.config/foot/themes/flutterice" ] || $DRY_RUN_CMD cp "${inputs.self}/modules/home/themes/kurukuru/foot/themes/flutterice" "$HOME/.config/foot/themes/flutterice"
+        $DRY_RUN_CMD [ -e "$HOME/.config/foot/themes/flutterice" ] || $DRY_RUN_CMD cp "${inputs.self}/modules/home/themes/nagare/foot/themes/flutterice" "$HOME/.config/foot/themes/flutterice"
       '';
     };
 
-    # same foot theme as kurukuru, just under mango instead of niri - the
-    # look isn't changing, so this reuses kurukuru's files rather than
+    # same foot theme as nagare, just under mango instead of niri - the
+    # look isn't changing, so this reuses nagare's files rather than
     # forking a copy
     manguru = {
       configFile = {
-        "foot/foot.ini".source = "${inputs.self}/modules/home/themes/kurukuru/foot/foot.ini";
-        "foot/colors.ini".source = "${inputs.self}/modules/home/themes/kurukuru/foot/colors.ini";
-        "foot/themes/noctalia".source = "${inputs.self}/modules/home/themes/kurukuru/foot/themes/noctalia";
+        "foot/foot.ini".source = "${inputs.self}/modules/home/themes/nagare/foot/foot.ini";
+        "foot/colors.ini".source = "${inputs.self}/modules/home/themes/nagare/foot/colors.ini";
+        "foot/themes/noctalia".source = "${inputs.self}/modules/home/themes/nagare/foot/themes/noctalia";
       };
       activation = ''
         $DRY_RUN_CMD mkdir -p $HOME/.config/foot/themes
-        $DRY_RUN_CMD [ -e "$HOME/.config/foot/themes/flutterice" ] || $DRY_RUN_CMD cp "${inputs.self}/modules/home/themes/kurukuru/foot/themes/flutterice" "$HOME/.config/foot/themes/flutterice"
+        $DRY_RUN_CMD [ -e "$HOME/.config/foot/themes/flutterice" ] || $DRY_RUN_CMD cp "${inputs.self}/modules/home/themes/nagare/foot/themes/flutterice" "$HOME/.config/foot/themes/flutterice"
       '';
     };
 

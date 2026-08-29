@@ -99,7 +99,7 @@
           { nixpkgs.overlays = [ inputs.emacs-overlay.overlays.default ]; }
           inputs.nix-flatpak.nixosModules.nix-flatpak
           inputs.noctalia-greeter.nixosModules.default
-          ./modules/nixos/kurukuru-greeter.nix
+          ./modules/nixos/nagare-greeter.nix
           ./modules/nixos/tor.nix
           inputs.disko.nixosModules.disko
           sops-nix.nixosModules.sops

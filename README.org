@@ -23,7 +23,7 @@ here is how everything is organized:
     - =apps/= — browsers, emacs, gaming, yazi, fetch, etc.
     - =services/= — mako, mpd, matugen theming, flatpaks
     - =terminal/= — foot, zsh, zellij, tmux
-    - =themes/= — kurukuru (niri + quickshell), noctaniri, redpine, rosepine-dark
+    - =themes/= — nagare (niri + quickshell), noctaniri, redpine, rosepine-dark
 
 - =users/= — home manager user configs
   - =alice/= — me! (used on wonderland and rabbit)
