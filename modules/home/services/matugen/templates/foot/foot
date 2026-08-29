@@ -23,7 +23,7 @@ selection-background={{colors.secondary_container.default.hex_stripped}}
 # unstable already ships >=1.23 where it's a hard error, not just the
 # deprecation warning older docs mention) - moved into colors-dark per
 # upstream's replacement. Keep this in sync with the committed
-# assets/dots/kurukuru/foot/themes/flutterice fallback, which already
+# assets/dots/nagare/foot/themes/flutterice fallback, which already
 # had this fix - this template regenerates that same file every time
 # matugen runs and was clobbering it back to the broken [cursor] form.
 cursor={{colors.on_primary.default.hex_stripped}} {{colors.primary.default.hex_stripped}}

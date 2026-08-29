@@ -1,0 +1,20 @@
+[
+  {
+    "appId": "floorp",
+    "name": "Floorp Browser",
+    "exec": "floorp",
+    "icon": "floorp"
+  },
+  {
+    "appId": "kitty",
+    "name": "Terminal",
+    "exec": "kitty",
+    "icon": "kitty"
+  },
+  {
+    "appId": "obsidian",
+    "name": "Obsidian",
+    "exec": "obsidian",
+    "icon": "obsidian"
+  }
+]

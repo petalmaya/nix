@@ -1,4 +1,4 @@
-# wayland-sessions/mango.desktop, so kurukurubar-greeter's session
+# wayland-sessions/mango.desktop, so nagarebar-greeter's session
 # scanner (scripts/session.sh) picks mango up - mirrors what niri's own
 # package already ships, mango doesn't bundle one yet
 { config, lib, pkgs, unstable-pkgs, ... }:

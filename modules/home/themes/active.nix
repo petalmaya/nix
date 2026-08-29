@@ -5,7 +5,7 @@ let
 in {
   options.nixtop.activeTheme = lib.mkOption {
     type = lib.types.nullOr (lib.types.enum [
-      "kurukuru"
+      "nagare"
       "manguru"
       "noctaniri"
       "redpine"
@@ -14,7 +14,7 @@ in {
     internal = true;
     readOnly = true;
     default =
-      if t.kurukuru.enable then "kurukuru"
+      if t.nagare.enable then "nagare"
       else if t.manguru.enable then "manguru"
       else if t.noctaniri.enable then "noctaniri"
       else if t.redpine.enable then "redpine"

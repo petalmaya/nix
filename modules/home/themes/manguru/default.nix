@@ -1,14 +1,14 @@
-# mango + kurukurubar (quickshell, shared with the kurukuru theme), themed
+# mango + nagarebar (quickshell, shared with the nagare theme), themed
 # by matugen
 { config, lib, pkgs, inputs, ... }:
 let
   cfg = config.nixtop.themes.manguru;
-  kurukurubar = import ../kurukuru/package.nix {
+  nagarebar = import ../nagare/package.nix {
     inherit pkgs;
     quickshellInput = inputs.quickshell;
   };
 in {
-  options.nixtop.themes.manguru.enable = lib.mkEnableOption "Manguru Theme (MangoWC + Kuru Kuru Bar / Quickshell)";
+  options.nixtop.themes.manguru.enable = lib.mkEnableOption "Manguru Theme (MangoWC + nagare-shell / Quickshell)";
   options.nixtop.themes.manguru.repoPath = lib.mkOption {
     type = lib.types.str;
     default = "${config.home.homeDirectory}/nix";
@@ -43,18 +43,18 @@ in {
       gtk.enable = true;
     };
 
-    # same shell as kurukuru - kurukurubar's mango backend (Data/MangoWC.qml)
+    # same shell as nagare - nagarebar's mango backend (Data/MangoWC.qml)
     # is what makes this theme possible in the first place, no need to fork it
     home.file.".config/quickshell".source =
-      config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/home/themes/kurukuru/quickshell";
+      config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/home/themes/nagare/quickshell";
 
     home.packages = [
-      kurukurubar
+      nagarebar
       pkgs.material-symbols
       pkgs.nerd-fonts.noto
     ];
 
-    # kurukurubar has its own notification server, mako would race it for
+    # nagarebar has its own notification server, mako would race it for
     # the dbus name
     services.mako.enable = lib.mkForce false;
   };

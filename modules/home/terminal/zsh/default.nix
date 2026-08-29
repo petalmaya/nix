@@ -8,8 +8,8 @@
       enable = true;
       enableZshIntegration = true;
     };
-    # matugen owns starship.toml on kurukuru/manguru hosts
-    xdg.configFile."starship.toml" = lib.mkIf (!(config.nixtop.themes.kurukuru.enable or false) && !(config.nixtop.themes.manguru.enable or false)) {
+    # matugen owns starship.toml on nagare/manguru hosts
+    xdg.configFile."starship.toml" = lib.mkIf (!(config.nixtop.themes.nagare.enable or false) && !(config.nixtop.themes.manguru.enable or false)) {
       source = ./starship.toml;
     };
 
