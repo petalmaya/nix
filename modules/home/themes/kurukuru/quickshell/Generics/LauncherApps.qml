@@ -110,6 +110,18 @@ Item {
           radius: Dat.Radius.md
           width: list.width
 
+          // reuseItems (above) recycles this delegate into a pool and
+          // rebinds it to new modelData instead of destroying it - but
+          // a pooled item can still be the one Qt's hover chain thinks
+          // is currently hovered, and delivering the next hover event
+          // to it mid-recycle segfaults in
+          // QQuickDeliveryAgentPrivate::deliverHoverEvent. Same failure
+          // mode as the dock's `closing` flag (see Data/Dock.qml) - kill
+          // hover synchronously before the item goes anywhere, restore
+          // it once it's back on screen bound to real data.
+          ListView.onPooled: hoverArea.hoverEnabled = false
+          ListView.onReused: hoverArea.hoverEnabled = true
+
           RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 8
@@ -167,6 +179,8 @@ Item {
           }
 
           Gen.MouseArea {
+            id: hoverArea
+
             hoverEnabled: true
             layerColor: Dat.Colors.current.on_surface
             layerRadius: 12
