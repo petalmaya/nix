@@ -111,8 +111,11 @@ Singleton {
   }
 
   Process {
+    // mirror of the Niri.qml gate - under niri there's no mmsg/mango
+    // socket, so skip trying (the `command -v mmsg` guard already made
+    // this a harmless no-op there, but no reason to even fork bash for it)
     command: ["bash", "-c", "command -v mmsg >/dev/null 2>&1 && exec mmsg watch all-monitors || exit 0"]
-    running: true
+    running: Quickshell.env("XDG_CURRENT_DESKTOP") === "mango"
 
     stdout: SplitParser {
       onRead: line => {
