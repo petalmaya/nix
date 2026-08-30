@@ -87,8 +87,11 @@ Singleton {
   }
 
   Process {
+    // under mango, XDG_CURRENT_DESKTOP is "mango" (env=XDG_CURRENT_DESKTOP,mango
+    // in manguru.conf) and there's no niri binary to talk to at all - don't
+    // even try, instead of spawning a doomed process every session
     command: ["niri", "msg", "-j", "event-stream"]
-    running: true
+    running: Quickshell.env("XDG_CURRENT_DESKTOP") !== "mango"
 
     stdout: SplitParser {
       onRead: line => {

@@ -45,7 +45,15 @@ Item {
   Timer {
     interval: 1000
     repeat: true
-    running: root.hasPlayer && root.activePlayer.isPlaying
+    // only tick while the notch is actually fully expanded (this panel
+    // is a permanent, non-Loader child of Primary - the notch's
+    // "collapsed" states only toggle expandedPane.visible on an
+    // *ancestor*, which doesn't touch this Item's own `visible` or stop
+    // its bindings/timers from running). Matches the gating MprisItem
+    // already uses for its own timers via Dat.Globals.notchState(),
+    // instead of polling in the background for as long as anything is
+    // playing regardless of whether the notch is even open.
+    running: Dat.Globals.notchState(root.outputName) == "FULLY_EXPANDED" && root.hasPlayer && root.activePlayer.isPlaying
 
     onTriggered: root.polledPosition = root.activePlayer.position
   }
