@@ -105,7 +105,7 @@ Item {
           required property var modelData
           required property int index
 
-          color: (list.currentIndex == index) ? Dat.Colors.current.primary_container : "transparent"
+          color: (list.currentIndex == index) ? Dat.Colors.current.surface_container_highest : "transparent"
           height: 52
           radius: Dat.Radius.md
           width: list.width
@@ -122,9 +122,31 @@ Item {
           ListView.onPooled: hoverArea.hoverEnabled = false
           ListView.onReused: hoverArea.hoverEnabled = true
 
+          // selection marker - a colored background wash reads badly
+          // once the palette has no hue to separate it from surface
+          // (monochrome wallpapers collapse primary_container to
+          // near-white), so the accent lives here instead: a small
+          // pill of actual primary color that can't wash out
+          Rectangle {
+            anchors.left: parent.left
+            anchors.leftMargin: 6
+            anchors.verticalCenter: parent.verticalCenter
+            color: Dat.Colors.current.primary
+            height: parent.height * 0.5
+            opacity: (list.currentIndex == entryDelegate.index) ? 1 : 0
+            radius: Dat.Radius.full
+            width: 3
+
+            Behavior on opacity {
+              NumberAnimation {
+                duration: Dat.MaterialEasing.standardTime
+              }
+            }
+          }
+
           RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 8
+            anchors.leftMargin: 14
             anchors.rightMargin: 8
             spacing: 12
 
@@ -160,7 +182,7 @@ Item {
 
               Text {
                 Layout.fillWidth: true
-                color: (list.currentIndex == entryDelegate.index) ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
+                color: Dat.Colors.current.on_surface
                 elide: Text.ElideRight
                 font.pointSize: 10
                 text: entryDelegate.modelData.entry.name
@@ -168,7 +190,7 @@ Item {
 
               Text {
                 Layout.fillWidth: true
-                color: (list.currentIndex == entryDelegate.index) ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface_variant
+                color: Dat.Colors.current.on_surface_variant
                 elide: Text.ElideRight
                 font.pointSize: 8
                 opacity: 0.8
@@ -209,7 +231,7 @@ Item {
             anchors.bottomMargin: 6
             anchors.right: parent.right
             anchors.rightMargin: 8
-            color: (list.currentIndex == entryDelegate.index) ? Dat.Colors.current.on_primary_container : Dat.Colors.current.primary
+            color: Dat.Colors.current.primary
             font.pointSize: 11
             icon: "push_pin"
             visible: Dat.Dock.isPinned(entryDelegate.modelData.entry.id)
