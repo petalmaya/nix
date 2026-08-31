@@ -208,14 +208,14 @@ WlrLayershell {
 
             required property var modelData
 
-            color: (Dat.Launcher.mode == modelData.mode) ? Dat.Colors.current.primary_container : "transparent"
+            color: (Dat.Launcher.mode == modelData.mode) ? Dat.Colors.current.surface_container_highest : "transparent"
             height: 28
             radius: Dat.Radius.mdSm
             width: 28
 
             Gen.MatIcon {
               anchors.centerIn: parent
-              color: (modeTab.modelData.mode == Dat.Launcher.mode) ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface_variant
+              color: (modeTab.modelData.mode == Dat.Launcher.mode) ? Dat.Colors.current.primary : Dat.Colors.current.on_surface_variant
               font.pointSize: 13
               icon: modeTab.modelData.icon
             }

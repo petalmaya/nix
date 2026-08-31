@@ -117,12 +117,12 @@ Item {
         Layout.preferredHeight: 64
         border.color: tile.urgent ? Dat.Colors.current.error : (tile.current ? Dat.Colors.current.primary : (tile.selected ? Dat.Colors.current.outline : "transparent"))
         border.width: 2
-        color: tile.current ? Dat.Colors.current.primary_container : (tile.selected ? Dat.Colors.current.surface_container_high : Dat.Colors.current.surface_container)
+        color: tile.selected ? Dat.Colors.current.surface_container_high : Dat.Colors.current.surface_container
         radius: Dat.Radius.lgSm
 
         Text {
           anchors.centerIn: parent
-          color: tile.current ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
+          color: Dat.Colors.current.on_surface
           font.pointSize: 14
           text: tile.modelData.name || `${tile.modelData.idx}`
         }
