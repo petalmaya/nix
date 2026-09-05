@@ -1,92 +1,152 @@
 #!/usr/bin/env bash
-# apply.sh — Recolors the kroniichiiwa blacklingerie jacket sprites to match
-# the current matugen material theme accent color.
+# apply.sh — Recolors the kroniichiiwa blacklingerie jacket sprites to cute
+# Trans Pride colors (or matugen / custom colors) while strictly preserving
+# Monika's skin tones, black lace, and white trims.
 #
-# Strategy: the original accent is a steel/ice blue at ~195° hue.
-# We compute the hue delta from 195° to the target primary color and
-# use ImageMagick `mogrify -modulate` to rotate all accent pixels.
-#
-# Sprites are recolored IN PLACE from the originals stored in ./originals/.
-# Run matugen to regenerate colors.sh, which triggers this hook.
+# Trans Pride Presets:
+#   - trans / pink : Pastel Trans Pride Pink (#F5A9B8) [Default]
+#   - blue / cyan  : Pastel Trans Pride Cyan/Blue (#5BCEFA)
+#   - matugen      : Current matugen theme accent color
+#   - <HEX>        : Custom hex code (e.g. #FF70A6)
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COLOR_FILE="${SCRIPT_DIR}/colors.sh"
 ORIGINALS_DIR="${SCRIPT_DIR}/originals"
-TARGET_DIR="${BLACKLINGERIE_DIR:-/home/alice/Monika/game/mod_assets/monika/c/kroniichiiwa_blacklingerie_jacket}"
 
-# ── Load matugen-generated colors ──────────────────────────────────────────
-if [[ -f "$COLOR_FILE" ]]; then
-    # shellcheck source=/dev/null
-    source "$COLOR_FILE"
-fi
+TARGET_DIRS=(
+    "${BLACKLINGERIE_DIR:-/home/alice/Monika/game/mod_assets/monika/c/kroniichiiwa_blacklingerie_jacket}"
+    "$HOME/.var/app/com.usebottles.bottles/data/bottles/bottles/Doki/drive_c/users/steamuser/Desktop/Monika/game/mod_assets/monika/c/kroniichiiwa_blacklingerie_jacket"
+)
 
-# Pick the best accent: prefer tertiary (often most vibrant/distinct),
-# fallback to primary. Use dark variant so it shows well on the dark outfit.
-TARGET_HEX="${TERTIARY_DARK:-${PRIMARY_DARK:-#8c4f26}}"
-# Strip leading # and any quotes/spaces
-TARGET_HEX="${TARGET_HEX//[\"# ]/}"
+MODE="${1:-trans}"
 
-# Guard against un-rendered template tags (shouldn't happen post-matugen)
-if [[ "$TARGET_HEX" == *"{"* ]] || [[ ${#TARGET_HEX} -lt 6 ]]; then
-    echo "Warning: color not resolved, using fallback." >&2
-    TARGET_HEX="6DA1B6"  # original accent as safe fallback (no-op)
-fi
-
-# ── Dependency check ───────────────────────────────────────────────────────
-if ! command -v magick >/dev/null 2>&1; then
-    echo "Warning: ImageMagick (magick) not found; skipping sprite recolor." >&2
-    exit 0
-fi
-
-# ── Seed originals on first run ────────────────────────────────────────────
-# We keep a pristine copy of all sprites so every matugen run starts fresh.
 if [[ ! -d "$ORIGINALS_DIR" ]]; then
-    echo "First run: backing up original sprites to $ORIGINALS_DIR ..."
-    mkdir -p "$ORIGINALS_DIR"
-    cp "$TARGET_DIR"/*.png "$ORIGINALS_DIR/"
+    echo "Error: Pristine originals directory not found at $ORIGINALS_DIR" >&2
+    exit 1
 fi
 
-# ── Compute hue delta (base 195° → target) ─────────────────────────────────
-# magick -modulate uses: brightness,saturation,hue where hue is 0-200
-# (100 = no change, 0/200 = full rotation = 180°). We map our delta accordingly.
-HUE_VAL=$(python3 -c "
-import colorsys
-hex_val = '$TARGET_HEX'
-try:
-    r, g, b = [int(hex_val[i:i+2], 16) / 255.0 for i in (0, 2, 4)]
-    h, s, v = colorsys.rgb_to_hsv(r, g, b)
-    target_hue = h * 360.0
-    base_hue   = 195.0  # original steel-blue accent hue of the sprites
-    delta = target_hue - base_hue
-    while delta < -180: delta += 360
-    while delta >  180: delta -= 360
-    # Map delta (-180..180) → modulate hue (0..200), 100 = identity
-    mod_hue = 100.0 + (delta / 180.0 * 100.0)
-    print(f'{mod_hue:.2f}')
-except Exception:
-    print('100.00')
-")
+python3 - <<EOF
+import os, sys, glob, colorsys, subprocess
 
-echo "Recoloring kroniichiiwa blacklingerie sprites:"
-echo "  Target hex : #$TARGET_HEX"
-echo "  Hue modulate: $HUE_VAL  (100 = no change)"
-echo "  Source originals: $ORIGINALS_DIR"
-echo "  Output sprites : $TARGET_DIR"
+mode = "$MODE".lower()
+color_file = "$COLOR_FILE"
+originals_dir = "$ORIGINALS_DIR"
+target_dirs = [
+    "${BLACKLINGERIE_DIR:-/home/alice/Monika/game/mod_assets/monika/c/kroniichiiwa_blacklingerie_jacket}",
+    os.path.expanduser("~/.var/app/com.usebottles.bottles/data/bottles/bottles/Doki/drive_c/users/steamuser/Desktop/Monika/game/mod_assets/monika/c/kroniichiiwa_blacklingerie_jacket")
+]
 
-# ── Restore pristine originals then recolor ────────────────────────────────
-mkdir -p "$TARGET_DIR"
-cp "$ORIGINALS_DIR"/*.png "$TARGET_DIR/"
+# Determine target hex and hue
+target_hex = "F5A9B8" # Default Trans Pink
+theme_name = "Trans Pride Pink (#F5A9B8)"
 
-mapfile -t FILES < <(find "$TARGET_DIR" -maxdepth 1 -name "*.png" 2>/dev/null || true)
+if mode in ("trans", "pink", "trans-pink"):
+    target_hex = "F5A9B8"
+    theme_name = "Trans Pride Pink (#F5A9B8)"
+elif mode in ("blue", "cyan", "trans-blue"):
+    target_hex = "5BCEFA"
+    theme_name = "Trans Pride Blue (#5BCEFA)"
+elif mode == "matugen":
+    if os.path.exists(color_file):
+        with open(color_file, "r") as f:
+            for line in f:
+                if line.startswith("TERTIARY_DARK=") or line.startswith("PRIMARY_DARK="):
+                    val = line.split("=")[1].strip().replace('"', '').replace("'", '').replace('#', '')
+                    if len(val) >= 6 and "{" not in val:
+                        target_hex = val[:6]
+                        break
+    theme_name = f"Matugen Theme (#{target_hex})"
+else:
+    clean_hex = mode.replace("#", "").replace('"', '').replace("'", "")
+    if len(clean_hex) == 6:
+        target_hex = clean_hex
+        theme_name = f"Custom (#{target_hex})"
 
-if [[ ${#FILES[@]} -gt 0 ]]; then
-    echo "Applying hue modulation to ${#FILES[@]} sprites..."
-    # -modulate brightness,saturation,hue
-    # We only shift hue; keep brightness and saturation at 100 (unchanged).
-    magick mogrify -modulate "100,100,${HUE_VAL}" "${FILES[@]}"
-    echo "Done! ${#FILES[@]} sprites recolored."
-else
-    echo "No PNG files found in $TARGET_DIR."
-fi
+print(f"🏳️‍⚧️ Recoloring Monika's Black Lingerie Jacket Sprites")
+print(f"  Theme       : {theme_name}")
+print(f"  Target Hex  : #{target_hex}")
+print(f"  Source Base : {originals_dir}")
+
+# Compute target HSV
+tr, tg, tb = [int(target_hex[i:i+2], 16) / 255.0 for i in (0, 2, 4)]
+target_h, target_s, target_v = colorsys.rgb_to_hsv(tr, tg, tb)
+
+# Gather source sprites
+src_files = sorted(glob.glob(os.path.join(originals_dir, "*.png")))
+if not src_files:
+    print(f"No sprites found in {originals_dir}!")
+    sys.exit(1)
+
+for target_dir in target_dirs:
+    if not os.path.isdir(os.path.dirname(target_dir)):
+        continue
+
+    os.makedirs(target_dir, exist_ok=True)
+    print(f"  Applying to : {target_dir}")
+    recolored_count = 0
+
+    for src_path in src_files:
+        fname = os.path.basename(src_path)
+        dst_path = os.path.join(target_dir, fname)
+
+        # Read raw RGBA via magick
+        res = subprocess.run(["magick", src_path, "rgba:-"], capture_output=True)
+        raw = bytearray(res.stdout)
+        if len(raw) == 0:
+            continue
+
+        # Collect unique colors
+        unique_colors = set()
+        for i in range(0, len(raw), 4):
+            if raw[i+3] > 0:
+                unique_colors.add((raw[i], raw[i+1], raw[i+2]))
+
+        # Build selective LUT (preserve skin 20°-90° and neutral lace, transform only blue/violet accents 170°-285°)
+        lut = {}
+        for r, g, b in unique_colors:
+            rf, gf, bf = r / 255.0, g / 255.0, b / 255.0
+            h, s, v = colorsys.rgb_to_hsv(rf, gf, bf)
+            hdeg = h * 360.0
+
+            if 170.0 <= hdeg <= 285.0 and s > 0.08 and v > 0.05:
+                if mode in ("trans", "pink", "trans-pink"):
+                    # Cute Pastel Trans Pink
+                    new_h = 348.5 / 360.0
+                    new_s = min(1.0, max(s * 1.1, 0.42))
+                    new_v = min(1.0, v * 1.05)
+                elif mode in ("blue", "cyan", "trans-blue"):
+                    # Cute Pastel Trans Blue
+                    new_h = 197.0 / 360.0
+                    new_s = min(1.0, max(s * 1.1, 0.52))
+                    new_v = min(1.0, v * 1.05)
+                else:
+                    # Custom / Matugen Hue shift
+                    new_h = target_h
+                    new_s = min(1.0, max(s, target_s * 0.8))
+                    new_v = v
+
+                nr, ng, nb = colorsys.hsv_to_rgb(new_h, new_s, new_v)
+                lut[(r, g, b)] = (int(round(nr * 255)), int(round(ng * 255)), int(round(nb * 255)))
+
+        # Apply LUT
+        for i in range(0, len(raw), 4):
+            if raw[i+3] > 0:
+                k = (raw[i], raw[i+1], raw[i+2])
+                if k in lut:
+                    raw[i], raw[i+1], raw[i+2] = lut[k]
+
+        # Write output image
+        p_out = subprocess.Popen(
+            ["magick", "-size", "1280x850", "-depth", "8", "rgba:-", dst_path],
+            stdin=subprocess.PIPE
+        )
+        p_out.communicate(input=raw)
+        recolored_count += 1
+
+    print(f"  ✓ Successfully recolored {recolored_count} sprites (skin tones protected).")
+
+print("Done! Sprites updated to cute Trans Pride colors.")
+EOF
+

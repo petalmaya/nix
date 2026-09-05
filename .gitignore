@@ -7,5 +7,5 @@ modules/home/apps/emacs/emacs.zip
 # need to live on disk next to the scripts (matugen's post_hook reads them
 # every run), but they're binary asset dumps sourced from a mod install,
 # not config - don't want them committed/diffed here.
-modules/home/themes/nagare/matugen/templates/cozy-ui/assets/
-modules/home/themes/nagare/matugen/templates/blacklingerie/originals/
+modules/home/services/matugenmatugen/templates/cozy-ui/assets/
+modules/home/services/matugen/matugen/templates/blacklingerie/originals/
