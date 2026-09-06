@@ -19,7 +19,7 @@ echo "[INFO] Generating matugen theme from wallpaper"
 # "IO error: not a terminal" failure). --source-color-index 0 skips
 # the prompt entirely and picks the same first/primary source color
 # the old non-interactive behavior used.
-if matugen image "$SRCIMG" -t scheme-fruit-salad &> "$CACHEDIR/matugen.log"; then
+if matugen image "$SRCIMG" -t scheme-smart &> "$CACHEDIR/matugen.log"; then
   echo "[INFO] matugen theme applied"
 else
   echo "[ERROR] matugen failed, see ${CACHEDIR}/matugen.log"

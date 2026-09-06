@@ -37,6 +37,15 @@ in {
     programs.matugen = {
       enable = true;
       variant = "dark";
+      # "scheme-smart" measures the wallpaper's actual colourfulness and
+      # picks the Material variant per-image instead of always forcing
+      # scheme-tonal-spot: near-grey/monochrome images -> scheme-monochrome
+      # (chroma forced to 0 on every palette, so surface/background/accent
+      # all stay true neutral grey instead of getting a random tint from
+      # whatever stray saturated pixel matugen's scorer picked as source
+      # colour), moderately colourful -> scheme-neutral, and colourful
+      # photos -> scheme-tonal-spot/vibrant as before.
+      type = "scheme-smart";
       templates = matugenTemplates;
     };
 
