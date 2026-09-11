@@ -50,7 +50,10 @@ let
   t = "${liveRoot}/modules/home/services/matugen/templates";
   runtimeSources = {
     "antigravity" = "${t}/antigravity";
-    "bat" = "${t}/bat";
+    # NOTE: no "bat" entry. Its files moved co-located (see the bat/* entries
+    # below), and a dir symlink here would sit on top of them - HM creates the
+    # dir as a store symlink, then refuses to install bat/apply.sh inside it
+    # ("outside $HOME"). The children below provide the dir instead.
     "cava" = "${t}/cava";
     "discord" = "${t}/discord";
     "fuzzel" = "${t}/fuzzel";
@@ -63,7 +66,7 @@ let
     "pywalfox-beta4" = "${t}/pywalfox-beta4";
     "qt" = "${t}/qt";
     "qutebrowser" = "${t}/qutebrowser";
-    "spicetify" = "${t}/spicetify";
+    # no "spicetify" entry - same overlap as "bat" above (see spicetify/*)
     "steam" = "${t}/steam";
     "vscode" = "${t}/vscode";
     "yazi" = "${t}/yazi";
