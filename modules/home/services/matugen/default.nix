@@ -9,10 +9,8 @@
 #     fallback waiting — see terminal/zsh and apps/fetch. For the rest,
 #     off just means "don't recolor that app".)
 #
-# Template sources: most live in templates/, but ones owned by another
-# module live next to it as *.temp (see config.toml header). Either way
-# they all show up under ~/.config/matugen/templates/ at runtime, so
-# post_hook paths never change.
+# Template sources live under templates/. Each runtime entry below points
+# into that tree, so matugen and its hooks use one checked-in source of truth.
 { config, lib, pkgs, inputs, ... }:
 let
   cfg = config.nixtop.services.matugen;
@@ -28,8 +26,7 @@ let
   parsed = builtins.fromTOML (builtins.readFile "${matugenDir}/config.toml");
   templateNames = builtins.attrNames parsed.templates;
 
-  # "/modules/..." = repo root (co-located *.temp), "~..." = runtime path
-  # (passed through), anything else = templates/<path>.
+  # "~..." = runtime path (passed through), anything else = templates/<path>.
   resolveInput = p:
     if lib.hasPrefix "/" p then "${storeRoot}${p}"
     else if lib.hasPrefix "~" p then p
@@ -50,10 +47,8 @@ let
   t = "${liveRoot}/modules/home/services/matugen/templates";
   runtimeSources = {
     "antigravity" = "${t}/antigravity";
-    # NOTE: no "bat" entry. Its files moved co-located (see the bat/* entries
-    # below), and a dir symlink here would sit on top of them - HM creates the
-    # dir as a store symlink, then refuses to install bat/apply.sh inside it
-    # ("outside $HOME"). The children below provide the dir instead.
+    # These directories have child entries below, so they must not also be
+    # linked as whole directories (Home Manager would mask the children).
     "cava" = "${t}/cava";
     "discord" = "${t}/discord";
     "fuzzel" = "${t}/fuzzel";
@@ -66,27 +61,25 @@ let
     "pywalfox-beta4" = "${t}/pywalfox-beta4";
     "qt" = "${t}/qt";
     "qutebrowser" = "${t}/qutebrowser";
-    # no "spicetify" entry - same overlap as "bat" above (see spicetify/*)
     "steam" = "${t}/steam";
     "vscode" = "${t}/vscode";
-    "yazi" = "${t}/yazi";
     "fuzzel-colors.ini" = "${t}/fuzzel-colors.ini";
     "quickshell-config.json" = "${t}/quickshell-config.json";
     "terminal-sequences" = "${t}/terminal-sequences";
-    # Co-located sources (see config.toml). Runtime names unchanged.
-    "starship/starship.toml" = "${liveRoot}/modules/home/terminal/zsh/starship.toml.temp";
-    "starship/apply.sh" = "${liveRoot}/modules/home/terminal/zsh/starship-apply.sh";
-    "fastfetch/config.jsonc" = "${liveRoot}/modules/home/apps/fetch/config.jsonc.temp";
-    "foot/foot" = "${liveRoot}/modules/home/terminal/foot/foot.temp";
-    "foot/apply.sh" = "${liveRoot}/modules/home/terminal/foot/foot-apply.sh";
-    "bat/bat.tmTheme" = "${liveRoot}/modules/home/terminal/zsh/bat.tmTheme.temp";
-    "bat/apply.sh" = "${liveRoot}/modules/home/terminal/zsh/bat-apply.sh";
-    "yazi-theme.toml" = "${liveRoot}/modules/home/apps/yazi/yazi-theme.toml.temp";
-    "emacs/emacs.el" = "${liveRoot}/modules/home/apps/emacs/emacs.el.temp";
-    "emacs/apply.sh" = "${liveRoot}/modules/home/apps/emacs/emacs-apply.sh";
-    "emacs/output-path.sh" = "${liveRoot}/modules/home/apps/emacs/emacs-output-path.sh";
-    "spicetify/spicetify.ini" = "${liveRoot}/modules/home/apps/spicetify/spicetify.ini.temp";
-    "spicetify/apply.sh" = "${liveRoot}/modules/home/apps/spicetify/spicetify-apply.sh";
+    # Template-specific scripts and files are all sourced from the same tree.
+    "starship/starship.toml" = "${t}/starship/starship.toml";
+    "starship/apply.sh" = "${t}/starship/apply.sh";
+    "fastfetch/config.jsonc" = "${t}/fastfetch/config.jsonc";
+    "foot/foot" = "${t}/foot/foot";
+    "foot/apply.sh" = "${t}/foot/apply.sh";
+    "bat/bat.tmTheme" = "${t}/bat/bat.tmTheme";
+    "bat/apply.sh" = "${t}/bat/apply.sh";
+    "yazi-theme.toml" = "${t}/yazi-theme.toml";
+    "emacs/emacs.el" = "${t}/emacs/emacs.el";
+    "emacs/apply.sh" = "${t}/emacs/apply.sh";
+    "emacs/output-path.sh" = "${t}/emacs/output-path.sh";
+    "spicetify/spicetify.ini" = "${t}/spicetify/spicetify.ini";
+    "spicetify/apply.sh" = "${t}/spicetify/apply.sh";
     "papirus-icons/apply.sh" = "${t}/papirus-icons/apply.sh";
     "papirus-icons/colors" = "${t}/papirus-icons/colors";
     "papirus-icons/papirus-folders" = "${t}/papirus-icons/papirus-folders";

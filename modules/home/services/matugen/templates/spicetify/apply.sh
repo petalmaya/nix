@@ -1,1 +1,4 @@
-/nix/store/q8h7hn9j38g6gpy6nfswy29q51kgyagd-home-manager-files/.config/matugen/templates/spicetify/apply.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+spicetify -q apply --no-restart

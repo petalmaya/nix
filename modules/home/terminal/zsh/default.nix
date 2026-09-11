@@ -121,6 +121,5 @@ in {
     };
   };
 }
-# Matugen theme sources live here too: starship.toml.temp (+ dormant
-# starship-apply.sh) and bat.tmTheme.temp + bat-apply.sh.
+# Matugen theme sources live under services/matugen/templates/{starship,bat}.
 # Toggles: nixtop.services.matugen.templates.{starship,bat}.enable.

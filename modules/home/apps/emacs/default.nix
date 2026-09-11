@@ -52,5 +52,5 @@ in {
       config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/home/apps/emacs/emacs";
   };
 }
-# Matugen theme source lives here too: emacs.el.temp + emacs-apply.sh
-# (toggle: nixtop.services.matugen.templates.emacs.enable).
+# The matugen theme template and hooks live under services/matugen/templates/emacs.
+# Toggle: nixtop.services.matugen.templates.emacs.enable.

@@ -9,5 +9,5 @@
     };
   };
 }
-# Matugen theme source lives here too: yazi-theme.toml.temp
-# (toggle: nixtop.services.matugen.templates.yazi.enable).
+# The matugen theme template lives under services/matugen/templates.
+# Toggle: nixtop.services.matugen.templates.yazi.enable.

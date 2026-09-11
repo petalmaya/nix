@@ -19,5 +19,5 @@ in {
     };
   };
 }
-# Matugen theme source lives here too: config.jsonc.temp
-# (toggle: nixtop.services.matugen.templates.fastfetch.enable).
+# The matugen template lives under services/matugen/templates/fastfetch.
+# Toggle: nixtop.services.matugen.templates.fastfetch.enable.
