@@ -7,15 +7,9 @@ import Quickshell.Services.Greetd
 
 import qs.Data as Dat
 
-// Greetd session state for greeter.qml. Singleton (like
-// Data/Launcher.qml) since the auth conversation is stateful and only
-// needs one instance regardless of monitor count.
 Singleton {
   id: root
 
-  // set via `NAGARE_GREETER_MOCK=1 quickshell -p greeter.qml` (or
-  // scripts/test-greeter.sh) to run the UI without a real greetd
-  // socket - see handoff.md's Greeter session
   readonly property bool mockMode: Quickshell.env("NAGARE_GREETER_MOCK") === "1"
 
   property string username: Quickshell.env("USER") ?? ""
@@ -24,9 +18,6 @@ Singleton {
   property bool busy: false
   property string errorMessage: ""
   property int sessionIndex: 0
-  // which output shows the login card - "" falls back to screens[0]
-  // (Layers/Greeter.qml). Updated by a HoverHandler per output, global
-  // since there's exactly one login attempt regardless of monitor count.
   property string focusedOutput: ""
 
   function focusOutput(name) {
@@ -34,7 +25,6 @@ Singleton {
       root.focusedOutput = name;
   }
 
-  // [{name, exec: [string]}], from scripts/session.sh - see sessionScan
   property var sessions: []
 
   readonly property var selectedSession: (root.sessions.length > 0) ? root.sessions[root.sessionIndex % root.sessions.length] : null
@@ -45,8 +35,6 @@ Singleton {
     root.sessionIndex = (root.sessionIndex + 1) % root.sessions.length;
   }
 
-  // Entry point from Login/Enter. Mock flow fakes the same
-  // busy -> settle round trip so the UI doesn't fork between test/real.
   function submit() {
     if (root.busy || root.username.length === 0)
       return;
@@ -80,21 +68,15 @@ Singleton {
     }
   }
 
-  // gated so a stray authMessage from a leftover socket can't clobber
-  // mock-mode UI state
   Connections {
     target: (root.mockMode) ? null : Greetd
 
     function onAuthMessage(message, error, responseRequired, echoResponse) {
       if (error) {
-        // recoverable (e.g. fingerprint misread) - surface, keep going
         root.errorMessage = message;
         return;
       }
       if (responseRequired) {
-        // single input field, so every prompt gets the password field's
-        // contents - fine for standard pam_unix, but a PIN/fingerprint
-        // flow would need to branch on message/echoResponse here
         Greetd.respond(root.password);
       }
     }
@@ -111,27 +93,19 @@ Singleton {
     }
   }
 
-  // Scans wayland-sessions + xsessions with scripts/session.sh, which
-  // awks Name=/Exec= out of each .desktop file. X11 sessions listed
-  // for completeness even though this shell targets niri/mangowc.
   Process {
     id: sessionScan
 
-    // NixOS puts session .desktop files under
-    // /run/current-system/sw/share/*, not /usr/share/* - scanning the
-    // FHS paths found nothing here even with a session package registered.
-    command: ["bash", "-c", "bash " + Dat.Paths.urlToPath(Qt.resolvedUrl("../scripts/session.sh")) + " /run/current-system/sw/share/wayland-sessions 2>/dev/null; bash " + Dat.Paths.urlToPath(Qt.resolvedUrl("../scripts/session.sh")) + " /run/current-system/sw/share/xsessions 2>/dev/null"]
+    command: ["bash", "-c", "bash " + Dat.Paths.urlToPath(Qt.resolvedUrl("../scripts/session.sh")) + " /run/current-system/sw/share/wayland-sessions; bash " + Dat.Paths.urlToPath(Qt.resolvedUrl("../scripts/session.sh")) + " /run/current-system/sw/share/xsessions"]
     running: true
 
     stdout: SplitParser {
       onRead: line => {
-        const parts = line.split(",");
-        if (parts.length < 3)
+        const tab = line.indexOf("\t");
+        if (tab < 0)
           return;
-        const name = parts[1];
-        // Exec= can contain commas in field codes (rare), so rejoin
-        // everything after the second comma
-        const exec = parts.slice(2).join(",").trim();
+        const name = line.slice(0, tab).trim();
+        const exec = line.slice(tab + 1).trim();
         if (!name || !exec)
           return;
         root.sessions = root.sessions.concat([{
@@ -139,6 +113,14 @@ Singleton {
           "exec": ["sh", "-c", exec]
         }]);
       }
+    }
+
+    stderr: SplitParser {
+      onRead: line => console.log("[sessionScan] " + line)
+    }
+    onExited: (code) => {
+      if (code !== 0)
+        console.log("[sessionScan] exited with code " + code);
     }
   }
 }

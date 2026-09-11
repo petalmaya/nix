@@ -5,7 +5,7 @@
   home.homeDirectory = "/home/lewis";
 
   nixtop = {
-    themes.manguru.enable = true;
+    themes.teakettler.enable = true;
     terminal.foot.enable = true;
     # apps.floorp.enable = true;
     # apps.zen.enable = true;

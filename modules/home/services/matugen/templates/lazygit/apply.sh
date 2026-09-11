@@ -3,7 +3,7 @@ set -euo pipefail
 
 lazygit_config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/lazygit"
 themes_dir="$lazygit_config_dir/themes"
-theme_file="$themes_dir/flutterice.yml"
+theme_file="$themes_dir/pinaceae.yml"
 config_file="$lazygit_config_dir/config.yml"
 
 mkdir -p "$themes_dir"
@@ -11,7 +11,7 @@ touch "$config_file"
 
 # 1. Verify theme file exists
 if [ ! -f "$theme_file" ]; then
-    echo "flutterice.yml not found" >&2
+    echo "pinaceae.yml not found" >&2
     exit 1
 fi
 
@@ -40,7 +40,7 @@ theme_block=$(awk '
 ' "$theme_file")
 
 if [ -z "$theme_block" ]; then
-    echo "failed to extract theme from flutterice.yml" >&2
+    echo "failed to extract theme from pinaceae.yml" >&2
     exit 1
 fi
 

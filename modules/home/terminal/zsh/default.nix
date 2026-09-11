@@ -1,6 +1,11 @@
 { config, pkgs, lib, ... }:
-
-{
+let
+  # matugen owns starship on ALL themes when its master + starship
+  # toggles are on - no per-theme allowlist anymore
+  matugenOwnsStarship =
+    (config.nixtop.services.matugen.enable or false)
+    && (config.nixtop.services.matugen.templates.starship.enable or false);
+in {
   options.nixtop.terminal.zsh.enable = lib.mkEnableOption "Zsh configuration with extras";
 
   config = lib.mkIf config.nixtop.terminal.zsh.enable {
@@ -8,8 +13,8 @@
       enable = true;
       enableZshIntegration = true;
     };
-    # matugen owns starship.toml on nagare/manguru hosts
-    xdg.configFile."starship.toml" = lib.mkIf (!(config.nixtop.themes.nagare.enable or false) && !(config.nixtop.themes.manguru.enable or false)) {
+    # static fallback only when matugen isn't owning the file
+    xdg.configFile."starship.toml" = lib.mkIf (!matugenOwnsStarship) {
       source = ./starship.toml;
     };
 
@@ -20,6 +25,12 @@
       syntaxHighlighting.enable    = false;
       historySubstringSearch.enable = true;
 
+      setOptions = [
+        "AUTO_CD"
+        "CORRECT"
+        "NO_BEEP"
+      ];
+
       history = {
         size          = 50000;
         save          = 50000;
@@ -28,6 +39,18 @@
         expireDuplicatesFirst = true;
         share         = true;
       };
+
+      initContent = ''
+        # Completion tweaks
+        zstyle ':completion:*' menu select
+        zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+        zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
+        zstyle ':completion:*:descriptions' format '%B%d%b'
+
+        # Key bindings
+        bindkey '^[[A' history-substring-search-up
+        bindkey '^[[B' history-substring-search-down
+      '';
 
       plugins = [
         {
@@ -47,8 +70,6 @@
         }
       ];
 
-      initContent = builtins.readFile ./zshrc;
-
       shellAliases = {
         nixsw = "sudo nixos-rebuild switch --flake .#${if config ? osConfig then config.osConfig.networking.hostName else "wonderland"}";
         nixup = "nix flake update";
@@ -58,6 +79,17 @@
         ".." = "cd ..";
         "..." = "cd ../..";
         cat = "bat";
+
+        # Git aliases
+        gs  = "git status -sb";
+        ga  = "git add";
+        gc  = "git commit";
+        gp  = "git push";
+        gl  = "git log --oneline --graph --decorate --all";
+        gd  = "git diff";
+        gco = "git checkout";
+        gcb = "git checkout -b";
+        gpl = "git pull --rebase";
       };
     };
 
@@ -89,3 +121,6 @@
     };
   };
 }
+# Matugen theme sources live here too: starship.toml.temp (+ dormant
+# starship-apply.sh) and bat.tmTheme.temp + bat-apply.sh.
+# Toggles: nixtop.services.matugen.templates.{starship,bat}.enable.

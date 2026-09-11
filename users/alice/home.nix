@@ -5,7 +5,7 @@
   home.homeDirectory = "/home/alice";
 
   nixtop = {
-    themes.manguru.enable = true;
+    themes.teakettler.enable = true;
     terminal.foot.enable = true;
     terminal.zsh.enable = true;
     # terminal.tmux.enable = true;
@@ -28,8 +28,8 @@
     links2 # side browser
     unstable-pkgs.tutanota-desktop keepassxc steam # mail & gaming
     mousepad nautilus # acker
-    mpvpaper hyprpicker
-    foot # terminal emulator's
+    mpvpaper
+    foot # terminal emulator
     fastfetch hyfetch # fetch
     chafa libsixel ripgrep btop # terminal things
     transmission_4-gtk nicotine-plus # legal things
@@ -68,6 +68,7 @@
     unstable-pkgs.antigravity-ide # ai tool
     unstable-pkgs.yt-dlp
   ];
+  
   gtk.gtk4.theme = null;
   programs.yazi.shellWrapperName = "y";
   programs.zsh.dotDir = "${config.xdg.configHome}/zsh";

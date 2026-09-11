@@ -8,6 +8,8 @@
     "${inputs.self}/modules/nixos/noctalia-greeter.nix"
     "${inputs.self}/modules/nixos/plymouth.nix"
     "${inputs.self}/modules/nixos/mango-session.nix"
+    "${inputs.self}/modules/nixos/teakettler-greeter.nix"
+    "${inputs.self}/modules/nixos/tor.nix"
   ];
 
   options = {
@@ -90,7 +92,7 @@
     (lib.mkIf config.nixtop.desktop.enable {
       nixtop.noctalia-greeter.enable = false;
       nixtop.mango-session.enable = true;
-      programs.nagarebar.greeter = {
+      programs.teakettler.greeter = {
         enable = true;
         compositor = "mango";
       };
@@ -106,10 +108,10 @@
       # and r! clears any stale copy from before this was correct
       systemd.tmpfiles.rules = [
         "d /var/lib/greeter/.config 0755 greeter greeter -"
-        "r! /var/lib/greeter/.config/nagarebar/config.json"
-        "d /var/lib/greeter/.config/nagarebar 0755 greeter greeter -"
-        "C /var/lib/greeter/.config/nagarebar/config.json 0644 greeter greeter - ${
-          pkgs.writeText "nagare-greeter-config.json" (builtins.toJSON {
+        "r! /var/lib/greeter/.config/teakettler/config.json"
+        "d /var/lib/greeter/.config/teakettler 0755 greeter greeter -"
+        "C /var/lib/greeter/.config/teakettler/config.json 0644 greeter greeter - ${
+          pkgs.writeText "teakettler-greeter-config.json" (builtins.toJSON {
             wallSrc = "file://${inputs.self}/assets/wallpaper/serial_experiments_lain_server_room.jpg";
           })
         }"

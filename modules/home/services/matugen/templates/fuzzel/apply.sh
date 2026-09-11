@@ -3,7 +3,7 @@ set -euo pipefail
 
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
 config_file="$config_dir/fuzzel/fuzzel.ini"
-include_line="include=$config_dir/fuzzel/themes/flutterice"
+include_line="include=$config_dir/fuzzel/themes/pinaceae"
 
 mkdir -p "$(dirname "$config_file")"
 

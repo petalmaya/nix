@@ -19,11 +19,11 @@ resolve_config_home() {
 
 config_dir="$(resolve_config_home)/niri"
 config_file="$config_dir/config.kdl"
-output_file="$config_dir/flutterice.kdl"
-include_line='include "flutterice.kdl"'
+output_file="$config_dir/pinaceae.kdl"
+include_line='include "pinaceae.kdl"'
 
-has_flutterice_include() {
-    grep -Eq '^[[:space:]]*include([[:space:]].*)?"([^"]*/)?flutterice\.kdl"([[:space:]]|$)' "$config_file"
+has_pinaceae_include() {
+    grep -Eq '^[[:space:]]*include([[:space:]].*)?"([^"]*/)?pinaceae\.kdl"([[:space:]]|$)' "$config_file"
 }
 
 apply_include() {
@@ -34,7 +34,7 @@ apply_include() {
         return
     fi
 
-    if has_flutterice_include; then
+    if has_pinaceae_include; then
         return
     else
         local grep_status=$?

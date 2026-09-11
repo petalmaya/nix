@@ -36,7 +36,7 @@ let
     jetbrains-mono
   ];
 in {
-  options.nixtop.apps.emacs.enable = lib.mkEnableOption "Emacs (flutterice-emacs config)";
+  options.nixtop.apps.emacs.enable = lib.mkEnableOption "Emacs (pinaceae-emacs config)";
   options.nixtop.apps.emacs.repoPath = lib.mkOption {
     type = lib.types.str;
     default = "${config.home.homeDirectory}/nix";
@@ -52,3 +52,5 @@ in {
       config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/home/apps/emacs/emacs";
   };
 }
+# Matugen theme source lives here too: emacs.el.temp + emacs-apply.sh
+# (toggle: nixtop.services.matugen.templates.emacs.enable).

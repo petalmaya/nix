@@ -3,16 +3,17 @@
 {
   imports = [
     ./apps/fetch
+    
+    # Browsers
+    ./apps/browsers/floorp.nix
+    ./apps/browsers/librewolf.nix
+    ./apps/browsers/firefox-esr.nix
+    ./apps/browsers/zen.nix
 
-    ./apps/floorp.nix
-    ./apps/librewolf.nix
-    ./apps/firefox-esr.nix
-    ./apps/zen.nix
-
-    ./apps/spicetify.nix
+    ./apps/spicetify
     ./apps/gaming.nix
     ./apps/rofi
-    ./apps/yazi.nix
+    ./apps/yazi
     ./apps/emacs
 
     ./services/flatpak.nix
@@ -31,5 +32,6 @@
     ./themes/noctaniri
     ./themes/nagare
     ./themes/manguru
+    ./themes/teakettler
   ];
 }

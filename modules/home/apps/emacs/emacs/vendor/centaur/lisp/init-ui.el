@@ -87,8 +87,8 @@
       (add-hook hook #'refresh-ns-appearance))))
 
 ;; Theme
-;; Flutter Emacs uses the matugen-generated `flutterice' theme
-;; (themes/flutterice-theme.el) instead of Centaur's doom-themes stack.
+;; Flutter Emacs uses the matugen-generated `pinaceae' theme
+;; (themes/pinaceae-theme.el) instead of Centaur's doom-themes stack.
 (flutter-load-theme)
 
 ;; Make certain buffers grossly incandescent

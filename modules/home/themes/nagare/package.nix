@@ -2,7 +2,10 @@
 # nagarebar itself is a thin wrapper around bare `qs`, which resolves
 # ~/.config/quickshell (the out-of-store symlink set up in default.nix).
 # the greeter gets a real store-built copy instead since it runs as its
-# own user with no checkout to symlink into
+# own user with no checkout to symlink into.
+#
+# manguru shares this builder (same quickshell tree); teakettler has its
+# own copy in ../teakettler/package.nix.
 { pkgs, quickshellInput }:
 let
   system = pkgs.stdenv.hostPlatform.system;
@@ -10,20 +13,9 @@ let
 
   configSrc = pkgs.lib.fileset.toSource {
     root = ./quickshell;
-    fileset = pkgs.lib.fileset.unions [
-      ./quickshell/shell.qml
-      ./quickshell/greeter.qml
-      ./quickshell/Data
-      ./quickshell/Layers
-      ./quickshell/Containers
-      ./quickshell/Widgets
-      ./quickshell/Generics
-      ./quickshell/Assets
-      ./quickshell/scripts
-    ];
+    fileset = ./quickshell;
   };
 
-  # greeter.qml swapped in as shell.qml
   greeterConfigSrc = pkgs.runCommand "nagarebar-greeter-config" {} ''
     cp -r ${configSrc} $out
     chmod -R u+w $out
@@ -47,6 +39,12 @@ let
   ];
 
   runtimePath = pkgs.lib.makeBinPath [
+    pkgs.bash
+    pkgs.coreutils
+    pkgs.findutils
+    pkgs.gawk
+    pkgs.gnugrep
+    pkgs.gnused
     pkgs.rembg
     pkgs.brightnessctl
     pkgs.power-profiles-daemon

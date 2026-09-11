@@ -31,7 +31,7 @@ original copyright headers are retained.
   `flutter--load-system-theme`, `flutter-load-random-theme`, the
   circadian/auto-dark `flutter-load-theme`, and the `consult-theme`
   advice) replaced with a simple `flutter-load-theme` that loads the
-  `flutterice` theme. `flutter-dark-theme-p` kept (used by
+  `pinaceae` theme. `flutter-dark-theme-p` kept (used by
   init-check.el). `update-packages` now prefers `elpaca-update-all`.
   `flutter-homepage` now points at the local Nix repo (`~/nix`).
 - **init-package.el**: rewritten for Elpaca — removed package.el
@@ -48,7 +48,7 @@ original copyright headers are retained.
   logo was dropped so `dashboard-startup-banner` is `'official`;
   footer reads "Powered by Flutter Emacs".
 - **init-hydra.el**: the Theme section of the toggles hydra now has a
-  single "flutterice" reload plus `consult-theme`; everything else
+  single "pinaceae" reload plus `consult-theme`; everything else
   (toggles, proxies, package archives) unchanged.
 - **init-const.el**: `flutter-homepage` repointed at the local repo.
 - **init-edit.el**: `elec-pair` marked `:ensure nil` — it is not a
@@ -58,7 +58,7 @@ original copyright headers are retained.
 
 ## Renaming
 
-All user-facing "flutterice Emacs" branding (frame title, dashboard
+All user-facing "pinaceae Emacs" branding (frame title, dashboard
 banner/footer, hydra titles, docstrings) was renamed to **Flutter
-Emacs**. The `flutterice` theme (matugen-generated, `themes/
-flutterice-theme.el`) keeps its name.
+Emacs**. The `pinaceae` theme (matugen-generated, `themes/
+pinaceae-theme.el`) keeps its name.
