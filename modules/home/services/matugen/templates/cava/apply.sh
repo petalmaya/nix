@@ -2,7 +2,7 @@
 set -euo pipefail
 
 config_file="${XDG_CONFIG_HOME:-$HOME/.config}/cava/config"
-theme_file="${XDG_CONFIG_HOME:-$HOME/.config}/cava/themes/flutterice"
+theme_file="${XDG_CONFIG_HOME:-$HOME/.config}/cava/themes/pinaceae"
 
 if [ ! -f "$config_file" ] || [ ! -f "$theme_file" ]; then
     exit 0

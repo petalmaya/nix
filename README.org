@@ -4,6 +4,8 @@
 #+CAPTION: a screenie
 [[file:noctaniri.png]]
 
+* WARNING CURRENTLY IN CLEANUP/TRANSTION DO NOT FUCK WITH!
+
 * What?
 my nixos configuration! this is what runs my cozy daily setup on wonderland (my main laptop) and rabbit (my test machine) ♡
 

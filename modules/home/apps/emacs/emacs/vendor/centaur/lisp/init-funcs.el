@@ -486,14 +486,14 @@ Return the fastest package archive."
   (eq (frame-parameter nil 'background-mode) 'dark))
 
 (defun flutter-load-theme (&optional _theme _no-save)
-  "Load the `flutterice' theme.
+  "Load the `pinaceae' theme.
 
 THEME and NO-SAVE are accepted for compatibility with the old
 Centaur API; Flutter Emacs has a single matugen-generated
-theme (themes/flutterice-theme.el), so they are ignored."
+theme (themes/pinaceae-theme.el), so they are ignored."
   (interactive)
   (mapc #'disable-theme custom-enabled-themes)
-  (load-theme 'flutterice t))
+  (load-theme 'pinaceae t))
 
 
 

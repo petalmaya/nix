@@ -16,9 +16,9 @@ lib.mkIf config.nixtop.themes.manguru.enable {
     config.lib.file.mkOutOfStoreSymlink "${config.nixtop.themes.manguru.repoPath}/modules/home/themes/manguru/mango/manguru.conf";
 
   # matugen's output, seed a writable copy (store symlinks block its writes)
-  home.activation.ensureMangoFlutterice = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.ensureMangoPinaceae = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p $HOME/.config/mango
-    $DRY_RUN_CMD [ -e "$HOME/.config/mango/flutterice.conf" ] || $DRY_RUN_CMD cp "${./flutterice.conf}" "$HOME/.config/mango/flutterice.conf"
+    $DRY_RUN_CMD [ -e "$HOME/.config/mango/pinaceae.conf" ] || $DRY_RUN_CMD cp "${./pinaceae.conf}" "$HOME/.config/mango/pinaceae.conf"
   '';
 
   xdg.portal = {

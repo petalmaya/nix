@@ -1,0 +1,171 @@
+pragma ComponentBehavior: Bound
+import QtQuick
+import QtQuick.Layouts
+
+import qs.Data as Dat
+import qs.Widgets as Wid
+
+Item {
+  id: root
+
+  property string outputName: ""
+
+  ColumnLayout {
+    anchors.fill: parent
+    anchors.topMargin: this.spacing
+    spacing: 3
+
+    Item {
+      Layout.fillWidth: true
+      Layout.leftMargin: 20
+      Layout.rightMargin: 20
+      implicitHeight: 18
+
+      RowLayout {
+        id: tabLay
+
+        property int activeIndex: Dat.Globals.settingsTabIndex(root.outputName)
+
+        anchors.fill: parent
+
+        Repeater {
+          // Wallpaper lives in Generics/LauncherWallpaper.qml launcher mode.
+          model: ["Power", "Audio", "Advanced"]
+
+          Item {
+            id: tabRect
+
+            required property int index
+            required property string modelData
+
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            state: (index == tabLay.activeIndex) ? "ACTIVE" : "INACTIVE"
+
+            states: [
+              State {
+                name: "ACTIVE"
+
+                PropertyChanges {
+                  bgRect.opacity: 1
+                  tabText.opacity: 1
+                }
+              },
+              State {
+                name: "INACTIVE"
+
+                PropertyChanges {
+                  bgRect.opacity: 0
+                  tabText.opacity: 0.8
+                }
+              }
+            ]
+            transitions: [
+              Transition {
+                from: "INACTIVE"
+                to: "ACTIVE"
+
+                NumberAnimation {
+                  duration: Dat.MaterialEasing.emphasizedAccelTime
+                  easing.bezierCurve: Dat.MaterialEasing.emphasizedAccel
+                  properties: "bgRect.opacity,tabText.opacity"
+                }
+              },
+              Transition {
+                from: "ACTIVE"
+                to: "INACTIVE"
+
+                NumberAnimation {
+                  duration: Dat.MaterialEasing.emphasizedDecelTime
+                  easing.bezierCurve: Dat.MaterialEasing.emphasizedDecel
+                  properties: "bgRect.opacity,tabText.opacity"
+                }
+              }
+            ]
+
+            Rectangle {
+              id: bgRect
+
+              anchors.centerIn: parent
+              color: Dat.Colors.current.surface_container_high
+              height: tabRect.height
+              radius: Dat.Radius.mdSm
+              width: tabText.contentWidth + 20
+            }
+
+            Text {
+              id: tabText
+
+              anchors.centerIn: parent
+              color: Dat.Colors.current.on_surface
+              horizontalAlignment: Text.AlignHCenter
+              text: parent.modelData
+              verticalAlignment: Text.AlignVCenter
+
+              Behavior on opacity {
+                NumberAnimation {
+                  duration: Dat.MaterialEasing.emphasizedTime
+                  easing.bezierCurve: Dat.MaterialEasing.emphasized
+                }
+              }
+
+              MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+
+                onClicked: mevent => {
+                  Dat.Globals.setSettingsTabIndex(root.outputName, tabRect.index);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    StackLayout {
+      Layout.fillHeight: true
+      Layout.fillWidth: true
+      currentIndex: tabLay.activeIndex
+
+      Wid.PowerTab {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        opacity: visible ? 1 : 0
+
+        Behavior on opacity {
+          NumberAnimation {
+            duration: Dat.MaterialEasing.standardAccelTime
+            easing.bezierCurve: Dat.MaterialEasing.standardAccel
+          }
+        }
+      }
+
+      Wid.AudioTab {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+        opacity: visible ? 1 : 0
+
+        Behavior on opacity {
+          NumberAnimation {
+            duration: Dat.MaterialEasing.emphasizedAccelTime
+            easing.bezierCurve: Dat.MaterialEasing.emphasizedAccel
+          }
+        }
+      }
+
+      // Network tab placeholder; no backend yet.
+      Wid.AdvancedTab {
+        opacity: visible ? 1 : 0
+
+        Behavior on opacity {
+          NumberAnimation {
+            duration: Dat.MaterialEasing.emphasizedAccelTime
+            easing.bezierCurve: Dat.MaterialEasing.emphasizedAccel
+          }
+        }
+      }
+
+    }
+  }
+}

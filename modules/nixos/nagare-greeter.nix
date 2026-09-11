@@ -1,16 +1,14 @@
-# greetd session running nagarebar's greeter.qml
 { lib, pkgs, config, inputs, unstable-pkgs, ... }:
 let
   cfg = config.programs.nagarebar.greeter;
-  system = pkgs.stdenv.hostPlatform.system;
+  # nagare-builder only. teakettler has its own module
+  # (modules/nixos/teakettler-greeter.nix) and its own package, so this
+  # file never reaches into ../home/themes/teakettler any more.
   nagarebar = import ../home/themes/nagare/package.nix {
     inherit pkgs;
     quickshellInput = inputs.quickshell;
   };
   greeterBin = "${nagarebar}/bin/nagarebar-greeter";
-
-  # qml wallpaper never renders inside the real greetd session, so swaybg
-  # draws the background instead. sits underneath harmlessly if that ever works
   greeterWallpaper = "${inputs.self}/assets/wallpaper/serial_experiments_lain_server_room.jpg";
 
   niriGreeterConf = pkgs.writeText "niri-greeter.kdl" ''

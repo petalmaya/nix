@@ -10,8 +10,8 @@ mkdir -p "$config_dir"
 if [ ! -f "$config_file" ]; then
     cat >"$config_file" <<'EOF'
 [flavor]
-dark = "flutterice"
-light = "flutterice"
+dark = "pinaceae"
+light = "pinaceae"
 EOF
     exit 0
 fi
@@ -37,8 +37,8 @@ BEGIN {
 
 # Print any missing keys before leaving the [flavor] section.
 function print_flavor_defaults() {
-    if (!saw_dark)  print "dark = \"flutterice\""
-    if (!saw_light) print "light = \"flutterice\""
+    if (!saw_dark)  print "dark = \"pinaceae\""
+    if (!saw_light) print "light = \"pinaceae\""
 }
 
 # Flush buffered blank lines back into the output.
@@ -84,13 +84,13 @@ function flush_blank_buf() {
 
         # Replace any existing dark/light assignments with the desired value.
         if ($0 ~ /^[[:space:]]*dark[[:space:]]*=/) {
-            print "dark = \"flutterice\""
+            print "dark = \"pinaceae\""
             saw_dark = 1
             next
         }
 
         if ($0 ~ /^[[:space:]]*light[[:space:]]*=/) {
-            print "light = \"flutterice\""
+            print "light = \"pinaceae\""
             saw_light = 1
             next
         }
@@ -110,8 +110,8 @@ END {
     } else if (!saw_flavor) {
         if (NR > 0) print ""
         print "[flavor]"
-        print "dark = \"flutterice\""
-        print "light = \"flutterice\""
+        print "dark = \"pinaceae\""
+        print "light = \"pinaceae\""
     }
 }
 ' "$config_file" >"$tmp_file"

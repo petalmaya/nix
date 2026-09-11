@@ -26,9 +26,9 @@ lib.mkIf config.nixtop.themes.nagare.enable {
     config.lib.file.mkOutOfStoreSymlink "${config.nixtop.themes.nagare.repoPath}/modules/home/themes/nagare/niri/config.kdl";
 
   # matugen's output, seed a writable copy (store symlinks block its writes)
-  home.activation.ensureNiriFlutterice = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.ensureNiriPinaceae = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p $HOME/.config/niri
-    $DRY_RUN_CMD [ -e "$HOME/.config/niri/flutterice.kdl" ] || $DRY_RUN_CMD cp "${./flutterice.kdl}" "$HOME/.config/niri/flutterice.kdl"
+    $DRY_RUN_CMD [ -e "$HOME/.config/niri/pinaceae.kdl" ] || $DRY_RUN_CMD cp "${./pinaceae.kdl}" "$HOME/.config/niri/pinaceae.kdl"
   '';
 
   xdg.portal = {

@@ -131,8 +131,8 @@
        ;; Flutter Emacs has a single matugen-generated theme; the
        ;; old Centaur theme gallery is replaced by a one-key reload plus
        ;; `consult-theme' for anything else.
-       (("t l" (flutter-load-theme) "flutterice"
-         :toggle (memq 'flutterice custom-enabled-themes) :exit t)
+       (("t l" (flutter-load-theme) "pinaceae"
+         :toggle (memq 'pinaceae custom-enabled-themes) :exit t)
         ("t t" (consult-theme) "pick theme" :exit t))
        "Package Archive"
        (("p m" (flutter-set-package-archives 'melpa t)

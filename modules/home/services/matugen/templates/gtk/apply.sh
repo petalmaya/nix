@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-GTK_IMPORT='@import url("flutterice.css");'
+GTK_IMPORT='@import url("pinaceae.css");'
 
 theme_exists() {
     local name="$1"
@@ -32,7 +32,7 @@ ensure_gtk_css_import() {
     local timestamp="/* matugen-reload: $(date +%s%N 2>/dev/null || date +%s) */"
 
     if [ ! -f "$colors_file" ]; then
-        echo "Error: $label flutterice.css not found at $colors_file" >&2
+        echo "Error: $label pinaceae.css not found at $colors_file" >&2
         return 1
     fi
 
@@ -54,16 +54,16 @@ ensure_gtk_css_import() {
             fi
         fi
 
-        if [[ "$content" != *"flutterice.css"* ]] || [[ "$content" != *"@import"* ]]; then
+        if [[ "$content" != *"pinaceae.css"* ]] || [[ "$content" != *"@import"* ]]; then
             content=$(printf '%s\n\n%s' "$content" "$GTK_IMPORT")
-            echo "Appended $label flutterice.css import to gtk.css"
+            echo "Appended $label pinaceae.css import to gtk.css"
         fi
 
         # Write content with new timestamp so file hash/content changes (forces GTK4 inotify re-evaluation)
         printf '%s\n%s\n' "$content" "$timestamp" > "$target"
     else
         printf '%s\n%s\n' "$GTK_IMPORT" "$timestamp" > "$gtk_css"
-        echo "Created $label gtk.css with flutterice.css import"
+        echo "Created $label gtk.css with pinaceae.css import"
     fi
 
     touch "$gtk_css"
@@ -226,11 +226,11 @@ main() {
 
     local gtk3_ok=true gtk4_ok=true
     if ! ensure_gtk_css_import \
-            "$gtk3_dir/gtk.css" "$gtk3_dir/flutterice.css" "GTK3"; then
+            "$gtk3_dir/gtk.css" "$gtk3_dir/pinaceae.css" "GTK3"; then
         gtk3_ok=false
     fi
     if ! ensure_gtk_css_import \
-            "$gtk4_dir/gtk.css" "$gtk4_dir/flutterice.css" "GTK4"; then
+            "$gtk4_dir/gtk.css" "$gtk4_dir/pinaceae.css" "GTK4"; then
         gtk4_ok=false
     fi
 

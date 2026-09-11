@@ -4,5 +4,5 @@ category = "launcher"
 
 [templates.fuzzel]
 input_path = "fuzzel.conf"
-output_path = "$XDG_CONFIG_HOME/fuzzel/themes/flutterice"
+output_path = "$XDG_CONFIG_HOME/fuzzel/themes/pinaceae"
 post_hook = "bash '{{ config_dir }}/apply.sh'"

@@ -1,8 +1,8 @@
 # Spicetify — Colorful
 
-A Flutterice v5 color template for the [Colorful](https://github.com/sanoojes/spicetify-colorful) Spicetify theme.
+A Pinaceae v5 color template for the [Colorful](https://github.com/sanoojes/spicetify-colorful) Spicetify theme.
 
-Generates Colorful's `color.ini` from your active Flutterice palette and reapplies Spicetify automatically whenever your theme changes.
+Generates Colorful's `color.ini` from your active Pinaceae palette and reapplies Spicetify automatically whenever your theme changes.
 
 ## Requirements
 
@@ -11,8 +11,8 @@ Generates Colorful's `color.ini` from your active Flutterice palette and reappli
 
 ## What it does
 
-- `spicetify_colorful.ini` — maps Flutterice's palette to Colorful's `color.ini` keys.
-- `template.toml` — tells Flutterice where to write the generated file (`$XDG_CONFIG_HOME/spicetify/Themes/Colorful/color.ini`) and what to run afterward.
+- `spicetify_colorful.ini` — maps Pinaceae's palette to Colorful's `color.ini` keys.
+- `template.toml` — tells Pinaceae where to write the generated file (`$XDG_CONFIG_HOME/spicetify/Themes/Colorful/color.ini`) and what to run afterward.
 - `apply.sh` — runs `spicetify apply -q --no-restart` so Spotify picks up the new colors without a manual step.
 
 ## Manual Installation
@@ -33,7 +33,7 @@ Generates Colorful's `color.ini` from your active Flutterice palette and reappli
 To apply the theme run the commands below:
 
 ```sh
-spicetify config current_theme Colorful color_scheme flutterice
+spicetify config current_theme Colorful color_scheme pinaceae
 spicetify config inject_css 1 replace_colors 1 overwrite_assets 1 inject_theme_js 1
 spicetify apply
 ```

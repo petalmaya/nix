@@ -4,5 +4,5 @@ category = "terminal"
 
 [templates.lazygit]
 input_path = "lazygit.yml"
-output_path = "$XDG_CONFIG_HOME/lazygit/themes/flutterice.yml"
+output_path = "$XDG_CONFIG_HOME/lazygit/themes/pinaceae.yml"
 post_hook = "bash '{{ config_dir }}/apply.sh'"
