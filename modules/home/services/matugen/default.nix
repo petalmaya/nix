@@ -132,16 +132,22 @@ in {
       pkgs.jq # some apply.sh hooks need it
     ];
 
-    programs.matugen = {
-      enable = true;
-      variant = "dark";
-      # scheme-smart picks the Material variant per wallpaper instead of
-      # forcing one: grey images go monochrome, colourful ones vibrant.
-      type = "scheme-smart";
-      templates = matugenTemplates;
+    # NOTE: deliberately NOT using inputs.matugen's own `programs.matugen`
+    # option here. That module bakes one wallpaper into a build-time Nix
+    # derivation and only exposes the resulting colours as a read-only
+    # attrset (theme.colors / theme.files) - it never copies rendered
+    # templates into $HOME. Our workflow is "run `matugen image <wallpaper>`
+    # by hand whenever", so what we actually need Nix to do is just place a
+    # real, resolved config.toml where the matugen CLI looks for one by
+    # default. matugen does the rendering + post_hooks live, same as it
+    # always has.
+    home.file = runtimeTree // {
+      ".config/matugen/config.toml".source =
+        (pkgs.formats.toml { }).generate "matugen-config.toml" {
+          config = parsed.config;
+          templates = matugenTemplates;
+        };
     };
-
-    home.file = runtimeTree;
 
     # papirus-folders writes inside its theme dir, which a store path can't
     # do — seed a writable copy once.

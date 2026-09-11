@@ -1,0 +1,1 @@
+/nix/store/jnzd6jhl4rbaimmq9wac51li7q70my7a-home-manager-files/.config/matugen/templates/emacs/output-path.sh
