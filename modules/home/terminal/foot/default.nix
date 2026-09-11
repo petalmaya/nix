@@ -76,5 +76,5 @@ in
     home.activation.ensureFootTheme = lib.hm.dag.entryAfter [ "writeBoundary" ] active.activation;
   };
 }
-# Matugen theme source lives here too: foot.temp + foot-apply.sh
-# (toggle: nixtop.services.matugen.templates.foot.enable).
+# The matugen theme template and hook live under services/matugen/templates/foot.
+# Toggle: nixtop.services.matugen.templates.foot.enable.

@@ -16,5 +16,5 @@
     };
   };
 }
-# Matugen theme source lives here too: spicetify.ini.temp + spicetify-apply.sh
-# (toggle: nixtop.services.matugen.templates.spicetify.enable).
+# The matugen template and hook live under services/matugen/templates/spicetify.
+# Toggle: nixtop.services.matugen.templates.spicetify.enable.
