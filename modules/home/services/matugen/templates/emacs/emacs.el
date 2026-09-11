@@ -1,1 +1,1 @@
-/nix/store/jnzd6jhl4rbaimmq9wac51li7q70my7a-home-manager-files/.config/matugen/templates/emacs/emacs.el
+/nix/store/q8h7hn9j38g6gpy6nfswy29q51kgyagd-home-manager-files/.config/matugen/templates/emacs/emacs.el

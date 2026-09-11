@@ -28,11 +28,6 @@ lib.mkIf config.nixtop.themes.teakettler.enable {
       config.lib.file.mkOutOfStoreSymlink "${config.nixtop.themes.teakettler.repoPath}/modules/home/themes/teakettler/mango/rules.conf";
     ".config/mango/animations.conf".source =
       config.lib.file.mkOutOfStoreSymlink "${config.nixtop.themes.teakettler.repoPath}/modules/home/themes/teakettler/mango/animations.conf";
-    # static pinaceae palette (NOT matugen output - matugen still writes
-    # ~/.config/mango/pinaceae.conf on every run, teakettler just
-    # doesn't source it)
-    ".config/mango/pinaceae.conf".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.nixtop.themes.teakettler.repoPath}/modules/home/themes/teakettler/mango/pinaceae.conf";
   };
 
   xdg.portal = {

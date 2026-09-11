@@ -121,9 +121,15 @@ in {
   };
   options.nixtop.services.matugen.templates = lib.genAttrs templateNames (name:
     lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Run the '${name}' matugen template.";
+      type = lib.types.submodule {
+        options.enable = lib.mkOption {
+          type = lib.types.bool;
+          default = true;
+          description = "Run the '${name}' matugen template.";
+        };
+      };
+      default = { };
+      description = "Options for the '${name}' matugen template.";
     });
 
   config = lib.mkIf cfg.enable {
