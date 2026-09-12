@@ -78,6 +78,7 @@ reload_nautilus() {
     fi
 }
 
+# Unused: HM owns settings.ini now (matugen uses gsettings + gtk.css).
 update_gtk3_settings_ini() {
     local theme="$1" mode="$2"
     local config_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -138,10 +139,7 @@ sync_system_appearance() {
         fi
     fi
 
-    # Update GTK3 settings.ini for standalone GTK3 apps
-    if [ "$theme_available" = "true" ]; then
-        update_gtk3_settings_ini "$target_theme" "$mode"
-    fi
+    # HM owns settings.ini; matugen only does gtk.css + gsettings.
 
     if [ -z "$has_gsettings" ] && [ -z "$has_dconf" ]; then
         echo "No gsettings or dconf found, skip system appearance sync"
