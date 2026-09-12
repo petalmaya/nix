@@ -5,8 +5,8 @@
     gtk = {
       enable = true;
       theme = {
-        name = "Everforest-Dark-B";
-        package = pkgs.everforest-gtk-theme;
+        name = "adw-gtk3-dark";
+        package = pkgs.adw-gtk3;
       };
       iconTheme = {
         name = "Papirus-Dark";

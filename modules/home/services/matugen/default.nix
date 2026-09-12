@@ -148,6 +148,9 @@ in {
         };
     };
 
+    # HM owns gtk settings.ini; force to heal leftover matugen file.
+    xdg.configFile."gtk-3.0/settings.ini".force = true;
+
     # papirus-folders writes inside its theme dir, which a store path can't
     # do — seed a writable copy once.
     home.activation.ensurePapirusIconsWritable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
