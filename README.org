@@ -33,6 +33,9 @@ here is how everything is organized:
 
 - =secrets/= — sops-encrypted secrets
 
+* Architecture map
+for the actual import and enable flow, read [[file:ARCHITECTURE.md][ARCHITECTURE.md]].
+
 * How?
 
 ** Quickstart (for me ofc)

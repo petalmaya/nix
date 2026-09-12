@@ -9,6 +9,8 @@ in {
   options.nixtop.apps.fetch.enable = lib.mkEnableOption "Fastfetch/Hyfetch tool";
 
   config = lib.mkIf config.nixtop.apps.fetch.enable {
+    home.packages = [ pkgs.hyfetch ];
+
     programs.fastfetch = {
       enable = true;
     };

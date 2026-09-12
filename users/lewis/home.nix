@@ -1,4 +1,4 @@
-{ config, pkgs, lib, inputs, ... }:
+{ config, pkgs, ... }:
 
 {
   home.username = "lewis";
@@ -7,16 +7,24 @@
   nixtop = {
     themes.teakettler.enable = true;
     terminal.foot.enable = true;
-    # apps.floorp.enable = true;
-    # apps.zen.enable = true;
+    apps.launchers.enable = true;
+
+    # A category can be enabled while individual packages are left out.
+    apps.gaming = {
+      enable = true;
+      exclude = [
+        "wine"
+        "openttd"
+      ];
+    };
+
     apps.firefox-esr.enable = true;
     services.flatpak.enable = true;
   };
 
-  home.packages = with pkgs; [
-    git
-    fuzzel
-  ];
+  # Git is a one-off for this small profile; it does not justify enabling the
+  # full command-line tools group.
+  home.packages = [ pkgs.git ];
 
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;

@@ -1,17 +1,8 @@
-{ config, pkgs, lib, unstable-pkgs, inputs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
-  imports = [
-    "${inputs.self}/modules/nixos/cachix.nix"
-    "${inputs.self}/modules/nixos/podman.nix"
-    "${inputs.self}/modules/nixos/nix-ld.nix"
-    "${inputs.self}/modules/nixos/noctalia-greeter.nix"
-    "${inputs.self}/modules/nixos/plymouth.nix"
-    "${inputs.self}/modules/nixos/mango-session.nix"
-    "${inputs.self}/modules/nixos/teakettler-greeter.nix"
-    "${inputs.self}/modules/nixos/tor.nix"
-  ];
-
+  # Custom system modules are imported once by flake.nix via ./modules/nixos.
+  # This file contains shared policy; host files add machine-specific policy.
   options = {
     nixtop.desktop.enable = lib.mkEnableOption "Desktop environment and graphical applications";
   };

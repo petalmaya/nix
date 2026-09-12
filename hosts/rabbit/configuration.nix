@@ -4,7 +4,6 @@
   imports = [
     ../common/default.nix
     ../common/home-wifi.nix
-    ./hardware-configuration.nix
   ];
 
   networking.hostName = "rabbit";

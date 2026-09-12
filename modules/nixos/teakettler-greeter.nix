@@ -1,14 +1,6 @@
-# greetd session running teakettler's own greeter (teakettler-greeter).
-#
-# Split out of nagare-greeter.nix so teakettler stops reaching into the
-# nagare package / option namespace: this module only ever imports
-# ../home/themes/teakettler/package.nix and only exposes
-# programs.teakettler.greeter. nagare-greeter.nix is now nagare-only.
 { lib, pkgs, config, inputs, unstable-pkgs, ... }:
 let
   cfg = config.programs.teakettler.greeter;
-  # built from teakettler's own package.nix + quickshell tree, so the
-  # greeter never has to reach into another theme's builder
   teakettlerShell = import ../home/themes/teakettler/package.nix {
     inherit pkgs;
     quickshellInput = inputs.quickshell;

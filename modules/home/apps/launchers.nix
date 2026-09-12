@@ -1,17 +1,9 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.nixtop.apps.gaming;
+  cfg = config.nixtop.apps.launchers;
   packages = {
-    wine = pkgs.wine;
-    renpy = pkgs.renpy;
-    "obs-studio" = pkgs.obs-studio;
-    prismlauncher = pkgs.prismlauncher;
-    openttd = pkgs.openttd;
-    openrct2 = pkgs.openrct2;
-    "steam-run" = pkgs.steam-run;
-    "pokemmo-installer" = pkgs.pokemmo-installer;
-    steam = pkgs.steam;
+    fuzzel = pkgs.fuzzel;
   };
 
   selectedPackages = lib.filterAttrs
@@ -19,8 +11,8 @@ let
     packages;
 in
 {
-  options.nixtop.apps.gaming = {
-    enable = lib.mkEnableOption "Gaming applications";
+  options.nixtop.apps.launchers = {
+    enable = lib.mkEnableOption "Application launchers";
     exclude = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
