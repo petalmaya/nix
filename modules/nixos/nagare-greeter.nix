@@ -1,9 +1,6 @@
 { lib, pkgs, config, inputs, unstable-pkgs, ... }:
 let
   cfg = config.programs.nagarebar.greeter;
-  # nagare-builder only. teakettler has its own module
-  # (modules/nixos/teakettler-greeter.nix) and its own package, so this
-  # file never reaches into ../home/themes/teakettler any more.
   nagarebar = import ../home/themes/nagare/package.nix {
     inherit pkgs;
     quickshellInput = inputs.quickshell;

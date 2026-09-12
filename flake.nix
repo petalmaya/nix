@@ -94,14 +94,21 @@
           inherit inputs unstable-pkgs;
         };
         modules = [
+          # Machine-specific hardware and settings.
           ./hosts/${hostname}/hardware-configuration.nix
           ./hosts/${hostname}/configuration.nix
+
+          # Shared system modules and third-party NixOS modules.
+          ./modules/nixos
           { nixpkgs.overlays = [ inputs.emacs-overlay.overlays.default ]; }
           inputs.nix-flatpak.nixosModules.nix-flatpak
           inputs.noctalia-greeter.nixosModules.default
           inputs.disko.nixosModules.disko
           sops-nix.nixosModules.sops
           home-manager.nixosModules.home-manager
+
+          # Every user gets the same Home Manager module library. The user
+          # files below decide which of those modules are enabled.
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
