@@ -95,7 +95,7 @@
       # but we ensure the secret is optional so garden can have placeholder password.
 
       systemd.oomd.enable = true;
-      system.stateVersion = "25.11";
+      system.stateVersion = "26.05";
 
       # swap defaults – host overrides for garden (zswap) vs wonderland/rabbit (zram)
       zramSwap = {

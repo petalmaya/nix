@@ -19,6 +19,8 @@ in
     programs.firefox = {
       enable = true;
       package = pkgs.firefox-esr;
+      # updated behavior for 26.05 – use XDG config path
+      configPath = "${config.xdg.configHome}/mozilla/firefox";
       nativeMessagingHosts = [ pywalfox-manifest ];
       profiles.${config.home.username} = {
         isDefault = true;
