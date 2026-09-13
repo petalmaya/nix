@@ -6,6 +6,7 @@
     programs.firefox = {
       enable = true;
       package = pkgs.floorp-bin;
+      configPath = "${config.xdg.configHome}/mozilla/firefox";
       profiles.${config.home.username} = {
         isDefault = true;
         extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [

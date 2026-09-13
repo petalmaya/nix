@@ -18,6 +18,8 @@ in
 
     programs.zsh = {
       enable = true;
+      # updated behavior for 26.05 – XDG config dir instead of home
+      dotDir = "${config.xdg.configHome}/zsh";
       enableCompletion = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = false;

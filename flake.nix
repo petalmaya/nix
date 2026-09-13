@@ -83,17 +83,14 @@
             system = sys;
             config.allowUnfree = true;
           };
-          # defensively resolve noctalia home module (upstream has changed the attr path once)
-          noctaliaHM =
-            if inputs.noctalia-shell ? homeModules then inputs.noctalia-shell.homeModules.default
-            else if inputs.noctalia-shell ? homeManagerModules then inputs.noctalia-shell.homeManagerModules.default
-            else null;
           # mango HM module if the flake exposes one, otherwise null
+          # noctalia HM is imported defensively inside modules/noctalia/default.nix
+          # (old noctaniri did builtins.attrValues ...), so we don't add it here
           mangoHM =
             if inputs.mango ? homeManagerModules then inputs.mango.homeManagerModules.default
             else if inputs.mango ? homeModules then inputs.mango.homeModules.default
             else null;
-          extraHmModules = builtins.filter (x: x != null) [ noctaliaHM mangoHM ];
+          extraHmModules = builtins.filter (x: x != null) [ mangoHM ];
           # hardware file may not exist for garden until install time
           hwPath = ./hosts/${hostname}/hardware-configuration.nix;
           hwImports = if builtins.pathExists hwPath then [ hwPath ] else [ ];
