@@ -1,0 +1,8 @@
+{
+  // waybar scaffold config – HM generates the real config, this file is reference
+  "layer": "top",
+  "position": "top",
+  "modules-left": ["mango/workspaces", "mango/window"],
+  "modules-center": ["clock"],
+  "modules-right": ["pulseaudio", "network", "battery", "tray"]
+}

@@ -1,0 +1,23 @@
+{ pkgs, lib, config, inputs, ... }:
+{
+  options.nixtop.apps.floorp.enable = lib.mkEnableOption "Floorp browser configuration";
+
+  config = lib.mkIf config.nixtop.apps.floorp.enable {
+    programs.firefox = {
+      enable = true;
+      package = pkgs.floorp-bin;
+      profiles.${config.home.username} = {
+        isDefault = true;
+        extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
+          ublock-origin
+          darkreader
+          bitwarden
+          sponsorblock
+        ];
+        settings = {
+          "extensions.autoDisableScopes" = 0;
+        };
+      };
+    };
+  };
+}
