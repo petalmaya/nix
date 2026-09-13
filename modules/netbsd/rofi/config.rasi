@@ -1,0 +1,8 @@
+/* rofi scaffold – wayland */
+configuration {
+  modi: "drun,run,window";
+  show-icons: true;
+  terminal: "foot";
+  drun-display-format: "{name} [<span weight='light' size='small'><i>({generic})</i></span>]";
+}
+@theme "gruvbox-dark"

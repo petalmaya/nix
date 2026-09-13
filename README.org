@@ -1,94 +1,68 @@
-#+author: Alice Liddell
-#+options: toc:nil
+#+TITLE: Nixtop – Alice's NixOS
 
-#+CAPTION: a screenie
-[[file:noctaniri.png]]
+* Overview
 
-* WARNING CURRENTLY IN CLEANUP/TRANSTION DO NOT FUCK WITH!
+Reworked config. Do not use. In heavy work.
 
-* What?
-my nixos configuration! this is what runs my cozy daily setup on wonderland (my main laptop) and rabbit (my test machine) ♡
+- =flake.nix= is the entry point. =nixosConfigurations.wonderland/rabbit/garden= are the hosts.
+- =hosts/<host>/{default.nix,disko.nix,hardware-configuration.nix}= is host policy.
+- =modules/default.nix= exports =nixosModules= and =homeModules=; edit there to add/remove a module.
+- =modules/core= is the system baseline (bootloader, networking, sops, zram/zswap, pipewire, fonts, etc).
+- =modules/user/<name>/{home.nix,nixpak.nix}= are per-user profiles (alice+lewis on wonderland, lewis on rabbit, rose on garden).
+- =modules/mango= is MangoWC config: shared base (=config,settings,layout,rules,animations=) + per-shell variants (=appearance,keybinds,autostart=) selected by =nixtop.shell=.
+- =modules/matugen= owns colour generation from wallpaper at runtime; it writes a Noctalia palette bridge (=~/.config/noctalia/palettes/nixtop.json=) and app configs. See =modules/matugen/templates=.
+- =modules/noctalia= and =modules/quickshell= are alternative shells selected by =nixtop.shell = "noctalia" | "quickshell"= (default =noctalia=). The greeter follows =nixtop.greetd.greeter=.
+- Theming ownership is switchable: =nixtop.theme.owner = "auto" | "matugen" | "noctalia"= (default =auto= follows shell) plus per-app =nixtop.theme.apps.<app>=.
 
-i'm big on declarability, so everything lives here — the desktop shell, the terminal, emacs, even the login greeter. i like niri oh and emacs :3
+* Quick start
 
-* Where?
-here is how everything is organized:
+#+BEGIN_SRC sh
+nix flake check --no-build
+nix build .#nixosConfigurations.wonderland.config.system.build.toplevel
+sudo nixos-rebuild switch --flake .#wonderland
+#+END_SRC
 
-- =hosts/= — machine configurations
-  - =common/= — shared config for all my systems
-  - =wonderland/= — my main laptop
-  - =rabbit/= — my test machine, for experimenting without breaking things!
+On first install for =garden=, generate hardware config:
 
-- =modules/= — my custom nixos and home manager modules
-  - =nixos/= — system level stuff (cachix, podman, the greetd greeter, etc.)
-  - =home/= — home manager configuration:
-    - =apps/= — browsers, emacs, gaming, yazi, fetch, etc.
-    - =services/= — mako, mpd, matugen theming, flatpaks
-    - =terminal/= — foot, zsh, zellij, tmux
-    - =themes/= — nagare (niri + quickshell), noctaniri, redpine, rosepine-dark
+#+BEGIN_SRC sh
+nixos-generate-config --show-hardware-config > hosts/garden/hardware-configuration.nix
+#+END_SRC
 
-- =users/= — home manager user configs
-  - =alice/= — me! (used on wonderland and rabbit)
-  - =lewis/= — secondary user for testing and multitasking
+Secrets are managed by sops-nix: =secrets/secrets.yaml=, =.sops.yaml=.
 
-- =secrets/= — sops-encrypted secrets
+* Wallpaper → theme
 
-* Architecture map
-for the actual import and enable flow, read [[file:ARCHITECTURE.md][ARCHITECTURE.md]].
+#+BEGIN_SRC sh
+nixtop-theme ~/Pictures/Wallpapers/your.jpg
+# or via the shell's wallpaper picker (quickshell) – both run matugen and nudge Noctalia + Mango.
+#+END_SRC
 
-* How?
+* Dev live-edit flags (opt-in, default off except emacs)
 
-** Quickstart (for me ofc)
-if i ever need to rebuild my system in a hurry:
-#+begin_src sh
-  git clone https://github.com/petalmaya/nix.git
-  cd nix
-  nixsw
-#+end_src
+- =nixtop.dev.liveEmacs= (default on) – =~/ .config/emacs= → repo =modules/emacs/emacs=
+- =nixtop.dev.liveMango= – =~/ .config/mango= → repo =modules/mango=
+- =nixtop.dev.liveMatugen= – =~/ .config/matugen/templates= → repo =modules/matugen/templates=
+- =nixtop.dev.liveQuickshell= – =~/ .config/quickshell= → repo =modules/quickshell/shell=
 
-** Installing on a new machine (or new user setup)
-you need your own age key so you can decrypt and re-encrypt the secrets.
+Editing a template with the flag off = rebuild.
 
-*** 1. generate an age key
-#+begin_src sh
-  age-keygen -o ~/.config/sops/age/keys.txt
-  # write down the public key printed - you'll need it!
-#+end_src
+* Layout
 
-*** 2. add your public key to .sops.yaml
-edit =.sops.yaml= and replace my public key with your own:
-#+begin_src yaml
-  keys:
-    - &admin age1YOUR_PUBLIC_KEY_HERE
-  creation_rules:
-    - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
-      key_groups:
-      - age:
-        - *admin
-#+end_src
+#+BEGIN_SRC text
+flake.nix
+├── hosts/wonderland, rabbit, garden
+├── modules/
+│   ├── default.nix          # nixosModules / homeModules lists
+│   ├── core/                # NixOS baseline + greetd selector + cachix/plymouth/nix-ld/podman + zsh/tmux (HM)
+│   ├── browsers/            # firefox-esr, floorp
+│   ├── conf/                # foot, fetch, yazi
+│   ├── emacs/               # nixmacs + live-editable emacs tree
+│   ├── mango/               # shared + variants/noctalia|quickshell
+│   ├── matugen/             # 11 templates + palette bridge + nixtop-theme CLI
+│   ├── noctalia/            # shell + greeter (interim/default)
+│   └── quickshell/          # own shell (shell/ + package.nix), deferred
+├── assets/wallpaper, font
+└── secrets/
+#+END_SRC
 
-*** 3. create your secrets.yaml
-my actual secrets are ignored by git, so you should create your own using the template:
-#+begin_src sh
-  cp secrets/secrets.yaml.example secrets/secrets.yaml
-  sops secrets/secrets.yaml
-#+end_src
-
-*** 4. copy your key where sops-nix expects it
-before your first rebuild, put the key at =/var/lib/sops-nix/keys.txt= :
-#+begin_src sh
-  sudo mkdir -p /var/lib/sops-nix
-  sudo cp ~/.config/sops/age/keys.txt /var/lib/sops-nix/keys.txt
-  sudo chmod 600 /var/lib/sops-nix/keys.txt
-#+end_src
-
-*** 5. build!
-#+begin_src sh
-  sudo nixos-rebuild switch --flake .#wonderland
-#+end_src
-
-* Who's Alice?
-im alice, silly goose!
-
-* what about the servers?!
-i moved most of it to another repo, and even then i've moved off of nixos for them perfering other distros for ease of setting up quickly.
+See =ARCHITECTURE.md= for the full map (ported from =pre-rework/ARCHITECTURE.md=).

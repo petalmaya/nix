@@ -1,10 +1,23 @@
 .tor-config/
-modules/home/apps/emacs/emacs.zip
+modules/emacs/emacs.zip
+result
+result-*
+.direnv/
+.direnvrc
 
-# matugen runtime files inside the templates tree
-modules/home/services/matugen/templates/cozy-ui/assets/
-modules/home/services/matugen/templates/blacklingerie/originals/
-# matugen template outputs that render back into the templates tree.
-modules/home/services/matugen/templates/cozy-ui/colors.sh
-modules/home/services/matugen/templates/blacklingerie/colors.sh
-modules/home/services/matugen/templates/papirus-icons/colors-final
+# matugen runtime outputs that render back into the templates tree
+modules/matugen/templates/cozy-ui/assets/
+modules/matugen/templates/blacklingerie/originals/
+modules/matugen/templates/cozy-ui/colors.sh
+modules/matugen/templates/blacklingerie/colors.sh
+modules/matugen/templates/papirus-icons/colors-final
+
+# quickshell runtime state
+.quickshell/
+.qs/
+
+# dropped clone – whole tbnixifedandsolved tree is intentionally ignored until deletion
+modules/quickshell/tbnixifedandsolved/
+
+# Nix build outputs
+flake.lock.backup
