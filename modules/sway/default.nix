@@ -74,6 +74,12 @@ in
         playerctl
         libnotify
         polkit_gnome
+        # status.sh deps — ensure ip/ping/pactl are present so swaybar never sees "Error reading from status bar"
+        iproute2
+        iputils
+        gawk
+        coreutils
+        pulseaudio # provides pactl (pipewire-pulse compat)
       ];
 
       # Companion configs – fuzzel, mako, swaylock
