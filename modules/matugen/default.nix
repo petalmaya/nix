@@ -74,12 +74,16 @@ let
 
   # Gate matugen templates where noctalia owns the app: foot, gtk3, gtk4, emacs may be owned by noctalia.
   # The list of gateable apps is those where both systems can write the same file.
-  isMatugenOwned = name:
-    if name == "foot" then effectiveOwner "foot" == "matugen"
-    else if name == "gtk3" then effectiveOwner "gtk" == "matugen"
-    else if name == "gtk4" then effectiveOwner "gtk" == "matugen"
-    else if name == "emacs" then effectiveOwner "emacs" == "matugen"
-    else true;
+  # FIX: For now matugen always owns these so they stay themed even when shell is noctalia.
+  # Once Noctalia user templates (templates.toml) are ready for these apps, re-enable gating.
+  isMatugenOwned = name: true;
+  # Original gating (kept for reference, re-enable later):
+  # isMatugenOwned = name:
+  #   if name == "foot" then effectiveOwner "foot" == "matugen"
+  #   else if name == "gtk3" then effectiveOwner "gtk" == "matugen"
+  #   else if name == "gtk4" then effectiveOwner "gtk" == "matugen"
+  #   else if name == "emacs" then effectiveOwner "emacs" == "matugen"
+  #   else true;
 
   # Filter templates by enable flags and by owner gating
   enabledTemplates = lib.filterAttrs (name: t:

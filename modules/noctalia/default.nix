@@ -27,11 +27,13 @@ in
         # theme bridge – §8.2
         theme.source = "custom";
         theme.custom_palette = "nixtop";
-        # Mango compositor – Noctalia will generate its Mango appearance
-        # via its own templates when this is set correctly.
-        # Keep template catalog enabled (network allowed) – don't filter it.
-        # The old noctaniri set builtin_ids = [ "niri" ]; for Mango we leave
-        # it to Noctalia's defaults which already include Mango when detected.
+        # Compositor shadows – docs say Mango does shadows, Noctalia does not.
+        # Must disable Noctalia's own shadows when Mango's are enabled (see §6).
+        bar."default".shadow = false;
+        bar."default".contact_shadow = false;
+        dock.shadow = false;
+        shell.panel.shadow = false;
+        # Keep template catalog enabled (network allowed)
       };
     };
 

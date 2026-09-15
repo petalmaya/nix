@@ -1,0 +1,12 @@
+# Sway — modular entry (mango-style split)
+# Main config simply includes the split files; order matters.
+# Variables first so $mod etc are available to later files.
+include ~/.config/sway/variables.conf
+include ~/.config/sway/appearance.conf
+include ~/.config/sway/inputs.conf
+include ~/.config/sway/outputs.conf
+include ~/.config/sway/bar.conf
+include ~/.config/sway/keybinds.conf
+include ~/.config/sway/media.conf
+include ~/.config/sway/modes.conf
+include ~/.config/sway/autostart.conf

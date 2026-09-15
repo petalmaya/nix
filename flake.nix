@@ -63,6 +63,11 @@
       url = "github:mangowm/mango";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    silentSDDM = {
+      url = "github:uiriansan/SilentSDDM";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -121,6 +126,7 @@
                  else { })
                else { })
               inputs.noctalia-greeter.nixosModules.default
+              inputs.silentSDDM.nixosModules.default
               {
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;

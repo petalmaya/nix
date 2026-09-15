@@ -9,7 +9,8 @@
     terminal.foot.enable = true;
     apps.fetch.enable = true;
     apps.yazi.enable = true;
-    apps.firefox-esr.enable = true;
+    apps.chromium.enable = true;
+    sway.enable = true;
   };
 
   home.packages = [ pkgs.git ];

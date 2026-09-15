@@ -12,10 +12,14 @@
 
     apps.fetch.enable = true;
     apps.yazi.enable = true;
-    apps.firefox-esr.enable = true;
+    apps.chromium.enable = true;
     # floorp optional – disabled by default, enable if wanted
     # apps.floorp.enable = true;
+    # firefox-esr disabled – switched to chromium per request
+    # apps.firefox-esr.enable = false;
     apps.emacs.enable = true;
+
+    sway.enable = true;
   };
 
   # wallpaper directory shared into the home (D24) – alice and rose only
