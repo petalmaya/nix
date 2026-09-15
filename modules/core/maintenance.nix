@@ -11,12 +11,13 @@ in
     autoUpgrade.enable = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "Enable daily nixos auto-upgrade (system.autoUpgrade).";
+      description = "Enable nixos auto-upgrade every 4 days (system.autoUpgrade).";
     };
     autoUpgrade.dates = lib.mkOption {
       type = lib.types.str;
-      default = "daily";
-      description = "Systemd calendar for autoUpgrade (see systemd.time(7)).";
+      # systemd calendar: every 4 days at 04:00 (days 01,05,09,13,17,21,25,29) + monotonic 4d
+      default = "*-*-01/4 04:00:00";
+      description = "Systemd calendar for autoUpgrade (see systemd.time(7)). Default is every 4 days at 04:00.";
     };
     autoUpgrade.flake = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
@@ -64,11 +65,16 @@ in
         # When using flakes, --update-input nixpkgs is often wanted; keep flags minimal by default
         flags = lib.mkDefault [ ];
         allowReboot = cfg.autoUpgrade.allowReboot;
-        # daily upgrades should persist across power-offs
+        # every-4-days upgrades should persist across power-offs
         persistent = lib.mkDefault true;
         randomizedDelaySec = lib.mkDefault "30min";
         operation = lib.mkDefault "switch";
       };
+      # Enforce true 4-day interval via monotonic timer in addition to the calendar.
+      # OnCalendar covers the wall-clock schedule (01,05,09,… at 04:00) while
+      # OnUnitActiveSec guarantees a 96 h gap even across short/long months or downtime.
+      systemd.timers.nixos-upgrade.timerConfig.OnUnitActiveSec = lib.mkDefault "4d";
+      systemd.timers.nixos-upgrade.timerConfig.OnBootSec = lib.mkDefault "15min";
     })
 
     (lib.mkIf cfg.gc.enable {

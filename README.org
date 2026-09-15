@@ -1,0 +1,70 @@
+#+TITLE: Nixtop – Alice's NixOS
+
+* Overview
+
+This is the reworked configuration (v2) – flat module tree by concern.
+
+- =flake.nix= is the entry point. =nixosConfigurations.wonderland/rabbit/garden= are the hosts.
+- =hosts/<host>/{default.nix,disko.nix,hardware-configuration.nix}= is host policy.
+- =modules/default.nix= exports =nixosModules= and =homeModules=; edit there to add/remove a module.
+- =modules/core= is the system baseline (bootloader, networking, sops, zram/zswap, pipewire, fonts, etc).
+- =modules/user/<name>/{home.nix,nixpak.nix}= are per-user profiles (alice+lewis on wonderland, lewis on rabbit, rose on garden).
+- =modules/mango= is MangoWC config: shared base (=config,settings,layout,rules,animations=) + per-shell variants (=appearance,keybinds,autostart=) selected by =nixtop.shell=.
+- =modules/matugen= owns colour generation from wallpaper at runtime; it writes a Noctalia palette bridge (=~/.config/noctalia/palettes/nixtop.json=) and app configs. See =modules/matugen/templates=.
+- =modules/noctalia= and =modules/quickshell= are alternative shells selected by =nixtop.shell = "noctalia" | "quickshell"= (default =noctalia=). The greeter follows =nixtop.greetd.greeter=.
+- Theming ownership is switchable: =nixtop.theme.owner = "auto" | "matugen" | "noctalia"= (default =auto= follows shell) plus per-app =nixtop.theme.apps.<app>=.
+
+* Quick start
+
+#+BEGIN_SRC sh
+nix flake check --no-build
+nix build .#nixosConfigurations.wonderland.config.system.build.toplevel
+sudo nixos-rebuild switch --flake .#wonderland
+#+END_SRC
+
+On first install for =garden=, generate hardware config:
+
+#+BEGIN_SRC sh
+nixos-generate-config --show-hardware-config > hosts/garden/hardware-configuration.nix
+#+END_SRC
+
+Secrets are managed by sops-nix: =secrets/secrets.yaml=, =.sops.yaml=.
+
+* Wallpaper → theme
+
+#+BEGIN_SRC sh
+nixtop-theme ~/Pictures/Wallpapers/your.jpg
+# or via the shell's wallpaper picker (quickshell) – both run matugen and nudge Noctalia + Mango.
+#+END_SRC
+
+* Dev live-edit flags (opt-in, default off except emacs)
+
+- =nixtop.dev.liveEmacs= (default on) – =~/ .config/emacs= → repo =modules/emacs/emacs=
+- =nixtop.dev.liveMango= – =~/ .config/mango= → repo =modules/mango=
+- =nixtop.dev.liveMatugen= – =~/ .config/matugen/templates= → repo =modules/matugen/templates=
+- =nixtop.dev.liveQuickshell= – =~/ .config/quickshell= → repo =modules/quickshell/shell=
+
+Editing a template with the flag off = rebuild.
+
+See =PLAN.md §8.4= for the anti-hell rule (no per-file mkOutOfStoreSymlink, one symlink per flag, generated files in =~/ .local/state=).
+
+* Layout
+
+#+BEGIN_SRC text
+flake.nix
+├── hosts/wonderland, rabbit, garden
+├── modules/
+│   ├── default.nix          # nixosModules / homeModules lists
+│   ├── core/                # NixOS baseline + greetd selector + cachix/plymouth/nix-ld/podman + zsh/tmux (HM)
+│   ├── browsers/            # firefox-esr, floorp
+│   ├── conf/                # foot, fetch, yazi
+│   ├── emacs/               # nixmacs + live-editable emacs tree
+│   ├── mango/               # shared + variants/noctalia|quickshell
+│   ├── matugen/             # 11 templates + palette bridge + nixtop-theme CLI
+│   ├── noctalia/            # shell + greeter (interim/default)
+│   └── quickshell/          # own shell (shell/ + package.nix), deferred
+├── assets/wallpaper, font
+└── secrets/
+#+END_SRC
+
+See =ARCHITECTURE.md= for the full map (ported from =pre-rework/ARCHITECTURE.md=).

@@ -3,7 +3,7 @@ let
   cfg = config.nixtop.services.matugen;
 
   # Registry – one place to add/remove a template (§8.5)
-  # Keep-list (11): noctalia (palette bridge), mango, quickshell, foot, gtk3, gtk4, bat, starship, fastfetch, yazi, emacs
+  # Keep-list (12): noctalia (palette bridge), mango, quickshell, foot, gtk3, gtk4, bat, starship, fastfetch, yazi, emacs, papirus-icons
   templates = {
     noctalia = {
       input_path = "noctalia/palette.json";
@@ -56,6 +56,11 @@ let
       input_path = "emacs/emacs.el";
       output_path = "~/.config/emacs/themes/pinaceae-theme.el";
       post_hook = "bash ~/.config/matugen/templates/emacs/apply.sh 2>/dev/null || true";
+    };
+    "papirus-icons" = {
+      input_path = "papirus-icons/colors";
+      output_path = "~/.config/matugen/templates/papirus-icons/colors-final";
+      post_hook = "bash ~/.config/matugen/templates/papirus-icons/apply.sh 2>/dev/null || true";
     };
   };
 
@@ -189,6 +194,20 @@ in
       $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
       $DRY_RUN_CMD mkdir -p "$HOME/.config/nixtop-shell"
       $DRY_RUN_CMD [ -e "$HOME/.config/noctalia/palettes/nixtop.json" ] || $DRY_RUN_CMD touch "$HOME/.config/noctalia/palettes/nixtop.json"
+    '';
+
+    # papirus-folders writes inside its theme dir, which a store path can't do — seed a writable copy once.
+    # Fixes Nautilus only showing fallback icons: the user theme must be writable so papirus-folders can recolor it.
+    home.activation.ensurePapirusIconsWritable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD mkdir -p "$HOME/.local/share/icons"
+      if [ ! -d "$HOME/.local/share/icons/Papirus" ]; then
+        $DRY_RUN_CMD cp -r "${pkgs.papirus-icon-theme}/share/icons/Papirus" "$HOME/.local/share/icons/Papirus"
+        $DRY_RUN_CMD chmod -R u+w "$HOME/.local/share/icons/Papirus"
+        $DRY_RUN_CMD chmod +x "$HOME/.local/share/icons/Papirus" 2>/dev/null || true
+      fi
+      # ensure papirus-folders script is executable (live symlink or store)
+      $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/papirus-icons/papirus-folders" 2>/dev/null || true
+      $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/papirus-icons/apply.sh" 2>/dev/null || true
     '';
   });
 }
