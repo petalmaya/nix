@@ -1,10 +1,6 @@
 daemonize
 ignore-empty-password
 show-failed-attempts
-indicator
-clock
-timestr=%H:%M
-datestr=%a, %d %b
 font=FiraCode Nerd Font
 font-size=24
 indicator-radius=110
@@ -28,3 +24,4 @@ text-clear-color=e7efedff
 text-caps-lock-color=e7efedff
 text-ver-color=e7efedff
 text-wrong-color=f2d8d4ff
+image=/home/alice/Pictures/Wallpapers/alpine-lake.jpg
