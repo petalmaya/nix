@@ -84,21 +84,15 @@ while true; do
     fi
     blocks+=("$(make_block "$net_text")")
 
-    # --- Load average ---
-    load=$(cut -d' ' -f1 /proc/loadavg 2>/dev/null || true)
-    if [ -n "${load:-}" ]; then
-        blocks+=("$(make_block "🏋 $load")")
-    fi
-
     # --- Volume ---
     if command -v pactl >/dev/null 2>&1; then
         # portable grep: no -P (PCRE) — not guaranteed on minimal systems; use -o '[0-9]*%'
         vol=$(pactl get-sink-volume @DEFAULT_SINK@ 2>/dev/null | grep -o '[0-9]*%' | head -1 | tr -d '%' || true)
         mute=$(pactl get-sink-mute @DEFAULT_SINK@ 2>/dev/null | awk '{print $2}' || true)
         if [ "${mute:-}" = "yes" ]; then
-            blocks+=("$(make_block "🔇 muted")")
+            blocks+=("$(make_block " muted")")
         elif [ -n "${vol:-}" ]; then
-            blocks+=("$(make_block "🔊 ${vol}%")")
+            blocks+=("$(make_block " ${vol}%")")
         fi
     fi
 
@@ -108,9 +102,9 @@ while true; do
         cap=$(cat "$bat/capacity" 2>/dev/null || true)
         st=$(cat "$bat/status" 2>/dev/null || true)
         if [ "${st:-}" = "Charging" ]; then
-            icon="⚡"
+            icon=""
         else
-            icon="🔋"
+            icon="󰁹"
         fi
         if [ -n "${cap:-}" ]; then
             blocks+=("$(make_block "$icon ${cap}%")")
@@ -119,7 +113,7 @@ while true; do
     done
 
     # --- Date + time (with ISO week number) ---
-    datetime=$(date "+%Y/%m/%d (w%V) 🕐 %H:%M" 2>/dev/null || date)
+    datetime=$(date "+%Y/%m/%d (w%V)  %H:%M" 2>/dev/null || date)
     blocks+=("$(make_block "$datetime")")
 
     # Join blocks with commas and emit a single JSON array line WITH leading comma.
