@@ -4,6 +4,8 @@
   networking.extraHosts = "127.0.0.1 wonderland";
 
   nixtop.desktop.enable = true;
+  # live sway for dev — ~/.config/sway → ~/nix/modules/sway/sway (see modules/sway/default.nix:30)
+  nixtop.dev.liveSway = true;
 
   boot.initrd.kernelModules = [ "i915" ];
 

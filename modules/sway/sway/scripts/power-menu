@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+choice=$(printf '%s\n' 'Lock' 'Suspend' 'Log out' 'Reboot' 'Power off' | fuzzel --dmenu --prompt='Power  >   ')
+case "$choice" in
+    Lock) swaylock -C "$HOME/.config/swaylock/config" ;;
+    Suspend) swaylock -C "$HOME/.config/swaylock/config" & systemctl suspend ;;
+    'Log out') swaymsg exit ;;
+    Reboot) systemctl reboot ;;
+    'Power off') systemctl poweroff ;;
+esac
+

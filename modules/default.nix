@@ -1,6 +1,9 @@
 {
   nixosModules = [
     ./core
+    ./core/apparmor.nix
+    ./core/sddm.nix
+    ./core/maintenance.nix
     ./noctalia/greeter.nix
     ./quickshell/greeter.nix
   ];
@@ -15,5 +18,6 @@
     ./matugen
     ./noctalia
     ./quickshell
+    ./sway
   ];
 }

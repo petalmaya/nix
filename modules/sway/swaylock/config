@@ -1,0 +1,30 @@
+daemonize
+ignore-empty-password
+show-failed-attempts
+indicator
+clock
+timestr=%H:%M
+datestr=%a, %d %b
+font=FiraCode Nerd Font
+font-size=24
+indicator-radius=110
+indicator-thickness=8
+inside-color=0b1519cc
+inside-clear-color=31505bcc
+inside-caps-lock-color=a97878cc
+inside-ver-color=31505bcc
+inside-wrong-color=a97878cc
+ring-color=31505bff
+ring-clear-color=c8b98cff
+ring-caps-lock-color=a97878ff
+ring-ver-color=a9c2c7ff
+ring-wrong-color=a97878ff
+key-hl-color=e7efedff
+bs-hl-color=a97878ff
+separator-color=00000000
+line-color=00000000
+text-color=e7efedff
+text-clear-color=e7efedff
+text-caps-lock-color=e7efedff
+text-ver-color=e7efedff
+text-wrong-color=f2d8d4ff

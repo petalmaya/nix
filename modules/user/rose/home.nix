@@ -11,8 +11,9 @@
     terminal.foot.enable = true;
     apps.fetch.enable = true;
     apps.yazi.enable = true;
-    apps.firefox-esr.enable = true;
+    apps.chromium.enable = true;
     apps.emacs.enable = true;
+    sway.enable = true;
   };
 
   home.file."Pictures/Wallpapers".source =

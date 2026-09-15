@@ -38,6 +38,11 @@
       default = false;
       description = "Symlink quickshell config live into the repo.";
     };
+    nixtop.dev.liveSway = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Symlink sway config live into the repo (mirrors liveMango).";
+    };
   };
 
   config = lib.mkMerge [
@@ -122,16 +127,29 @@
         addLoginEntry = lib.mkDefault true;
       };
 
-      # greeter user needs a writable home for its config
+      # greeter user needs a writable home for its config (fix for 26.05: isSystemUser + group required)
       users.users.greeter = {
+        isSystemUser = true;
+        group = "greeter";
         home = "/var/lib/greeter";
         createHome = true;
       };
+      users.groups.greeter = {};
 
-      # default greeter follows the shell unless explicitly overridden
-      nixtop.greetd.greeter = lib.mkDefault config.nixtop.shell;
+      # default greeter – sway + SilentSDDM is now the default desktop (user request)
+      # old default was `config.nixtop.shell` (noctalia/quickshell via greetd);
+      # now sddm (SilentSDDM) is pre-selected. Override per-host if needed.
+      nixtop.greetd.greeter = lib.mkDefault "sddm";
+
+      # AppArmor – requested by user; nix has security.apparmor.enable
+      nixtop.security.apparmor.enable = lib.mkDefault true;
+
+      # Sway is the default session for the SDDM chooser (alongside Mango)
+      services.displayManager.defaultSession = lib.mkDefault "sway";
 
       nixtop.plymouth.enable = lib.mkDefault true;
+
+      security.polkit.enable = true;
 
       security.rtkit.enable = true;
       services.pipewire = {

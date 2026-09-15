@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+dir="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
+mkdir -p "$dir"
+file="$dir/desktop-$(date +%Y-%m-%d_%H-%M-%S).png"
+grim "$file"
+notify-send -i "$file" 'Screenshot saved' "$file"
+
