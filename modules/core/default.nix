@@ -1,4 +1,10 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 {
   imports = [
     ./cachix.nix
@@ -12,9 +18,23 @@
     nixtop.desktop.enable = lib.mkEnableOption "Desktop environment and graphical applications";
 
     nixtop.shell = lib.mkOption {
-      type = lib.types.enum [ "noctalia" "quickshell" ];
-      default = "noctalia";
-      description = "Which shell owns the session. Drives Mango variant, greeter default and theming owner.";
+      type = lib.types.enum [
+        "noctalia"
+        "quickshell"
+        "jes"
+        "none"
+      ];
+      default = "none";
+      description = "Which shell owns the session. 'none' = waybar-only (swayfx bar, no shell). Drives variant, greeter default and theming owner.";
+    };
+    nixtop.sway.bar = lib.mkOption {
+      type = lib.types.enum [
+        "waybar"
+        "swaybar"
+        "none"
+      ];
+      default = "waybar";
+      description = "Which bar to run under swayfx. waybar is primary; swaybar is archived status.sh; none disables bar entirely.";
     };
 
     # dev live-edit flags (defaults per §8.4)
@@ -52,7 +72,9 @@
 
       boot.loader.systemd-boot.enable = true;
       boot.loader.efi.canTouchEfiVariables = true;
-      boot.binfmt.emulatedSystems = lib.filter (sys: sys != pkgs.stdenv.hostPlatform.system) [ "aarch64-linux" ];
+      boot.binfmt.emulatedSystems = lib.filter (sys: sys != pkgs.stdenv.hostPlatform.system) [
+        "aarch64-linux"
+      ];
       boot.binfmt.preferStaticEmulators = true;
 
       networking.networkmanager.enable = true;
@@ -70,7 +92,10 @@
       };
 
       nixpkgs.config.allowUnfree = true;
-      nix.settings.experimental-features = [ "nix-command" "flakes" ];
+      nix.settings.experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       nixpkgs.config.permittedInsecurePackages = [
         "python3.12-ecdsa-0.19.1"
       ];
@@ -81,7 +106,13 @@
       users.users.alice = {
         isNormalUser = true;
         hashedPasswordFile = config.sops.secrets.alice_password.path;
-        extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
+        extraGroups = [
+          "networkmanager"
+          "wheel"
+          "video"
+          "audio"
+          "input"
+        ];
         shell = pkgs.zsh;
         openssh.authorizedKeys.keys = [
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIaO01Z2u6T2zPwR/XOoR6Zv0EvgAsTCvCd1M4bm7Yph alice@wonderland"
@@ -92,7 +123,13 @@
       users.users.lewis = {
         isNormalUser = true;
         hashedPasswordFile = config.sops.secrets.lewis_password.path;
-        extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
+        extraGroups = [
+          "networkmanager"
+          "wheel"
+          "video"
+          "audio"
+          "input"
+        ];
         shell = pkgs.zsh;
       };
 
@@ -109,11 +146,13 @@
         memoryPercent = 50;
       };
 
-      swapDevices = lib.mkDefault [{
-        device = "/var/lib/swapfile";
-        size = 8192;
-        priority = 0;
-      }];
+      swapDevices = lib.mkDefault [
+        {
+          device = "/var/lib/swapfile";
+          size = 8192;
+          priority = 0;
+        }
+      ];
 
       boot.kernel.sysctl = {
         "vm.swappiness" = 10;
@@ -121,27 +160,24 @@
     }
 
     (lib.mkIf config.nixtop.desktop.enable {
-      # Mango session via upstream flake (D22) – addLoginEntry registers the .desktop
+      # Mango session via the upstream flake; addLoginEntry registers the .desktop.
       programs.mango = {
         enable = lib.mkDefault true;
         addLoginEntry = lib.mkDefault true;
       };
 
-      # greeter user needs a writable home for its config (fix for 26.05: isSystemUser + group required)
+      # The greetd greeter user needs a writable home plus an explicit group.
       users.users.greeter = {
         isSystemUser = true;
         group = "greeter";
         home = "/var/lib/greeter";
         createHome = true;
       };
-      users.groups.greeter = {};
+      users.groups.greeter = { };
 
-      # default greeter – sway + SilentSDDM is now the default desktop (user request)
-      # old default was `config.nixtop.shell` (noctalia/quickshell via greetd);
-      # now sddm (SilentSDDM) is pre-selected. Override per-host if needed.
+      # SilentSDDM is the default greeter; override per-host if needed.
       nixtop.greetd.greeter = lib.mkDefault "sddm";
 
-      # AppArmor – requested by user; nix has security.apparmor.enable
       nixtop.security.apparmor.enable = lib.mkDefault true;
 
       # Sway is the default session for the SDDM chooser (alongside Mango)
@@ -178,7 +214,7 @@
         noto-fonts
         nerd-fonts.jetbrains-mono
         source-code-pro
-        (runCommand "cartograph-cf" {} ''
+        (runCommand "cartograph-cf" { } ''
           install -m444 -D ${./../../assets/font/cartograph}/*.otf -t $out/share/fonts/opentype
         '')
       ];
@@ -209,10 +245,12 @@
 
       services.flatpak = {
         enable = true;
-        remotes = lib.mkOptionDefault [{
-          name = "flathub";
-          location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
-        }];
+        remotes = lib.mkOptionDefault [
+          {
+            name = "flathub";
+            location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+          }
+        ];
       };
     })
   ];

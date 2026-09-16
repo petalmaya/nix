@@ -38,7 +38,7 @@ Rectangle {
       implicitWidth: 20
       radius: Dat.Radius.full
 
-      Text {
+        Text {
         id: workspaceNumText
 
         anchors.centerIn: parent
@@ -46,7 +46,7 @@ Rectangle {
         font.family: "Rubik"
         font.pointSize: 10
         font.weight: Font.Medium
-        text: Dat.MangoWC.currentWorkspace
+        text: Dat.Sway.active ? Dat.Sway.currentWorkspace : Dat.MangoWC.currentWorkspace
       }
     }
 
@@ -80,7 +80,7 @@ Rectangle {
       }
     }
     onWheel: event => {
-      const backend = Dat.MangoWC.active ? Dat.MangoWC : null;
+      const backend = Dat.Sway.active ? Dat.Sway : (Dat.MangoWC.active ? Dat.MangoWC : null);
       if (!backend) {
         return;
       }

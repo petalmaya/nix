@@ -1,0 +1,26 @@
+# Keep line endings predictable across Windows/WSL checkouts. Shell hooks and
+# Nix/QML sources must stay LF — CRLF breaks `bash` scripts at runtime.
+* text=auto
+*.nix text eol=lf
+*.sh text eol=lf
+*.qml text eol=lf
+*.qmltypes text eol=lf
+*.toml text eol=lf
+*.conf text eol=lf
+*.css text eol=lf
+*.ini text eol=lf
+*.js text eol=lf
+*.go text eol=lf
+*.ron text eol=lf
+*.rasi text eol=lf
+*.jsonc text eol=lf
+
+# Binaries vendored with the JES fork must not be normalized.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ttf binary
+*.otf binary
+*.ogg binary
+*.qsb binary

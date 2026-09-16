@@ -14,14 +14,16 @@ WlrLayershell {
   property bool surfaceVisible: false
 
   function _targetScreen() {
-    if (Dat.MangoWC.active && Dat.MangoWC.focusedOutput) {
-      const match = Quickshell.screens.find(s => s.name == Dat.MangoWC.focusedOutput);
-    if (Dat.MangoWC.active && Dat.MangoWC.focusedOutput) {
-      const match = Quickshell.screens.find(s => s.name == Dat.MangoWC.focusedOutput);
-      if (match)
-        return match;
+    const swayOut = Dat.Sway.active ? Dat.Sway.focusedOutput : ""
+    if (swayOut) {
+      const m = Quickshell.screens.find(s => s.name === swayOut)
+      if (m) return m
     }
-    return Quickshell.screens[0] ?? null;
+    if (Dat.MangoWC.active && Dat.MangoWC.focusedOutput) {
+      const m = Quickshell.screens.find(s => s.name === Dat.MangoWC.focusedOutput)
+      if (m) return m
+    }
+    return Quickshell.screens[0] ?? null
   }
 
   anchors.bottom: true

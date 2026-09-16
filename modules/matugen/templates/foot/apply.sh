@@ -10,7 +10,10 @@ if [[ "$config_dir" == "$HOME"/* ]]; then
 else
     include_dir="$config_dir"
 fi
-include_line="include=$include_dir/foot/themes/pinaceae"
+# Must match the registry output_path (themes/generated) and the include in
+# modules/conf/foot.nix. An older revision managed themes/pinaceae here,
+# which fought the declarative config on every matugen run.
+include_line="include=$include_dir/foot/themes/generated"
 
 mkdir -p "$(dirname "$config_file")"
 
@@ -31,11 +34,11 @@ if [ ! -f "$config_file" ]; then
 [main]
 $include_line
 EOF
-elif ! grep -q 'include.*pinaceae' "$config_file"; then
+elif ! grep -q 'include.*themes/generated' "$config_file"; then
     tmp_file="$(mktemp "${config_file}.tmp.XXXXXX")"
     trap 'rm -f "$tmp_file"' EXIT
 
-    # Drop other theme includes, then ensure the pinaceae include is present.
+    # Drop other theme includes, then ensure the generated include is present.
     sed '/include=.*themes/d' "$config_file" >"$tmp_file"
     if grep -q '^\[main\]' "$tmp_file"; then
         sed -i '/^\[main\]/a '"$include_line" "$tmp_file"

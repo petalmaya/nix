@@ -1,8 +1,25 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  osConfig ? null,
+  ...
+}:
 let
-  shell = if config ? osConfig then config.osConfig.nixtop.shell else config.nixtop.shell or "noctalia";
+  # HM modules read NixOS options via the osConfig module argument;
+  # config.osConfig does not exist.
+  shell = if osConfig != null then osConfig.nixtop.shell or "none" else config.nixtop.shell or "none";
   mangoSrc = ./.;
-  variantDir = ./variants/${shell};
+  # Mango is archived (sway is primary). Only noctalia/quickshell have mango
+  # variants; every other shell (none/jes) falls back to the noctalia variant
+  # so the standalone mango session keeps working.
+  variantDir = if shell == "quickshell" then ./variants/quickshell else ./variants/noctalia;
+  liveMango =
+    if osConfig != null then
+      osConfig.nixtop.dev.liveMango or false
+    else
+      config.nixtop.dev.liveMango or false;
 
   # Build a merged Mango config directory (shared + shell variant)
   mangoConfig = pkgs.runCommand "mango-config-${shell}" { } ''
@@ -31,7 +48,10 @@ in
         enable = true;
         xdgOpenUsePortal = true;
         config.mango = {
-          default = [ "gtk" "gnome" ];
+          default = [
+            "gtk"
+            "gnome"
+          ];
           "org.freedesktop.impl.portal.Access" = [ "gtk" ];
           "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
           "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
@@ -55,13 +75,13 @@ in
       ];
     }
 
-    (lib.mkIf (!((if config ? osConfig then config.osConfig.nixtop.dev.liveMango else config.nixtop.dev.liveMango or false))) {
+    (lib.mkIf ((!liveMango)) {
       # store-built mango config – one directory, not 8 symlinks (§8.4)
       xdg.configFile."mango".source = mangoConfig;
       xdg.configFile."mango".recursive = true;
     })
 
-    (lib.mkIf (if config ? osConfig then config.osConfig.nixtop.dev.liveMango else config.nixtop.dev.liveMango or false) {
+    (lib.mkIf liveMango {
       # live-editable whole directory (dev only)
       xdg.configFile."mango".source = config.lib.file.mkOutOfStoreSymlink livePath;
       # variant files still need to be the selected shell's version – liveMango

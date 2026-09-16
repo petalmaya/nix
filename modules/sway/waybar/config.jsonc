@@ -1,0 +1,124 @@
+{
+  "_comment": "waybar for swayfx — flush top bar (no floating margins, no power button); matugen owns style.css",
+  "layer": "top",
+  "position": "top",
+  "height": 30,
+  "spacing": 4,
+  "margin-top": 0,
+  "margin-left": 0,
+  "margin-right": 0,
+  "margin-bottom": 0,
+  "exclusive": true,
+  "passthrough": false,
+  "gtk-layer-shell": true,
+
+  "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
+  "modules-center": ["clock"],
+  "modules-right": ["mpris", "sway/language", "pulseaudio", "network", "battery", "tray"],
+
+  "sway/workspaces": {
+    "disable-scroll": false,
+    "all-outputs": false,
+    "format": "{name}",
+    "format-icons": {
+      "1": "󰲠",
+      "2": "󰲢",
+      "3": "󰲤",
+      "4": "󰲦",
+      "5": "󰲨",
+      "6": "󰲪",
+      "7": "󰲬",
+      "8": "󰲮",
+      "9": "󰲰",
+      "10": "󰿬",
+      "urgent": "",
+      "focused": "",
+      "default": ""
+    }
+  },
+
+  "sway/mode": {
+    "format": " {}",
+    "tooltip": false
+  },
+
+  "sway/window": {
+    "max-length": 60,
+    "tooltip": true,
+    "icon": true,
+    "icon-size": 16
+  },
+
+  "mpris": {
+    "format": "{player_icon} {dynamic}",
+    "format-paused": "{status_icon} {dynamic}",
+    "player-icons": {
+      "default": "▶",
+      "mpv": "🎵",
+      "spotify": "",
+      "firefox": ""
+    },
+    "status-icons": {
+      "paused": "⏸",
+      "stopped": "⏹"
+    },
+    "max-length": 36,
+    "tooltip": true
+  },
+
+  "sway/language": {
+    "format": "⌨ {}",
+    "tooltip": true
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": " muted",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""]
+    },
+    "on-click": "pamixer -t",
+    "on-click-right": "pavucontrol",
+    "scroll-step": 5
+  },
+
+  "network": {
+    "format-wifi": " {essid} ({signalStrength}%)",
+    "format-ethernet": "⇅ {ifname}",
+    "format-linked": "⇅ {ifname} (no IP)",
+    "format-disconnected": "⚠ down",
+    "format-alt": "⇅ {ifname}: {ipaddr}/{cidr}",
+    "tooltip-format": "{ifname} → {gwaddr}\n{ipaddr}",
+    "on-click": "foot -e nmtui",
+    "interval": 5
+  },
+
+  "battery": {
+    "states": { "warning": 30, "critical": 15 },
+    "format": "{icon} {capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-icons": ["", "", "", "", ""],
+    "tooltip": true
+  },
+
+  "clock": {
+    "format": "{:%Y/%m/%d (w%V)  %H:%M}",
+    "format-alt": "{:%A, %B %d, %Y — %H:%M:%S}",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+    "calendar": { "mode": "year", "on-scroll": 1 },
+    "interval": 60
+  },
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8,
+    "show-passive-items": true
+  }
+}

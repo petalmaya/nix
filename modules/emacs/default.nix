@@ -1,4 +1,11 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  osConfig ? null,
+  ...
+}:
 let
   cfg = config.nixtop.apps.emacs;
   emacsPkg = pkgs.emacs-pgtk;
@@ -38,17 +45,28 @@ in
     description = "Where this repo is cloned, used for the ~/.config/emacs symlink.";
   };
 
-  config = lib.mkIf cfg.enable (let
-    liveEmacs = if config ? osConfig then config.osConfig.nixtop.dev.liveEmacs else config.nixtop.dev.liveEmacs or true;
-  in {
-    home.packages = [ emacsPkg ] ++ externalTools;
+  config = lib.mkIf cfg.enable (
+    let
+      liveEmacs =
+        if osConfig != null then
+          osConfig.nixtop.dev.liveEmacs or true
+        else
+          config.nixtop.dev.liveEmacs or true;
+    in
+    {
+      home.packages = [ emacsPkg ] ++ externalTools;
 
-    # Live-editable directory (D23, §8.4). Flag defaults on.
-    xdg.configFile."emacs" = if liveEmacs then {
-      source = config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/emacs/emacs";
-    } else {
-      source = ./emacs;
-      recursive = true;
-    };
-  });
+      # Live-editable directory (D23, §8.4). Flag defaults on.
+      xdg.configFile."emacs" =
+        if liveEmacs then
+          {
+            source = config.lib.file.mkOutOfStoreSymlink "${cfg.repoPath}/modules/emacs/emacs";
+          }
+        else
+          {
+            source = ./emacs;
+            recursive = true;
+          };
+    }
+  );
 }

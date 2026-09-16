@@ -1,8 +1,15 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  osConfig ? null,
+  ...
+}:
 let
   matugenOwnsStarship =
     (config.nixtop.services.matugen.enable or false)
     && (config.nixtop.services.matugen.templates.starship.enable or false);
+  hostName = if osConfig != null then osConfig.networking.hostName or "wonderland" else "wonderland";
 in
 {
   options.nixtop.terminal.zsh.enable = lib.mkEnableOption "Zsh configuration with extras";
@@ -71,7 +78,7 @@ in
       ];
 
       shellAliases = {
-        nixsw = "sudo nixos-rebuild switch --flake .#${if config ? osConfig then config.osConfig.networking.hostName else "wonderland"}";
+        nixsw = "sudo nixos-rebuild switch --flake .#${hostName}";
         nixup = "nix flake update";
 
         ls = "ls --color=auto";
