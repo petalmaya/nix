@@ -18,6 +18,8 @@
     ./matugen
     ./noctalia
     ./quickshell
+    ./jes
+    ./lucid
     ./sway
   ];
 }

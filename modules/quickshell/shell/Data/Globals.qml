@@ -114,8 +114,11 @@ Singleton {
   readonly property int tabIndexMusic: 3
 
   // best guess at "the monitor you're on", for IPC calls that don't
-  // specify an output. Mirrors Data/Launcher.qml's private copy.
+  // specify an output. Prefers Sway (primary, Go-backed) then Mango (archived).
   function _guessOutput() {
+    if (Dat.Sway.active && Dat.Sway.focusedOutput) {
+      return Dat.Sway.focusedOutput;
+    }
     if (Dat.MangoWC.active && Dat.MangoWC.focusedOutput) {
       return Dat.MangoWC.focusedOutput;
     }

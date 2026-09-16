@@ -24,4 +24,5 @@ text-clear-color=e7efedff
 text-caps-lock-color=e7efedff
 text-ver-color=e7efedff
 text-wrong-color=f2d8d4ff
-image=/home/alice/Pictures/Wallpapers/alpine-lake.jpg
+# No image= line on purpose: the path is per-user and swaylock fails when the
+# file is missing. The lock screen uses the solid inside-color above instead.

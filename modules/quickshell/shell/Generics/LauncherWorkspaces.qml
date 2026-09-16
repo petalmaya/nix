@@ -13,8 +13,9 @@ Item {
   signal requestFocus
 
   readonly property string outputName: Dat.Launcher.outputName
-  readonly property bool backendActive: Dat.MangoWC.active
-  readonly property var backend: Dat.MangoWC
+  // sway is primary (Go ipc), mango is archived fallback — pick whichever is active
+  readonly property bool backendActive: (Dat.Sway.active || Dat.MangoWC.active)
+  readonly property var backend: Dat.Sway.active ? Dat.Sway : Dat.MangoWC
 
   // just "how many tiles do we know about for this output", not a
   // hardcoded grid size
@@ -75,7 +76,7 @@ Item {
     color: Dat.Colors.current.on_surface_variant
     font.pointSize: 10
     horizontalAlignment: Text.AlignHCenter
-    text: "Workspace switching needs mango"
+    text: Dat.Sway.active ? "No workspaces" : (Dat.MangoWC.active ? "No workspaces" : "Workspace switching needs sway (or archived mango)")
     visible: !root.backendActive
     width: parent.width
     wrapMode: Text.Wrap

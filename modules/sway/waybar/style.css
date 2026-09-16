@@ -1,0 +1,135 @@
+/* waybar fallback — matugen overwrites this at ~/.config/waybar/style.css */
+/* mineral-blue fallback matches sway/appearance.conf */
+* {
+  font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", monospace;
+  font-size: 11px;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+}
+
+window#waybar {
+  background: rgba(11, 21, 25, 1);
+  color: #e7efed;
+  border-bottom: 2px solid #31505b;
+  border-radius: 0;
+  margin: 0;
+}
+
+#workspaces button {
+  padding: 0 8px;
+  margin: 0 1px;
+  background: transparent;
+  color: #718b91;
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+#workspaces button.focused,
+#workspaces button.active {
+  background: #13262c;
+  color: #c8b98c;
+  border: 1px solid #c8b98c;
+}
+
+#workspaces button.urgent {
+  background: #2b171b;
+  color: #f2d8d4;
+  border-color: #a97878;
+}
+
+#workspaces button:hover {
+  background: #31505b;
+  color: #e7efed;
+}
+
+#mode {
+  background: #c8b98c;
+  color: #13262c;
+  padding: 0 10px;
+  margin: 0 2px;
+  border-radius: 0;
+  font-weight: bold;
+}
+
+#window {
+  margin: 0 8px;
+  padding: 0 8px;
+  color: #a9c2c7;
+}
+
+#mpris {
+  background: #13262c;
+  color: #e7efed;
+  padding: 0 12px;
+  margin: 0 2px;
+  border-radius: 0;
+  border: none;
+  border-left: 1px solid #31505b;
+  border-right: 1px solid #31505b;
+}
+
+#language {
+  background: #1c3036;
+  color: #a9c2c7;
+  padding: 0 10px;
+  margin: 0 2px;
+  border-radius: 0;
+}
+
+#pulseaudio,
+#network,
+#battery,
+#clock,
+#tray {
+  padding: 0 10px;
+  margin: 0 2px;
+  border-radius: 0;
+  background: transparent;
+  color: #e7efed;
+  border: none;
+  border-left: 1px solid #31505b;
+}
+
+#clock {
+  font-weight: bold;
+  background: #31505b;
+  color: #e7efed;
+}
+
+#pulseaudio.muted {
+  background: #2b171b;
+  color: #a97878;
+}
+
+#battery.charging {
+  background: #c8b98c;
+  color: #13262c;
+}
+
+#battery.warning:not(.charging) {
+  background: #a97878;
+  color: #f2d8d4;
+}
+
+#battery.critical:not(.charging) {
+  background: #a97878;
+  color: #f2d8d4;
+  animation: blink 0.5s linear infinite alternate;
+}
+
+#tray {
+  background: transparent;
+  border: none;
+}
+
+@keyframes blink {
+  to { background-color: #2b171b; }
+}
+
+tooltip {
+  background: #0b1519;
+  border: 1px solid #31505b;
+  border-radius: 0;
+  color: #e7efed;
+}

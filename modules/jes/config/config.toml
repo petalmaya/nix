@@ -1,0 +1,42 @@
+# It's Micro, for exit use Ctrl+Q, for save - Ctrl+S
+[settings]
+# wm
+wm = "auto" # or your WM but with a capital letter
+wm_type = "auto" # auto (don't work with unregistred WM) | workspaces | coordinates
+
+# visual
+animation = 1.0
+spacing = 3
+margins = 3 
+wtw = 6 # spacing for widget to widget
+mainRad = 10 # 0-25
+fontSize = 17
+fontFamily = "Mononoki Nerd Font Propo"
+enable_base16 = false
+do_not_sync_rad = false
+disableCorners = false # disable roundings your monitors
+
+# bar
+barOnTop = true
+minibar = false
+barHeight = 30
+disableCava = false
+nanoPlayer = false # do your player more small
+nanoPlrSize = 200
+
+# launcher
+changeShader = ""
+
+# other
+custom_wallpaper_engine = false
+user_matugen = true
+doNotDisturb = false
+openweather_key = ""
+
+# plugins
+directory = "~/.config/JES/plugins/"
+
+# [[plugin]]
+# name = "example plugin"
+# active = false
+

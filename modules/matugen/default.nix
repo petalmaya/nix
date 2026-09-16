@@ -1,20 +1,52 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  osConfig ? null,
+  ...
+}:
 let
   cfg = config.nixtop.services.matugen;
 
-  # Registry – one place to add/remove a template (§8.5)
-  # Keep-list (12): noctalia (palette bridge), mango, quickshell, foot, gtk3, gtk4, bat, starship, fastfetch, yazi, emacs, papirus-icons
+  # All matugen templates. To add one: drop the source under ./templates/
+  # and register its input path, output path, and optional reload hook below.
+  # (mango is archived — the sway session themes via the sway template.)
   templates = {
     noctalia = {
       input_path = "noctalia/palette.json";
       output_path = "~/.config/noctalia/palettes/nixtop.json";
-      # Noctalia watches this file; nudge it to reload if the CLI exists
       post_hook = "noctalia msg reload 2>/dev/null || true";
+    };
+    jes = {
+      # JES watches ~/.local/state/JES_colors.json live (shell.qml FileView)
+      input_path = "jes/colors.json";
+      output_path = "~/.local/state/JES_colors.json";
     };
     mango = {
       input_path = "mango/mango.conf";
       output_path = "~/.local/state/nixtop/theme/mango.conf";
       post_hook = "mmsg dispatch reload_config 2>/dev/null || true";
+    };
+    sway = {
+      input_path = "sway/sway";
+      output_path = "~/.local/state/nixtop/theme/sway";
+      post_hook = "bash ~/.config/matugen/templates/sway/apply.sh 2>/dev/null || true";
+    };
+    waybar = {
+      input_path = "waybar/style.css";
+      output_path = "~/.config/waybar/style.css";
+      post_hook = "bash ~/.config/matugen/templates/waybar/apply.sh 2>/dev/null || true";
+    };
+    fuzzel = {
+      input_path = "fuzzel/fuzzel.conf";
+      output_path = "~/.config/fuzzel/themes/generated";
+      post_hook = "bash ~/.config/matugen/templates/fuzzel/apply.sh 2>/dev/null || true";
+    };
+    mako = {
+      input_path = "mako/config";
+      output_path = "~/.config/mako/config";
+      post_hook = "bash ~/.config/matugen/templates/mako/apply.sh 2>/dev/null || true";
     };
     quickshell = {
       input_path = "quickshell/quickshell.json";
@@ -64,49 +96,28 @@ let
     };
   };
 
-  # Theming owner switch (§8.3) – determines who writes the file.
-  # When owner is noctalia for a given app, matugen's template for that app is disabled.
-  # Shell is a NixOS option, so HM reads via osConfig when available.
-  shell = if config ? osConfig then config.osConfig.nixtop.shell else config.nixtop.shell or "noctalia";
-  themeOwner = config.nixtop.theme.owner or "auto";
-  effectiveOwner = app:
-    let
-      perApp = config.nixtop.theme.apps.${app} or null;
-    in
-    if perApp != null then perApp
-    else if themeOwner == "auto" then (if shell == "noctalia" then "noctalia" else "matugen")
-    else themeOwner;
-
-  # Gate matugen templates where noctalia owns the app: foot, gtk3, gtk4, emacs may be owned by noctalia.
-  # The list of gateable apps is those where both systems can write the same file.
-  # FIX: For now matugen always owns these so they stay themed even when shell is noctalia.
-  # Once Noctalia user templates (templates.toml) are ready for these apps, re-enable gating.
-  isMatugenOwned = name: true;
-  # Original gating (kept for reference, re-enable later):
-  # isMatugenOwned = name:
-  #   if name == "foot" then effectiveOwner "foot" == "matugen"
-  #   else if name == "gtk3" then effectiveOwner "gtk" == "matugen"
-  #   else if name == "gtk4" then effectiveOwner "gtk" == "matugen"
-  #   else if name == "emacs" then effectiveOwner "emacs" == "matugen"
-  #   else true;
-
-  # Filter templates by enable flags and by owner gating
-  enabledTemplates = lib.filterAttrs (name: t:
-    (cfg.templates.${name}.enable or true) && isMatugenOwned name
-  ) templates;
+  # Per-app theming ownership (nixtop.theme.owner / nixtop.theme.apps) is
+  # parked: Noctalia does not theme these apps yet, so matugen owns every
+  # template. The options stay so existing configs keep evaluating; gate the
+  # registry here again if Noctalia ever takes over an app.
+  enabledTemplates = lib.filterAttrs (name: _: cfg.templates.${name}.enable or true) templates;
 
   matugenConfig = {
     config = {
       prefer = "saturation";
       source_color_index = 0;
     };
-    templates = lib.mapAttrs (name: t: {
-      input_path = "${./templates}/${t.input_path}";
-      output_path = t.output_path;
-    } // lib.optionalAttrs (t ? post_hook) { post_hook = t.post_hook; }) enabledTemplates;
+    templates = lib.mapAttrs (
+      name: t:
+      {
+        input_path = "${./templates}/${t.input_path}";
+        output_path = t.output_path;
+      }
+      // lib.optionalAttrs (t ? post_hook) { post_hook = t.post_hook; }
+    ) enabledTemplates;
   };
 
-  # Live template dir – one symlink when enabled (§8.4)
+  # Live template dir – a single symlink when live-editing templates.
   liveTemplatePath = "${config.home.homeDirectory}/nix/modules/matugen/templates";
 in
 {
@@ -120,7 +131,8 @@ in
     default = "${config.home.homeDirectory}/nix";
     description = "Repo checkout location (runtime template links point here).";
   };
-  options.nixtop.services.matugen.templates = lib.genAttrs (builtins.attrNames templates) (name:
+  options.nixtop.services.matugen.templates = lib.genAttrs (builtins.attrNames templates) (
+    name:
     lib.mkOption {
       type = lib.types.submodule {
         options.enable = lib.mkOption {
@@ -131,83 +143,121 @@ in
       };
       default = { };
       description = "Options for the '${name}' matugen template.";
-    });
+    }
+  );
 
-  # theming owner options (§8.3)
+  # Reserved theming-owner options (see the parked-gating note above).
   options.nixtop.theme.owner = lib.mkOption {
-    type = lib.types.enum [ "auto" "matugen" "noctalia" ];
+    type = lib.types.enum [
+      "auto"
+      "matugen"
+      "noctalia"
+    ];
     default = "auto";
     description = "Who owns app theming. auto follows nixtop.shell.";
   };
   options.nixtop.theme.apps = lib.mkOption {
-    type = lib.types.attrsOf (lib.types.enum [ "matugen" "noctalia" ]);
+    type = lib.types.attrsOf (
+      lib.types.enum [
+        "matugen"
+        "noctalia"
+      ]
+    );
     default = { };
     description = "Per-app override for theming owner.";
   };
 
-  config = lib.mkIf cfg.enable (let
-    liveMatugen = if config ? osConfig then config.osConfig.nixtop.dev.liveMatugen else config.nixtop.dev.liveMatugen or false;
-  in {
-    home.packages = with pkgs; [
-      matugen
-      jq
-    ];
+  config = lib.mkIf cfg.enable (
+    let
+      # HM modules read NixOS options via the osConfig module argument;
+      # config.osConfig does not exist.
+      liveMatugen =
+        if osConfig != null then
+          osConfig.nixtop.dev.liveMatugen or false
+        else
+          config.nixtop.dev.liveMatugen or false;
+    in
+    {
+      home.packages = with pkgs; [
+        matugen
+        jq
+      ];
 
-    # generated config.toml – no checked-in file (§8.5)
-    xdg.configFile."matugen/config.toml".source =
-      (pkgs.formats.toml { }).generate "matugen-config.toml" matugenConfig;
+      # config.toml is generated at build time from the registry above.
+      # There is intentionally no checked-in config file to drift out of sync.
+      xdg.configFile."matugen/config.toml".source =
+        (pkgs.formats.toml { }).generate "matugen-config.toml"
+          matugenConfig;
 
-    # template sources – either store or live symlink + helper script (dev flag is NixOS-owned)
-    home.file = (
-      lib.mkIf (!liveMatugen) {
-        ".config/matugen/templates".source = ./templates;
-        ".config/matugen/templates".recursive = true;
-      } // lib.mkIf liveMatugen {
-        ".config/matugen/templates".source = config.lib.file.mkOutOfStoreSymlink liveTemplatePath;
-      }
-    ) // {
-      ".local/bin/nixtop-theme" = {
-        executable = true;
-        text = ''
-          #!/usr/bin/env bash
-          set -euo pipefail
-          IMG="''${1:-}"
-          if [ -z "$IMG" ]; then
-            echo "usage: nixtop-theme <image>" >&2
-            exit 1
+      # Template sources: store paths by default, one live repo symlink with liveMatugen.
+      home.file =
+        (
+          lib.mkIf (!liveMatugen) {
+            ".config/matugen/templates".source = ./templates;
+            ".config/matugen/templates".recursive = true;
+          }
+          // lib.mkIf liveMatugen {
+            ".config/matugen/templates".source = config.lib.file.mkOutOfStoreSymlink liveTemplatePath;
+          }
+        )
+        // {
+          ".local/bin/nixtop-theme" = {
+            executable = true;
+            text = ''
+                  #!/usr/bin/env bash
+                  set -euo pipefail
+                  IMG="''${1:-}"
+                  if [ -z "$IMG" ]; then
+                    echo "usage: nixtop-theme <image>" >&2
+                    exit 1
+                  fi
+              matugen image "$IMG"
+              # Live-reload everything matugen just rewrote. Each nudge is
+              # best-effort: only the running compositor/shell picks it up.
+              if pgrep -x sway >/dev/null 2>&1; then
+                    swaymsg reload 2>/dev/null || true
+                  fi
+                  if pgrep -x waybar >/dev/null 2>&1; then
+                    pkill -SIGUSR2 waybar 2>/dev/null || true
+                  fi
+                  if pgrep -x mako >/dev/null 2>&1; then
+                    makoctl reload 2>/dev/null || true
+                  fi
+              if command -v noctalia >/dev/null 2>&1; then
+                noctalia msg reload 2>/dev/null || true
+              fi
+              mmsg dispatch reload_config 2>/dev/null || true
+                  echo "themed from $IMG"
+            '';
+          };
+        };
+
+      # Seed theme output dirs/files so the first matugen run (and the shells
+      # watching its outputs) never hits a missing path.
+      home.activation.ensureThemeOutputDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        $DRY_RUN_CMD mkdir -p "$HOME/.config/noctalia/palettes"
+        $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
+        $DRY_RUN_CMD mkdir -p "$HOME/.config/nixtop-shell"
+        $DRY_RUN_CMD [ -e "$HOME/.config/noctalia/palettes/nixtop.json" ] || $DRY_RUN_CMD touch "$HOME/.config/noctalia/palettes/nixtop.json"
+      '';
+
+      # papirus-folders recolors the icon theme in place, which needs a writable
+      # copy — a store path won't do. Seed one from nixpkgs on first activation.
+      home.activation.ensurePapirusIconsWritable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          $DRY_RUN_CMD mkdir -p "$HOME/.local/share/icons"
+          if [ ! -d "$HOME/.local/share/icons/Papirus" ]; then
+            $DRY_RUN_CMD cp -r "${pkgs.papirus-icon-theme}/share/icons/Papirus" "$HOME/.local/share/icons/Papirus"
+            $DRY_RUN_CMD chmod -R u+w "$HOME/.local/share/icons/Papirus"
+            $DRY_RUN_CMD chmod +x "$HOME/.local/share/icons/Papirus" 2>/dev/null || true
           fi
-          matugen image "$IMG"
-          # nudge Noctalia if available
-          if command -v noctalia >/dev/null 2>&1; then
-            noctalia msg reload 2>/dev/null || true
-          fi
-          # reload mango
-          mmsg dispatch reload_config 2>/dev/null || true
-          echo "themed from $IMG"
-        '';
-      };
-    };
-
-    # ensure noctalia palette dir exists before first matugen run
-    home.activation.ensureNoctaliaPaletteDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir -p "$HOME/.config/noctalia/palettes"
-      $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
-      $DRY_RUN_CMD mkdir -p "$HOME/.config/nixtop-shell"
-      $DRY_RUN_CMD [ -e "$HOME/.config/noctalia/palettes/nixtop.json" ] || $DRY_RUN_CMD touch "$HOME/.config/noctalia/palettes/nixtop.json"
-    '';
-
-    # papirus-folders writes inside its theme dir, which a store path can't do — seed a writable copy once.
-    # Fixes Nautilus only showing fallback icons: the user theme must be writable so papirus-folders can recolor it.
-    home.activation.ensurePapirusIconsWritable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir -p "$HOME/.local/share/icons"
-      if [ ! -d "$HOME/.local/share/icons/Papirus" ]; then
-        $DRY_RUN_CMD cp -r "${pkgs.papirus-icon-theme}/share/icons/Papirus" "$HOME/.local/share/icons/Papirus"
-        $DRY_RUN_CMD chmod -R u+w "$HOME/.local/share/icons/Papirus"
-        $DRY_RUN_CMD chmod +x "$HOME/.local/share/icons/Papirus" 2>/dev/null || true
-      fi
-      # ensure papirus-folders script is executable (live symlink or store)
-      $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/papirus-icons/papirus-folders" 2>/dev/null || true
-      $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/papirus-icons/apply.sh" 2>/dev/null || true
-    '';
-  });
+        # Template hook scripts lose their exec bit through the store/live paths.
+        $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/papirus-icons/papirus-folders" 2>/dev/null || true
+        $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/papirus-icons/apply.sh" 2>/dev/null || true
+        $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/sway/apply.sh" 2>/dev/null || true
+          $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/waybar/apply.sh" 2>/dev/null || true
+          $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/fuzzel/apply.sh" 2>/dev/null || true
+          $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/mako/apply.sh" 2>/dev/null || true
+      '';
+    }
+  );
 }

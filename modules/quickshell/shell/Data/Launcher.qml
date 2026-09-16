@@ -30,8 +30,11 @@ Singleton {
   property bool morphFromDock: false
 
   // best guess at "the monitor you're on", for calls with no explicit
-  // output (e.g. a global IPC keybind). Falls back to the first screen.
+  // output (e.g. a global IPC keybind). Prefers Sway (Go daemon) then Mango (archived).
   function _guessOutput() {
+    if (Dat.Sway.active && Dat.Sway.focusedOutput) {
+      return Dat.Sway.focusedOutput;
+    }
     if (Dat.MangoWC.active && Dat.MangoWC.focusedOutput) {
       return Dat.MangoWC.focusedOutput;
     }

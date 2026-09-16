@@ -117,9 +117,9 @@ Item {
 
                   Rectangle {
                     required property int index
-                    property int workspace: Dat.MangoWC.currentWorkspace
-                    // mango-only, always undefined on niri
-                    property bool urgent: !!(Dat.MangoWC.workspaces[`${root.outputName}-${index + 1}`]?.is_urgent)
+                    // prefer Sway (Go daemon) else Mango (archived)
+                    property int workspace: Dat.Sway.active ? Dat.Sway.currentWorkspace : Dat.MangoWC.currentWorkspace
+                    property bool urgent: !!( (Dat.Sway.active ? Dat.Sway.workspaces : Dat.MangoWC.workspaces)[`${root.outputName}-${index + 1}`]?.is_urgent )
 
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -130,10 +130,9 @@ Item {
                       layerColor: Dat.Colors.current.primary
 
                       onClicked: {
-                        if (Dat.MangoWC.active) {
-                          Dat.MangoWC.setCurrentTag(parent.index + 1);
-                        } else {
-                          Dat.MangoWC.setCurrentTag(parent.index + 1, root.outputName);
+                        const backend = Dat.Sway.active ? Dat.Sway : Dat.MangoWC
+                        if (backend.active) {
+                          backend.setCurrentTag(parent.index + 1, root.outputName)
                         }
                       }
                     }
