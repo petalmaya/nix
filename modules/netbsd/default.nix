@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   # Scaffold for a Mango + waybar + rofi variant (netbsd)
   # Not imported by default – available as a switchable option.
@@ -22,9 +27,17 @@
         mainBar = {
           layer = "top";
           position = "top";
-          modules-left = [ "mango/workspaces" "mango/window" ];
+          modules-left = [
+            "mango/workspaces"
+            "mango/window"
+          ];
           modules-center = [ "clock" ];
-          modules-right = [ "pulseaudio" "network" "battery" "tray" ];
+          modules-right = [
+            "pulseaudio"
+            "network"
+            "battery"
+            "tray"
+          ];
           clock.format = "{:%Y-%m-%d %H:%M}";
         };
       };

@@ -37,7 +37,8 @@
       description = "Which bar to run under swayfx. waybar is primary; swaybar is archived status.sh; none disables bar entirely.";
     };
 
-    # dev live-edit flags (defaults per §8.4)
+    # dev live-edit flags (one symlink per flag, all default off except liveEmacs;
+    # see AGENTS.md for the symlink budget)
     nixtop.dev.liveEmacs = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -62,6 +63,16 @@
       type = lib.types.bool;
       default = false;
       description = "Symlink sway config live into the repo (mirrors liveMango).";
+    };
+    nixtop.dev.liveMako = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Symlink mako config dir live into the repo (generated colors live in ~/.local/state, so this is safe).";
+    };
+    nixtop.dev.liveWaybar = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Symlink waybar config live into the repo (config only; style.css stays matugen-owned).";
     };
   };
 

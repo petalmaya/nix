@@ -1,4 +1,10 @@
-{ pkgs, lib, config, inputs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  inputs,
+  ...
+}:
 let
   pywalfox-manifest = pkgs.writeTextFile {
     name = "pywalfox-manifest";

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 let
   cfg = config.nixtop.greetd;
 in
@@ -10,7 +16,11 @@ in
       description = "Enable greetd login manager. Defaults to desktop.enable.";
     };
     greeter = lib.mkOption {
-      type = lib.types.enum [ "noctalia" "quickshell" "sddm" ];
+      type = lib.types.enum [
+        "noctalia"
+        "quickshell"
+        "sddm"
+      ];
       default = config.nixtop.shell;
       description = "Which greeter to run. Mutually exclusive; one of noctalia, quickshell (nixtop-shell), or sddm (SilentSDDM).";
     };

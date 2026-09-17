@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   # Per-user Flatpak via nix-flatpak (D6) – this file *is* the per-user flatpak list.
   # Historically named nixpak.nix (the sandboxer nixpak is a different project);

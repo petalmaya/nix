@@ -1,4 +1,10 @@
-{ pkgs, lib, config, inputs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  inputs,
+  ...
+}:
 {
   options.nixtop.apps.floorp.enable = lib.mkEnableOption "Floorp browser configuration";
 

@@ -92,9 +92,12 @@
           # noctalia HM is imported defensively inside modules/noctalia/default.nix
           # (old noctaniri did builtins.attrValues ...), so we don't add it here
           mangoHM =
-            if inputs.mango ? homeManagerModules then inputs.mango.homeManagerModules.default
-            else if inputs.mango ? homeModules then inputs.mango.homeModules.default
-            else null;
+            if inputs.mango ? homeManagerModules then
+              inputs.mango.homeManagerModules.default
+            else if inputs.mango ? homeModules then
+              inputs.mango.homeModules.default
+            else
+              null;
           extraHmModules = builtins.filter (x: x != null) [ mangoHM ];
           # hardware file may not exist for garden until install time
           hwPath = ./hosts/${hostname}/hardware-configuration.nix;
@@ -120,11 +123,19 @@
               sops-nix.nixosModules.sops
               home-manager.nixosModules.home-manager
               # Mango flake module (upstream) – provides programs.mango with addLoginEntry
-              (if inputs.mango ? nixosModules then
-                (if inputs.mango.nixosModules ? mango then inputs.mango.nixosModules.mango
-                 else if inputs.mango.nixosModules ? default then inputs.mango.nixosModules.default
-                 else { })
-               else { })
+              (
+                if inputs.mango ? nixosModules then
+                  (
+                    if inputs.mango.nixosModules ? mango then
+                      inputs.mango.nixosModules.mango
+                    else if inputs.mango.nixosModules ? default then
+                      inputs.mango.nixosModules.default
+                    else
+                      { }
+                  )
+                else
+                  { }
+              )
               inputs.noctalia-greeter.nixosModules.default
               inputs.silentSDDM.nixosModules.default
               {
@@ -157,6 +168,26 @@
         };
       };
 
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
+      # Bare `nix fmt` formats the whole tree (minus the archived pre-rework
+      # reference); explicit paths still pass straight through to nixfmt.
+      # A bare nixfmt invocation would format stdin instead, so the wrapper
+      # supplies the file list when no args are given.
+      formatter.x86_64-linux =
+        let
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        in
+        pkgs.writeShellApplication {
+          name = "fmt";
+          runtimeInputs = [
+            pkgs.nixfmt
+            pkgs.findutils
+          ];
+          text = ''
+            if [ "$#" -eq 0 ]; then
+              exec find . -name '*.nix' -not -path './pre-rework/*' -exec nixfmt {} +
+            fi
+            exec nixfmt "$@"
+          '';
+        };
     };
 }

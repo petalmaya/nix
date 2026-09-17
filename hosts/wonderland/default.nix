@@ -1,11 +1,19 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   networking.hostName = "wonderland";
   networking.extraHosts = "127.0.0.1 wonderland";
 
   nixtop.desktop.enable = true;
-  # live sway for dev — ~/.config/sway → ~/nix/modules/sway/sway (see modules/sway/default.nix:30)
+  # live sway/mako/waybar for dev — ~/.config/{sway,mako} → ~/nix/modules/sway/...,
+  # waybar config.jsonc likewise (style.css stays matugen-owned, see modules/sway/default.nix)
   nixtop.dev.liveSway = true;
+  nixtop.dev.liveMako = true;
+  nixtop.dev.liveWaybar = true;
 
   boot.initrd.kernelModules = [ "i915" ];
 
@@ -34,7 +42,7 @@
 
   # wifi secret activation (moved from hosts/common/home-wifi.nix – keep in core or host)
   # imported via core/wifi.nix if exists, but we keep activation here for now:
-  sops.secrets.wifi_password = {};
+  sops.secrets.wifi_password = { };
   system.activationScripts.wifiKeyfile = {
     deps = [ "setupSecrets" ];
     text = ''

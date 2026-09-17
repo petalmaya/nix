@@ -1,11 +1,19 @@
-{ config, lib, pkgs, osConfig ? null, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  osConfig ? null,
+  ...
+}:
 let
   # Enable GTK/Papirus theming whenever the desktop or sway is active.
   # osConfig is available when this HM module is evaluated via NixOS's home-manager;
   # fall back to local config when evaluated standalone.
   desktopEnabled =
-    if osConfig != null then (osConfig.nixtop.desktop.enable or false)
-    else (lib.attrByPath [ "nixtop" "desktop" "enable" ] false config);
+    if osConfig != null then
+      (osConfig.nixtop.desktop.enable or false)
+    else
+      (lib.attrByPath [ "nixtop" "desktop" "enable" ] false config);
   swayEnabled = (config.nixtop.sway.enable or false);
   shouldEnable = desktopEnabled || swayEnabled;
 in

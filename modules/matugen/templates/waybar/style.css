@@ -57,7 +57,7 @@ window#waybar {
   color: #{{colors.on_surface_variant.default.hex_stripped}};
 }
 
-#mpris, #language, #pulseaudio, #network, #battery, #clock, #tray {
+#mpris, #pulseaudio, #network, #battery, #clock, #tray {
   padding: 0 10px;
   margin: 0 2px;
   border-radius: 0;

@@ -56,7 +56,7 @@ in
     {
       home.packages = [ emacsPkg ] ++ externalTools;
 
-      # Live-editable directory (D23, §8.4). Flag defaults on.
+      # Live-editable directory (one symlink per live flag, see AGENTS.md). Flag defaults on.
       xdg.configFile."emacs" =
         if liveEmacs then
           {

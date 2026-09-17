@@ -21,6 +21,23 @@ let
       config.nixtop.dev.liveSway or false;
   livePath = "${config.home.homeDirectory}/nix/modules/sway/sway";
 
+  # mako/waybar live flags mirror liveSway. mako symlinks the whole dir (its
+  # generated colors live in ~/.local/state, included from the static config);
+  # waybar symlinks only `config` — style.css is matugen-owned, so symlinking
+  # the dir would redirect generated output back into the repo.
+  liveMako =
+    if osConfig != null then
+      osConfig.nixtop.dev.liveMako or false
+    else
+      config.nixtop.dev.liveMako or false;
+  liveMakoPath = "${config.home.homeDirectory}/nix/modules/sway/mako";
+  liveWaybar =
+    if osConfig != null then
+      osConfig.nixtop.dev.liveWaybar or false
+    else
+      config.nixtop.dev.liveWaybar or false;
+  liveWaybarPath = "${config.home.homeDirectory}/nix/modules/sway/waybar/config.jsonc";
+
   # bar selection — NixOS option, HM reads via osConfig
   swayBar =
     if osConfig != null then
@@ -175,14 +192,13 @@ in
           pulseaudio # provides pactl (pipewire-pulse compat)
         ];
 
-      # Companion configs – fuzzel, mako, swaylock, waybar
+      # Companion configs – fuzzel, swaylock, mako, waybar.
+      # mako/config and waybar/config are static and HM-managed below (store or
+      # live); waybar/style.css is NOT here — matugen owns it (see the seed in
+      # ensureSwayThemeDir), because an HM store symlink is read-only and every
+      # matugen run would fail on it.
       xdg.configFile."fuzzel/fuzzel.ini".source = fuzzelSrc + "/fuzzel.ini";
-      xdg.configFile."mako/config".source = makoSrc + "/config";
       xdg.configFile."swaylock/config".source = swaylockSrc + "/config";
-      # waybar — static fallback; matugen overwrites style.css live at ~/.config/waybar/style.css
-      # Config is always present so `matugen` can template it even when bar is disabled; package is conditional on useWaybar
-      xdg.configFile."waybar/config".source = waybarConfig + "/config";
-      xdg.configFile."waybar/style.css".source = waybarConfig + "/style.css";
 
       # polkit agent wrapper — used by sway/autostart.conf via `exec ~/.local/bin/start-polkit`
       # This lives outside ~/.config/sway so it works both store-built and live-symlinked.
@@ -201,14 +217,19 @@ in
         $DRY_RUN_CMD chmod +x "$HOME/.config/sway/status.sh" 2>/dev/null || true
       '';
 
-      # Ensure matugen theme dirs exist before first `matugen image` (sway + waybar)
+      # Writable theme outputs matugen needs before its first run. style.css is
+      # matugen-owned (never HM-managed): seed a writable copy once, and drop
+      # the stale store symlink from before the fix so old checkouts heal.
       home.activation.ensureSwayThemeDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
         $DRY_RUN_CMD mkdir -p "$HOME/.config/waybar"
         $DRY_RUN_CMD mkdir -p "$HOME/.config/fuzzel/themes"
         $DRY_RUN_CMD [ -e "$HOME/.local/state/nixtop/theme/sway" ] || $DRY_RUN_CMD touch "$HOME/.local/state/nixtop/theme/sway"
-        $DRY_RUN_CMD [ -e "$HOME/.config/waybar/style.css" ] || $DRY_RUN_CMD touch "$HOME/.config/waybar/style.css"
+        $DRY_RUN_CMD [ -e "$HOME/.local/state/nixtop/theme/mako" ] || $DRY_RUN_CMD touch "$HOME/.local/state/nixtop/theme/mako"
         $DRY_RUN_CMD [ -e "$HOME/.config/fuzzel/themes/generated" ] || $DRY_RUN_CMD touch "$HOME/.config/fuzzel/themes/generated"
+        $DRY_RUN_CMD [ ! -L "$HOME/.config/waybar/style.css" ] || $DRY_RUN_CMD rm "$HOME/.config/waybar/style.css"
+        $DRY_RUN_CMD [ -e "$HOME/.config/waybar/style.css" ] || $DRY_RUN_CMD cp "${waybarConfig}/style.css" "$HOME/.config/waybar/style.css"
+        $DRY_RUN_CMD chmod u+w "$HOME/.config/waybar/style.css" 2>/dev/null || true
       '';
 
       # Live variant: with liveSway, ~/.config/sway is a symlink into the repo,
@@ -266,6 +287,31 @@ in
     (lib.mkIf (config.nixtop.sway.enable && liveSway) {
       xdg.configFile."sway".source = config.lib.file.mkOutOfStoreSymlink livePath;
       xdg.configFile."sway".recursive = true;
+    })
+
+    # mako static config — one directory (store or live); colors arrive via
+    # `include=~/.local/state/nixtop/theme/mako`, never written here.
+    (lib.mkIf (config.nixtop.sway.enable && !liveMako) {
+      xdg.configFile."mako".source = makoSrc;
+      xdg.configFile."mako".recursive = true;
+    })
+
+    (lib.mkIf (config.nixtop.sway.enable && liveMako) {
+      xdg.configFile."mako".source = config.lib.file.mkOutOfStoreSymlink liveMakoPath;
+      xdg.configFile."mako".recursive = true;
+    })
+
+    # waybar config is always present so the bar works even when its package is
+    # disabled; only the package itself stays conditional on useWaybar.
+    (lib.mkIf (config.nixtop.sway.enable && !liveWaybar) {
+      xdg.configFile."waybar/config".source = waybarConfig + "/config";
+    })
+
+    (lib.mkIf (config.nixtop.sway.enable && liveWaybar) {
+      # Deliberate per-file exception (not whole-dir): style.css in the same
+      # dir is matugen-owned, so a dir symlink would redirect generated output
+      # into the repo. After editing, `pkill -SIGUSR2 waybar` applies it live.
+      xdg.configFile."waybar/config".source = config.lib.file.mkOutOfStoreSymlink liveWaybarPath;
     })
   ];
 }

@@ -1,6 +1,12 @@
-{ pkgs, lib, config, ... }:
 {
-  options.nixtop.apps.chromium.enable = lib.mkEnableOption "Chromium browser configuration (replaces firefox-esr)";
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+{
+  options.nixtop.apps.chromium.enable =
+    lib.mkEnableOption "Chromium browser configuration (replaces firefox-esr)";
 
   config = lib.mkIf config.nixtop.apps.chromium.enable {
     programs.chromium = {

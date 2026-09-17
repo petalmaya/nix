@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 let
   cfg = config.nixtop.greetd;
   isSDDM = cfg.enable && cfg.greeter == "sddm";

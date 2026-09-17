@@ -1,4 +1,6 @@
-/* waybar fallback — matugen overwrites this at ~/.config/waybar/style.css */
+/* waybar fallback — seeded once as a writable copy at ~/.config/waybar/style.css
+   (see modules/sway/default.nix). matugen owns that path afterwards, so keep
+   this in sync with modules/matugen/templates/waybar/style.css. */
 /* mineral-blue fallback matches sway/appearance.conf */
 * {
   font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", monospace;
@@ -67,14 +69,6 @@ window#waybar {
   border: none;
   border-left: 1px solid #31505b;
   border-right: 1px solid #31505b;
-}
-
-#language {
-  background: #1c3036;
-  color: #a9c2c7;
-  padding: 0 10px;
-  margin: 0 2px;
-  border-radius: 0;
 }
 
 #pulseaudio,

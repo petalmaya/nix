@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   config = lib.mkIf (config.nixtop.greetd.greeter == "noctalia") {
     programs.noctalia-greeter = {

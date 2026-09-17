@@ -1,4 +1,10 @@
-{ config, lib, inputs, self ? inputs.self or null, ... }:
+{
+  config,
+  lib,
+  inputs,
+  self ? inputs.self or null,
+  ...
+}:
 let
   cfg = config.nixtop.maintenance;
   # derive flake URI from the current flake if user didn't override
@@ -59,8 +65,7 @@ in
         # Flake URI: if user sets cfg.autoUpgrade.flake use it, else derive from self + hostname
         # override with e.g. "/home/alice/nix#wonderland" if your checkout lives elsewhere
         flake = lib.mkDefault (
-          if cfg.autoUpgrade.flake != null then cfg.autoUpgrade.flake
-          else defaultFlake
+          if cfg.autoUpgrade.flake != null then cfg.autoUpgrade.flake else defaultFlake
         );
         # When using flakes, --update-input nixpkgs is often wanted; keep flags minimal by default
         flags = lib.mkDefault [ ];
