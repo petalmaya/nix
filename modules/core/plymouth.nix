@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   options.nixtop.plymouth.enable = lib.mkEnableOption "Plymouth boot splash screen with Blahaj theme";
 

@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   matugenOwnsFastfetch =
     (config.nixtop.services.matugen.enable or false)

@@ -18,7 +18,10 @@
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
-                mountOptions = [ "fmask=0022" "dmask=0022" ];
+                mountOptions = [
+                  "fmask=0022"
+                  "dmask=0022"
+                ];
               };
             };
             root = {
@@ -29,19 +32,35 @@
                 subvolumes = {
                   "@root" = {
                     mountpoint = "/";
-                    mountOptions = [ "compress=zstd:3" "noatime" "autodefrag" ];
+                    mountOptions = [
+                      "compress=zstd:3"
+                      "noatime"
+                      "autodefrag"
+                    ];
                   };
                   "@home" = {
                     mountpoint = "/home";
-                    mountOptions = [ "compress=zstd:3" "noatime" "autodefrag" ];
+                    mountOptions = [
+                      "compress=zstd:3"
+                      "noatime"
+                      "autodefrag"
+                    ];
                   };
                   "@nix" = {
                     mountpoint = "/nix";
-                    mountOptions = [ "compress=zstd:3" "noatime" "autodefrag" ];
+                    mountOptions = [
+                      "compress=zstd:3"
+                      "noatime"
+                      "autodefrag"
+                    ];
                   };
                   "@log" = {
                     mountpoint = "/var/log";
-                    mountOptions = [ "compress=zstd:3" "noatime" "autodefrag" ];
+                    mountOptions = [
+                      "compress=zstd:3"
+                      "noatime"
+                      "autodefrag"
+                    ];
                   };
                 };
               };

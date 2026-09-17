@@ -2,7 +2,13 @@
 name = "Papirus Icon Theme"
 category = "system"
 
+# Legacy matugen catalog entry — the Nix registry in modules/matugen/default.nix
+# is authoritative (it overrides output_path). Kept for the name/category only.
+[catalog.papirus-icons]
+name = "Papirus Icon Theme"
+category = "system"
+
 [templates.papirus_icons]
 input_path = "colors"
-output_path = "colors-final"
+output_path = "~/.local/state/nixtop/theme/papirus-colors"
 post_hook = "bash '{{ config_dir }}/apply.sh'"

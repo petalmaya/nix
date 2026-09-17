@@ -2,7 +2,10 @@
 set -euo pipefail
 
 {
-  COLOR_FILE="$(dirname "$0")/colors-final"
+  # Generated colors live outside the templates tree (matugen can't write into
+  # its own read-only store source); fall back to the old in-tree path once.
+  COLOR_FILE="$HOME/.local/state/nixtop/theme/papirus-colors"
+  [[ -f "$COLOR_FILE" ]] || COLOR_FILE="$(dirname "$0")/colors-final"
   [[ -f "$COLOR_FILE" ]] || exit 0
 
   # 1. Read the file instantly into RAM
@@ -120,6 +123,6 @@ set -euo pipefail
     fi
   fi
 
-  # 6. Apply icons instantly
-  [[ -n "$closest" ]] && "$(dirname "$0")/papirus-folders" -C "$closest" || echo "Error: Failed to apply papirus-folders"
+  # 6. Apply icons instantly (via bash: the store copy may lack the exec bit)
+  [[ -n "$closest" ]] && bash "$(dirname "$0")/papirus-folders" -C "$closest" || echo "Error: Failed to apply papirus-folders"
 }

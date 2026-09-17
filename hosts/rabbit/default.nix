@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   networking.hostName = "rabbit";
   networking.extraHosts = "127.0.0.1 rabbit";
@@ -15,7 +20,7 @@
   boot.initrd.kernelModules = [ "i915" ];
   hardware.enableAllFirmware = true;
 
-  sops.secrets.wifi_password = {};
+  sops.secrets.wifi_password = { };
   system.activationScripts.wifiKeyfile = {
     deps = [ "setupSecrets" ];
     text = ''

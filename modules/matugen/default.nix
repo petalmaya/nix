@@ -35,6 +35,9 @@ let
     };
     waybar = {
       input_path = "waybar/style.css";
+      # matugen-owned writable file (HM must NOT manage this path: a store
+      # symlink here is read-only and every run would fail). Seeded once from
+      # modules/sway/waybar/style.css by the sway module's activation.
       output_path = "~/.config/waybar/style.css";
       post_hook = "bash ~/.config/matugen/templates/waybar/apply.sh 2>/dev/null || true";
     };
@@ -45,7 +48,9 @@ let
     };
     mako = {
       input_path = "mako/config";
-      output_path = "~/.config/mako/config";
+      # Colors only; merged over the static config via mako's `include=`
+      # (see modules/sway/mako/config), so this stays writable state.
+      output_path = "~/.local/state/nixtop/theme/mako";
       post_hook = "bash ~/.config/matugen/templates/mako/apply.sh 2>/dev/null || true";
     };
     quickshell = {
@@ -91,7 +96,9 @@ let
     };
     "papirus-icons" = {
       input_path = "papirus-icons/colors";
-      output_path = "~/.config/matugen/templates/papirus-icons/colors-final";
+      # State, not templates: matugen cannot write back into its own
+      # read-only template source (that failure aborted whole runs).
+      output_path = "~/.local/state/nixtop/theme/papirus-colors";
       post_hook = "bash ~/.config/matugen/templates/papirus-icons/apply.sh 2>/dev/null || true";
     };
   };

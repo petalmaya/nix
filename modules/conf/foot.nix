@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   # generated colors file lives at a runtime path, not inside the repo checkout.
   # Either matugen or noctalia writes it; foot's declarative config just includes it.

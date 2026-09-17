@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 {
   options.nixtop.terminal.tmux.enable = lib.mkEnableOption "Tmux terminal multiplexer";
 

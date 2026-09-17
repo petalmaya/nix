@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   networking.hostName = "garden";
   networking.extraHosts = "127.0.0.1 garden";
@@ -8,7 +13,10 @@
   # garden is a new laptop – use zswap instead of zram (D14)
   # zswap option not in nixos-26.05; use kernel params + disable zram
   zramSwap.enable = lib.mkForce false;
-  boot.kernelParams = [ "zswap.enabled=1" "zswap.compressor=zstd" ];
+  boot.kernelParams = [
+    "zswap.enabled=1"
+    "zswap.compressor=zstd"
+  ];
 
   hardware.enableAllFirmware = true;
 
@@ -18,12 +26,18 @@
     isNormalUser = true;
     # use placeholder; will be sops.hashedPasswordFile once secret provisioned
     initialPassword = "rose";
-    extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "video"
+      "audio"
+      "input"
+    ];
     shell = pkgs.zsh;
   };
 
   # keep wifi secret logic consistent
-  sops.secrets.wifi_password = {};
+  sops.secrets.wifi_password = { };
   system.activationScripts.wifiKeyfile = {
     deps = [ "setupSecrets" ];
     text = ''

@@ -14,7 +14,7 @@
 
   "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
   "modules-center": ["clock"],
-  "modules-right": ["mpris", "sway/language", "pulseaudio", "network", "battery", "tray"],
+  "modules-right": ["mpris", "pulseaudio", "network", "battery", "tray"],
 
   "sway/workspaces": {
     "disable-scroll": false,
@@ -63,11 +63,6 @@
       "stopped": "⏹"
     },
     "max-length": 36,
-    "tooltip": true
-  },
-
-  "sway/language": {
-    "format": "⌨ {}",
     "tooltip": true
   },
 

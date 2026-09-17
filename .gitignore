@@ -10,7 +10,6 @@ modules/matugen/templates/cozy-ui/assets/
 modules/matugen/templates/blacklingerie/originals/
 modules/matugen/templates/cozy-ui/colors.sh
 modules/matugen/templates/blacklingerie/colors.sh
-modules/matugen/templates/papirus-icons/colors-final
 
 # quickshell runtime state
 .quickshell/

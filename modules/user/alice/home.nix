@@ -1,4 +1,11 @@
-{ config, pkgs, lib, unstable-pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  unstable-pkgs,
+  inputs,
+  ...
+}:
 {
   imports = [ ./nixpak.nix ];
 
@@ -91,7 +98,12 @@
       (if unstable-pkgs ? tauon then unstable-pkgs.tauon else null)
       (if unstable-pkgs ? ani-cli then unstable-pkgs.ani-cli else null)
       (if unstable-pkgs ? yt-dlp then unstable-pkgs.yt-dlp else pkgs.yt-dlp or null)
-      (if unstable-pkgs ? pokemmo-installer then unstable-pkgs.pokemmo-installer else (if pkgs ? pokemmo-installer then pkgs.pokemmo-installer else null))
+      (
+        if unstable-pkgs ? pokemmo-installer then
+          unstable-pkgs.pokemmo-installer
+        else
+          (if pkgs ? pokemmo-installer then pkgs.pokemmo-installer else null)
+      )
     ]
   );
 
@@ -102,7 +114,10 @@
   programs.mpv = {
     enable = true;
     package = pkgs.mpv.override {
-      scripts = with pkgs.mpvScripts; [ mpris modernz ];
+      scripts = with pkgs.mpvScripts; [
+        mpris
+        modernz
+      ];
     };
     config = {
       osc = "no";
