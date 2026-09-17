@@ -7,9 +7,8 @@
   ...
 }:
 let
-  # HM modules read NixOS options via the osConfig module argument;
-  # config.osConfig does not exist.
-  shell = if osConfig != null then osConfig.nixtop.shell or "none" else config.nixtop.shell or "none";
+  # Per-user shell (modules/shell): host default, overridable per user.
+  shell = config.nixtop.shell;
   shellEnabled = shell == "quickshell";
   cfg = config.nixtop.quickshell;
 

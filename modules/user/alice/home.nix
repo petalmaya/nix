@@ -29,6 +29,10 @@
     sway.enable = true;
   };
 
+  # JES for alice only — nixtop.shell is per-user (modules/shell), so lewis
+  # stays on the host default (waybar-only) on the same host.
+  nixtop.shell = "jes";
+
   # wallpaper directory shared into the home (D24) – alice and rose only
   home.file."Pictures/Wallpapers".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/assets/wallpaper";

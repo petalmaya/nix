@@ -21,5 +21,6 @@
     ./jes
     ./lucid
     ./sway
+    ./shell
   ];
 }

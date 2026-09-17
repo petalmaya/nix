@@ -44,7 +44,8 @@ let
       osConfig.nixtop.sway.bar or "waybar"
     else
       config.nixtop.sway.bar or "waybar";
-  shell = if osConfig != null then osConfig.nixtop.shell or "none" else config.nixtop.shell or "none";
+  # Per-user shell (modules/shell): host default, overridable per user.
+  shell = config.nixtop.shell;
   useWaybar = swayBar == "waybar" && shell == "none";
 
   # Noctalia targets swayfx or mango (nixtop.noctalia.compositor). Same HM
