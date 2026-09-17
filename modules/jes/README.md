@@ -25,7 +25,8 @@ Go helpers (music, calendar, cava, launcher, screenpicker).
 - `go/` — upstream `for-quickshell/go` sources (reference for Nix builds).
 - `sway/keybinds.conf` — JES keybinds for our swayfx, included via
   `sway/variant.conf` when `nixtop.shell == "jes"`.
-- `jes-cli` — upstream CLI, installed to `~/.local/bin/jes-cli`.
+- `jes-cli` — upstream CLI, packaged on PATH via `writeShellScriptBin`
+  (upstream drops it in `~/.local/bin`, which sway's exec PATH lacks).
 - `package.nix` — `qs` wrapper + runtime deps for JES.
 - `default.nix` — HM module, enabled only when `nixtop.shell == "jes"`.
 
