@@ -25,7 +25,7 @@
         "none"
       ];
       default = "none";
-      description = "Which shell owns the session. 'none' = waybar-only (swayfx bar, no shell). Drives variant, greeter default and theming owner.";
+      description = "Host default for which shell owns the session. Users override via the HM-side nixtop.shell (modules/shell); NixOS-side consumers (greeter default) always follow this host value. 'none' = waybar-only (swayfx bar, no shell).";
     };
     nixtop.sway.bar = lib.mkOption {
       type = lib.types.enum [
