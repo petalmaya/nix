@@ -55,12 +55,28 @@ in
       settings = {
         theme.source = "custom";
         theme.custom_palette = "nixtop";
+        # Mango follows Noctalia: this user template re-renders mango's colors
+        # from the live palette on every theme change (Noctalia's engine, not
+        # matugen — same {{ }} expressions as the matugen twin). post_hook
+        # mirrors the matugen registry's mango reload.
+        theme.templates.user.mango = {
+          input_path = "$XDG_CONFIG_HOME/noctalia/templates/mango.conf";
+          output_path = "$XDG_STATE_HOME/nixtop/theme/mango.conf";
+          post_hook = "mmsg dispatch reload_config 2>/dev/null || true";
+        };
         bar."default".shadow = false;
         bar."default".contact_shadow = false;
         dock.shadow = false;
         shell.panel.shadow = false;
       };
     };
+
+    # User template input above (static — Noctalia only ever writes outputs).
+    xdg.configFile."noctalia/templates/mango.conf".source = ./templates/mango.conf;
+
+    # Noctalia owns mango's colors now, so matugen must not also write
+    # mango.conf (two writers, two palettes). Stays overridable per template.
+    nixtop.services.matugen.templates.mango.enable = lib.mkDefault false;
 
     # Ensure palette dir exists before first matugen run (matugen writes nixtop.json)
     home.activation.ensureNoctaliaDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
