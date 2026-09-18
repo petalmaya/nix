@@ -16,7 +16,27 @@ let
   # Upstream drops jes-cli in ~/.local/bin, which is not on sway's exec PATH
   # (variant autostart + these keybinds call it bare). Package it instead so
   # it resolves via ~/.nix-profile/bin like every other sway exec target.
-  jesCli = pkgs.writeShellScriptBin "jes-cli" (builtins.readFile ./jes-cli);
+  # Two more upstream-isms are rewritten at package time (vendored file stays
+  # pristine): bare `qs` becomes the jes-qs wrapper (it carries the QML import
+  # paths, without which the shell dies on `import JES.Helpers`), and the
+  # shell dir moves from `-c` to `-p` — in quickshell 0.3 `-c` takes a config
+  # *name*, not a path, so the daemon exited with "no such configuration".
+  jesCli = pkgs.writeShellScriptBin "jes-cli" (
+    builtins.replaceStrings
+      [
+        "qs -c $HOME/.local/JES/quickshell ipc call root"
+        "qs -c $HOME/.local/JES/quickshell log"
+        "qs -d -c $HOME/.local/JES/quickshell"
+        ''qs -d -c "$HOME/.local/JES/quickshell"''
+      ]
+      [
+        "jes-qs ipc call root"
+        "jes-qs log"
+        "jes-qs -d -p $HOME/.local/JES/quickshell"
+        ''jes-qs -d -p "$HOME/.local/JES/quickshell"''
+      ]
+      (builtins.readFile ./jes-cli)
+  );
 in
 {
   options.nixtop.jes.enable = lib.mkOption {
