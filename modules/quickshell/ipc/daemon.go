@@ -13,6 +13,7 @@ package main
 // No external deps — stdlib only.
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
@@ -22,6 +23,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"time"
 )
@@ -196,6 +198,155 @@ func writeSnapshot(path string, data []byte) error {
 	return os.Rename(tmp, path)
 }
 
+// ---- mango mode: `mmsg watch all-monitors` -> mango.json ----
+
+// mmsg JSON shapes (subset we read; the full object is passed through raw
+// so QML's `monitors` map keeps tags/active_tags/layout_symbol/keymode/...).
+type mmsgTag struct {
+	Index       int    `json:"index"`
+	IsActive    bool   `json:"is_active"`
+	IsUrgent    bool   `json:"is_urgent"`
+	ClientCount int    `json:"client_count"`
+	Layout      string `json:"layout"`
+}
+
+type mmsgMonitor struct {
+	Name       string          `json:"name"`
+	Active     bool            `json:"active"`
+	ActiveTags []int           `json:"active_tags"`
+	Tags       []mmsgTag       `json:"tags"`
+}
+
+type mmsgLine struct {
+	Monitors []json.RawMessage `json:"monitors"`
+}
+
+type mangoSnapshot struct {
+	Timestamp    int64          `json:"timestamp"`
+	Focused      string         `json:"focusedOutput"`
+	Current      int            `json:"currentWorkspace"`
+	ByOutput     map[string]int `json:"currentWorkspaceByOutput"`
+	Workspaces   map[string]any `json:"workspaces"`
+	Monitors     map[string]any `json:"monitors"`
+	MonitorList  []any          `json:"monitorList"`
+}
+
+func mmsgPath(flagVal string) string {
+	if flagVal != "" && flagVal != "mmsg" {
+		return flagVal
+	}
+	p, err := exec.LookPath("mmsg")
+	if err != nil {
+		return ""
+	}
+	return p
+}
+
+func buildMangoSnapshot(rawMonitors []json.RawMessage) ([]byte, error) {
+	byOutput := map[string]int{}
+	workspacesMap := map[string]any{}
+	monitorsMap := map[string]any{}
+	monitorList := []any{}
+	focused := ""
+	current := 1
+
+	for _, raw := range rawMonitors {
+		var m mmsgMonitor
+		if err := json.Unmarshal(raw, &m); err != nil {
+			continue
+		}
+		if m.Name == "" {
+			continue
+		}
+		// pass the full object through so QML keeps every mmsg field
+		var full any
+		if err := json.Unmarshal(raw, &full); err != nil {
+			continue
+		}
+		monitorsMap[m.Name] = full
+		monitorList = append(monitorList, full)
+
+		primary := 0
+		if len(m.ActiveTags) > 0 {
+			primary = m.ActiveTags[0]
+		}
+		byOutput[m.Name] = primary
+
+		for _, t := range m.Tags {
+			key := fmt.Sprintf("%s-%d", m.Name, t.Index)
+			workspacesMap[key] = map[string]any{
+				"idx":          t.Index,
+				"output":       m.Name,
+				"is_focused":   m.Active && t.IsActive,
+				"name":         nil,
+				"is_active":    t.IsActive,
+				"is_urgent":    t.IsUrgent,
+				"client_count": t.ClientCount,
+				"layout":       t.Layout,
+			}
+		}
+
+		if m.Active {
+			focused = m.Name
+			current = primary
+		}
+	}
+
+	snap := mangoSnapshot{
+		Timestamp:   time.Now().UnixMilli(),
+		Focused:     focused,
+		Current:     current,
+		ByOutput:    byOutput,
+		Workspaces:  workspacesMap,
+		Monitors:    monitorsMap,
+		MonitorList: monitorList,
+	}
+	return json.Marshal(snap)
+}
+
+func mangoLoop(mmsg string, outPath string) error {
+	cmd := exec.Command(mmsg, "watch", "all-monitors")
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return fmt.Errorf("mmsg stdout pipe: %w", err)
+	}
+	cmd.Stderr = os.Stderr
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("mmsg watch start: %w", err)
+	}
+	defer func() {
+		_ = cmd.Process.Kill()
+		_ = cmd.Wait()
+	}()
+
+	scanner := bufio.NewScanner(stdout)
+	scanner.Buffer(make([]byte, 64*1024), 10*1024*1024)
+	for scanner.Scan() {
+		line := scanner.Bytes()
+		if len(bytes.TrimSpace(line)) == 0 {
+			continue
+		}
+		var parsed mmsgLine
+		if err := json.Unmarshal(line, &parsed); err != nil {
+			continue
+		}
+		if parsed.Monitors == nil {
+			continue
+		}
+		snap, err := buildMangoSnapshot(parsed.Monitors)
+		if err != nil {
+			continue
+		}
+		if err := writeSnapshot(outPath, snap); err != nil {
+			log.Printf("writeSnapshot: %v", err)
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("mmsg watch read: %w", err)
+	}
+	return fmt.Errorf("mmsg watch exited")
+}
+
 func subscribeLoop(sock string, outPath string) error {
 	// initial snapshot
 	ws, err := ipcRoundTrip(sock, ipcGetWorkspaces, nil)
@@ -301,16 +452,38 @@ func subscribeLoop(sock string, outPath string) error {
 }
 
 func main() {
-	outFlag := flag.String("out", "", "snapshot output path (default $XDG_CACHE_HOME/nixtop-shell/sway.json)")
+	outFlag := flag.String("out", "", "snapshot output path (default $XDG_CACHE_HOME/nixtop-shell/sway.json, or mango.json in mango mode)")
 	sockFlag := flag.String("sock", "", "sway IPC socket (default $SWAYSOCK)")
+	mangoFlag := flag.Bool("mango", false, "mango mode: watch `mmsg watch all-monitors` instead of sway IPC")
+	mmsgFlag := flag.String("mmsg", "mmsg", "mmsg binary for mango mode")
 	flag.Parse()
+
+	// Mango mode: explicit flag, or no sway socket but mmsg exists.
+	// Keeps one binary for both compositors (installed as nixtop-sway-ipc
+	// and nixtop-mango-ipc); QML launches the right name per compositor.
+	if *mangoFlag || ((*sockFlag == "" && swaySock() == "") && mmsgPath(*mmsgFlag) != "") {
+		mmsg := mmsgPath(*mmsgFlag)
+		if mmsg == "" {
+			log.Fatalf("no mmsg binary: install mango or pass --mmsg")
+		}
+		outPath := *outFlag
+		if outPath == "" {
+			outPath = filepath.Join(xdgCache(), "nixtop-shell", "mango.json")
+		}
+		log.Printf("nixtop mango ipc daemon: mmsg=%s out=%s", mmsg, outPath)
+		for {
+			err := mangoLoop(mmsg, outPath)
+			log.Printf("mango watch exited: %v; reconnecting in 1s", err)
+			time.Sleep(time.Second)
+		}
+	}
 
 	sock := *sockFlag
 	if sock == "" {
 		sock = swaySock()
 	}
 	if sock == "" {
-		log.Fatalf("no sway socket: set SWAYSOCK or --sock")
+		log.Fatalf("no sway socket: set SWAYSOCK or --sock (or run with --mango under mangowc)")
 	}
 	outPath := *outFlag
 	if outPath == "" {

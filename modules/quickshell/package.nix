@@ -51,11 +51,15 @@ let
     pkgs.power-profiles-daemon
   ];
 
-  # Go IPC daemon — sway's `swaymsg` per-frame is ~15ms & forks; Go daemon
-  # holds one IPC socket, writes a cache file, QML just FileViews it (caelestia/dank pattern)
-  swayIpc = pkgs.buildGoModule {
-    pname = "nixtop-sway-ipc";
-    version = "0.1.0";
+  # Go IPC daemons — one source, two compositor modes (same binary, two names).
+  # Sway's `swaymsg` per-frame is ~15ms & forks; mango's `mmsg watch` line is
+  # parsed in QML per event. The daemon holds the socket/subprocess, writes a
+  # cache file, QML just FileViews it (caelestia/dank pattern):
+  # sway mode -> $XDG_CACHE_HOME/nixtop-shell/sway.json (Data/Sway.qml),
+  # mango mode -> .../mango.json (Data/MangoWC.qml, --mango / auto-detect).
+  ipcDaemons = pkgs.buildGoModule {
+    pname = "nixtop-ipc-daemons";
+    version = "0.2.0";
     src = ./ipc;
     vendorHash = null; # no deps — stdlib only
     subPackages = [ "." ];
@@ -63,13 +67,30 @@ let
       "-s"
       "-w"
     ];
-    # buildGoModule names the binary after the directory (`ipc`), but we want `nixtop-sway-ipc`
+    # Binary name follows go.mod (`nixtop-shell-ipc`), not the directory —
+    # install real files (not symlinks) under both launch names QML looks up:
+    # `nixtop-sway-ipc` (Data/Sway.qml) and `nixtop-mango-ipc` (Data/MangoWC.qml).
+    # Copies, never symlinks, so noBrokenSymlinks cannot fire.
+    # The debug `ipc` alias is relative, created only when its target exists.
     postInstall = ''
       
-            if [ -f $out/bin/ipc ]; then mv $out/bin/ipc $out/bin/nixtop-sway-ipc; fi
-            if [ -f $out/bin/daemon ]; then mv $out/bin/daemon $out/bin/nixtop-sway-ipc; fi
-            # also provide `ipc` as alias for debugging
-            ln -s $out/bin/nixtop-sway-ipc $out/bin/ipc 2>/dev/null || true
+            base=""
+            if [ -f $out/bin/nixtop-shell-ipc ]; then
+              base="$out/bin/nixtop-shell-ipc"
+            elif [ -f $out/bin/ipc ]; then
+              base="$out/bin/ipc"
+            elif [ -f $out/bin/daemon ]; then
+              base="$out/bin/daemon"
+            fi
+            if [ -n "$base" ]; then
+              cp "$base" $out/bin/nixtop-sway-ipc
+              cp "$base" $out/bin/nixtop-mango-ipc
+              if [ "$base" != "$out/bin/nixtop-shell-ipc" ]; then
+                cp "$base" $out/bin/nixtop-shell-ipc
+              fi
+              rm -f $out/bin/ipc
+              ln -s nixtop-sway-ipc $out/bin/ipc
+            fi
     '';
   };
 in
@@ -78,7 +99,7 @@ pkgs.symlinkJoin {
   version = qs.version or "unstable";
   paths = [
     qs
-    swayIpc
+    ipcDaemons
   ];
   nativeBuildInputs = [ pkgs.makeWrapper ];
 
@@ -87,22 +108,30 @@ pkgs.symlinkJoin {
         makeWrapper ${pkgs.lib.getExe qs} $out/bin/nixtop-shell \
           --set FONTCONFIG_FILE "${fontconfig}" \
           --set QML2_IMPORT_PATH "${qmlPath}" \
-          --prefix PATH : "${runtimePath}:${swayIpc}/bin" \
-          --set NIXTOP_SHELL_IPC "${swayIpc}/bin/nixtop-sway-ipc"
+          --prefix PATH : "${runtimePath}:${ipcDaemons}/bin" \
+          --set NIXTOP_SHELL_IPC "${ipcDaemons}/bin/nixtop-sway-ipc" \
+          --set NIXTOP_SHELL_MANGO_IPC "${ipcDaemons}/bin/nixtop-mango-ipc"
     
         makeWrapper ${pkgs.lib.getExe qs} $out/bin/nixtop-shell-greeter \
           --set FONTCONFIG_FILE "${fontconfig}" \
           --set QML2_IMPORT_PATH "${qmlPath}" \
-          --prefix PATH : "${runtimePath}:${swayIpc}/bin" \
-          --set NIXTOP_SHELL_IPC "${swayIpc}/bin/nixtop-sway-ipc" \
+          --prefix PATH : "${runtimePath}:${ipcDaemons}/bin" \
+          --set NIXTOP_SHELL_IPC "${ipcDaemons}/bin/nixtop-sway-ipc" \
+          --set NIXTOP_SHELL_MANGO_IPC "${ipcDaemons}/bin/nixtop-mango-ipc" \
           --add-flags '-p ${greeterConfigSrc}'
     
-        # also expose the daemon directly for systemd/user or `qs ipc` debugging
-        ln -s ${swayIpc}/bin/nixtop-sway-ipc $out/bin/nixtop-sway-ipc || true
+        # also expose the daemons directly for systemd/user or `qs ipc` debugging
+        # (symlinkJoin already merges ipcDaemons' bin, so only link when missing)
+        if [ ! -e $out/bin/nixtop-sway-ipc ] && [ -e ${ipcDaemons}/bin/nixtop-sway-ipc ]; then
+          ln -s ${ipcDaemons}/bin/nixtop-sway-ipc $out/bin/nixtop-sway-ipc
+        fi
+        if [ ! -e $out/bin/nixtop-mango-ipc ] && [ -e ${ipcDaemons}/bin/nixtop-mango-ipc ]; then
+          ln -s ${ipcDaemons}/bin/nixtop-mango-ipc $out/bin/nixtop-mango-ipc
+        fi
   '';
 
   meta = {
-    description = "nixtop-shell - quickshell config for mango (primary) and sway (Go IPC daemon)";
+    description = "nixtop-shell - quickshell config for mango and sway (Go IPC daemons)";
     mainProgram = "nixtop-shell";
     platforms = pkgs.lib.platforms.linux;
   };

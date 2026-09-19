@@ -12,8 +12,8 @@ let
   shellEnabled = shell == "quickshell";
   cfg = config.nixtop.quickshell;
 
-  # build the wrapper (includes Go IPC daemon) from ./package.nix
-  swayIpcPkg = pkgs.callPackage ./package.nix {
+  # build the wrapper (includes Go IPC daemons) from ./package.nix
+  shellPkg = pkgs.callPackage ./package.nix {
     quickshellInput = inputs.quickshell;
   };
 
@@ -44,7 +44,7 @@ in
     # all-monitors`; Sway stays supported via the Go daemon (Data/Sway.qml).
     # Widgets pick Sway when active, else MangoWC — see WorkspacePill/SystemView.
     home.packages = [
-      swayIpcPkg
+      shellPkg
       pkgs.quickshell
       pkgs.jq
     ];
