@@ -22,6 +22,7 @@
         "noctalia"
         "quickshell"
         "jes"
+        "lucid"
         "none"
       ];
       default = "none";

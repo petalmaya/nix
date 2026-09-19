@@ -16,6 +16,7 @@
       "noctalia"
       "quickshell"
       "jes"
+      "lucid"
       "none"
     ];
     default = if osConfig != null then osConfig.nixtop.shell or "none" else "none";

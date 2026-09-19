@@ -80,6 +80,10 @@ in
         assertion = !(config.nixtop.quickshell.enable or false);
         message = "nixtop.shell selects one shell – cannot enable jes with quickshell";
       }
+      {
+        assertion = !(config.nixtop.lucid.enable or false);
+        message = "nixtop.shell selects one shell – cannot enable jes with lucid";
+      }
     ];
   };
 }

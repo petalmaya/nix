@@ -90,6 +90,11 @@ let
         exec jes-cli start-daemon
         include ~/.config/sway/jes-keybinds.conf
       ''
+    else if shell == "lucid" then
+      ''
+        # Lucid on mango: the mango session autostarts it
+        # (modules/mango/variants/lucid/autostart.conf), so sway stays empty.
+      ''
     else
       ''
         # Waybar variant (default, shell == none) — no extra autostart; waybar is in autostart.conf
@@ -97,7 +102,7 @@ let
   );
 
   autostartVariant =
-    if shell == "noctalia" || shell == "quickshell" || shell == "jes" then
+    if shell == "noctalia" || shell == "quickshell" || shell == "jes" || shell == "lucid" then
       ''
         # Autostart — shell variant owns the bar AND notifications, so waybar AND mako are NOT autostarted here.
         # swayidle + polkit are still needed for all shells.
@@ -267,6 +272,11 @@ in
               $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
         exec jes-cli start-daemon
         include ~/nix/modules/jes/sway/keybinds.conf
+        VARIANT
+            elif [ "${shell}" = "lucid" ]; then
+              # lucid targets mango: mango autostart owns it, sway variant stays empty
+              $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
+        # lucid on mango (see modules/mango/variants/lucid/)
         VARIANT
             else
               $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'

@@ -10,10 +10,16 @@ let
   # Per-user shell (modules/shell): host default, overridable per user.
   shell = config.nixtop.shell;
   mangoSrc = ./.;
-  # Mango is archived (sway is primary). Only noctalia/quickshell have mango
+  # Mango is archived (sway is primary). Noctalia/quickshell/lucid have mango
   # variants; every other shell (none/jes) falls back to the noctalia variant
   # so the standalone mango session keeps working.
-  variantDir = if shell == "quickshell" then ./variants/quickshell else ./variants/noctalia;
+  variantDir =
+    if shell == "quickshell" then
+      ./variants/quickshell
+    else if shell == "lucid" then
+      ./variants/lucid
+    else
+      ./variants/noctalia;
   liveMango =
     if osConfig != null then
       osConfig.nixtop.dev.liveMango or false

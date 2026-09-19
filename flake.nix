@@ -68,6 +68,15 @@
       url = "github:uiriansan/SilentSDDM";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Lucid shell (Quickshell, MIT). Non-flake source: modules/lucid copies
+    # the shell tree out at activation so its state files stay writable, and
+    # layers mango/foot adaptations on top. Update with
+    # `nix flake lock --update-input lucid` (see modules/lucid/UPSTREAM).
+    lucid = {
+      url = "github:Sn3akyy1/lucid";
+      flake = false;
+    };
   };
 
   outputs =

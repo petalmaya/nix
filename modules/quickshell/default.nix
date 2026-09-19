@@ -75,6 +75,10 @@ in
         message = "nixtop.shell selects one shell – cannot enable both jes and quickshell";
       }
       {
+        assertion = !(config.nixtop.lucid.enable or false);
+        message = "nixtop.shell selects one shell – cannot enable both lucid and quickshell";
+      }
+      {
         assertion = cfg.compositor == "sway" || cfg.compositor == "mango";
         message = "nixtop.quickshell.compositor must be sway (primary) or mango (archived)";
       }
