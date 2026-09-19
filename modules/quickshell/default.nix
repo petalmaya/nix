@@ -28,20 +28,21 @@ in
   options.nixtop.quickshell.enable = lib.mkOption {
     type = lib.types.bool;
     default = shellEnabled;
-    description = "Enable Alice's own Quickshell (nixtop-shell) on swayfx. Follows nixtop.shell.";
+    description = "Enable Alice's own Quickshell (nixtop-shell) on mango/sway. Follows nixtop.shell.";
   };
   options.nixtop.quickshell.compositor = lib.mkOption {
     type = lib.types.enum [
       "sway"
       "mango"
     ];
-    default = "sway";
-    description = "Which compositor quickshell targets; mango is archived, sway is primary.";
+    default = "mango";
+    description = "Which compositor quickshell targets; mango is primary, sway is supported.";
   };
 
   config = lib.mkIf (cfg.enable && shellEnabled) {
-    # Mango IPC is archived at ./archive/MangoWC.qml — Sway is the primary target.
-    # Go daemon (nixtop-sway-ipc) outsources hot sway IPC (caelestia/dank pattern) so QML just FileViews.
+    # MangoWC (Data/MangoWC.qml) is the primary backend via `mmsg watch
+    # all-monitors`; Sway stays supported via the Go daemon (Data/Sway.qml).
+    # Widgets pick Sway when active, else MangoWC — see WorkspacePill/SystemView.
     home.packages = [
       swayIpcPkg
       pkgs.quickshell
@@ -58,9 +59,16 @@ in
     };
 
     # legacy path: quickshell still resolves ~/.config/quickshell if nixtop-shell missing, so keep a compat symlink
+    # Lucid also owns ~/.config/quickshell as a real dir — back it up first
+    # so switching lucid -> quickshell does not leave a stale tree behind.
     home.activation.ensureQuickshellCompat = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir -p "$HOME/.config/nixtop-shell"
       $DRY_RUN_CMD mkdir -p "$HOME/.cache/nixtop-shell"
+      if [ -d "$HOME/.config/quickshell" ] && [ ! -L "$HOME/.config/quickshell" ]; then
+        if [ -e "$HOME/.config/quickshell/lucidprefs/prefs.json" ] || [ -e "$HOME/.config/quickshell/VERSION" ]; then
+          $DRY_RUN_CMD mv "$HOME/.config/quickshell" "$HOME/.config/quickshell.lucid-backup-$(date +%F-%H%M)" 2>/dev/null || true
+        fi
+      fi
       $DRY_RUN_CMD [ -e "$HOME/.config/quickshell" ] || $DRY_RUN_CMD ln -s "$HOME/.config/nixtop-shell" "$HOME/.config/quickshell" 2>/dev/null || true
       $DRY_RUN_CMD chmod +x "$HOME/.config/nixtop-shell/scripts/"* 2>/dev/null || true
     '';
@@ -80,7 +88,7 @@ in
       }
       {
         assertion = cfg.compositor == "sway" || cfg.compositor == "mango";
-        message = "nixtop.quickshell.compositor must be sway (primary) or mango (archived)";
+        message = "nixtop.quickshell.compositor must be mango (primary) or sway (supported)";
       }
     ];
   };

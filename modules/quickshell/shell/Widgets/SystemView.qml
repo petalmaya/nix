@@ -117,7 +117,7 @@ Item {
 
                   Rectangle {
                     required property int index
-                    // prefer Sway (Go daemon) else Mango (archived)
+                    // Sway when active (Go daemon), else MangoWC (mmsg primary)
                     property int workspace: Dat.Sway.active ? Dat.Sway.currentWorkspace : Dat.MangoWC.currentWorkspace
                     property bool urgent: !!( (Dat.Sway.active ? Dat.Sway.workspaces : Dat.MangoWC.workspaces)[`${root.outputName}-${index + 1}`]?.is_urgent )
 

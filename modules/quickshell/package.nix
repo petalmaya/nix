@@ -102,7 +102,7 @@ pkgs.symlinkJoin {
   '';
 
   meta = {
-    description = "nixtop-shell - quickshell config for swayfx (Go IPC daemon, mango archived)";
+    description = "nixtop-shell - quickshell config for mango (primary) and sway (Go IPC daemon)";
     mainProgram = "nixtop-shell";
     platforms = pkgs.lib.platforms.linux;
   };

@@ -76,6 +76,12 @@ in
     # inside it). Refresh on upstream VERSION change, preserving state files;
     # seed defaults (prefs minus the Hyprland-only workspaces module) + a
     # starter palette + cava config on first run. Mirrors install.sh.
+    #
+    # Permission-denied guard (fixes home-manager-alice.service line 377):
+    # a stale read-only symlink or root-owned file at lucidprefs/prefs.json
+    # aborts activation with `> prefs.json: Permission denied`. Seeds below
+    # never write through symlinks and always mv via tmp, so a read-only
+    # leftover heals instead of failing the whole switch.
     home.activation.ensureLucidShell = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       SRC="${lucidSrc}"
       DST="$HOME/.config/quickshell"
@@ -83,9 +89,10 @@ in
       if [ -L "$DST" ]; then
         $DRY_RUN_CMD rm "$DST"
       fi
+      $DRY_RUN_CMD mkdir -p "$DST"
+      $DRY_RUN_CMD chmod u+w "$DST" 2>/dev/null || true
       if [ ! -f "$DST/VERSION" ] || [ "$(cat "$DST/VERSION" 2>/dev/null)" != "$(cat "$SRC/VERSION")" ]; then
-        $DRY_RUN_CMD mkdir -p "$DST"
-        $DRY_RUN_CMD ${pkgs.rsync}/bin/rsync -a --delete \
+        $DRY_RUN_CMD ${pkgs.rsync}/bin/rsync -a --delete --chmod=u+w \
           --exclude '/support/' --exclude '/defaults/' --exclude '/wallpapers/' \
           --exclude '/install.sh' --exclude '/uninstall.sh' \
           --exclude '/README.md' --exclude '/LICENSE' --exclude '/CHANGELOG.md' \
@@ -95,16 +102,36 @@ in
       fi
       # state seeds — anything already in place wins (install.sh semantics)
       $DRY_RUN_CMD mkdir -p "$DST/lucidprefs" "$DST/lucidbar" "$DST/luciddocks" "$DST/lucidmoji" "$DST/lucidkeys" "$DST/lucidwidgets"
+      $DRY_RUN_CMD chmod u+w "$DST/lucidprefs" "$DST/lucidbar" "$DST/luciddocks" "$DST/lucidmoji" "$DST/lucidkeys" "$DST/lucidwidgets" 2>/dev/null || true
       seed() { # $1 = defaults basename, $2 = shell-tree relpath
-        if [ ! -s "$DST/$2" ] && [ -f "$SRC/defaults/$1" ]; then
-          $DRY_RUN_CMD cp "$SRC/defaults/$1" "$DST/$2"
+        target="$DST/$2"
+        if [ -L "$target" ]; then
+          $DRY_RUN_CMD rm -f "$target"
+        fi
+        if [ ! -s "$target" ] && [ -f "$SRC/defaults/$1" ]; then
+          $DRY_RUN_CMD mkdir -p "$(dirname "$target")"
+          tmp="$(mktemp)"
+          $DRY_RUN_CMD cp "$SRC/defaults/$1" "$tmp"
+          $DRY_RUN_CMD chmod u+w "$tmp"
+          $DRY_RUN_CMD mv "$tmp" "$target"
+          $DRY_RUN_CMD chmod u+w "$target" 2>/dev/null || true
         fi
       }
       # prefs seed carries the one mango tweak: the workspaces bar module is
       # Hyprland-only (Quickshell.Hyprland), so it starts off. jq keeps the
       # seed tracking upstream defaults instead of a checked-in copy.
+      if [ -L "$DST/lucidprefs/prefs.json" ]; then
+        $DRY_RUN_CMD rm -f "$DST/lucidprefs/prefs.json"
+      fi
       if [ ! -s "$DST/lucidprefs/prefs.json" ]; then
-        $DRY_RUN_CMD ${pkgs.jq}/bin/jq '.showWorkspaces = false' "$SRC/defaults/prefs.json" > "$DST/lucidprefs/prefs.json"
+        tmp="$(mktemp)"
+        # chmod first so a stale read-only empty file does not block the mv
+        $DRY_RUN_CMD chmod u+w "$DST/lucidprefs/prefs.json" 2>/dev/null || true
+        $DRY_RUN_CMD rm -f "$DST/lucidprefs/prefs.json" 2>/dev/null || true
+        $DRY_RUN_CMD ${pkgs.jq}/bin/jq '.showWorkspaces = false' "$SRC/defaults/prefs.json" > "$tmp"
+        $DRY_RUN_CMD chmod u+w "$tmp"
+        $DRY_RUN_CMD mv "$tmp" "$DST/lucidprefs/prefs.json"
+        $DRY_RUN_CMD chmod u+w "$DST/lucidprefs/prefs.json" 2>/dev/null || true
       fi
       seed blur.json lucidbar/blur.json
       seed clock_reminders.json lucidbar/clock_reminders.json

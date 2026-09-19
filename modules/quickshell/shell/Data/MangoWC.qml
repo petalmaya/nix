@@ -2,8 +2,9 @@ pragma Singleton
 import Quickshell
 import Quickshell.Io
 
-// Mango IPC via `mmsg watch all-monitors` (full snapshot per change); mirrors Niri.qml,
-// first active tag reads as current.
+// Mango IPC via `mmsg watch all-monitors` (full snapshot per change).
+// Primary backend on mango (XDG_CURRENT_DESKTOP=mango); Sway uses Data/Sway.qml.
+// First active tag reads as current.
 Singleton {
   id: root
 
