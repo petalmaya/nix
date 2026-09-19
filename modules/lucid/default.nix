@@ -58,9 +58,10 @@ in
   };
 
   config = lib.mkIf (cfg.enable && shellEnabled) {
+    # lucidPkg already bundles pkgs.quickshell — listing it again would put
+    # two copies on PATH (same collision as nixtop-shell's 0.3.0/0.3.1 skew).
     home.packages = [
       lucidPkg
-      pkgs.quickshell
       pkgs.jq
       pkgs.matugen
     ];
