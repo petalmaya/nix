@@ -11,8 +11,7 @@ Text {
   anchors.centerIn: parent
   color: Dat.Colors.current.secondary
   font.pointSize: 11
-  // Ambxst-style HH:mm (seconds add noise to a centered pill)
-  text: Qt.formatDateTime(Dat.Clock.date, "HH:mm")
+  text: Qt.formatDateTime(Dat.Clock.date, "h:mm:ss AP")
 
   Gen.MouseArea {
     anchors.centerIn: parent

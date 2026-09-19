@@ -264,8 +264,41 @@ in
         $DRY_RUN_CMD mkdir -p "$HOME/.config/noctalia/palettes"
         $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
         $DRY_RUN_CMD mkdir -p "$HOME/.config/nixtop-shell"
+        $DRY_RUN_CMD mkdir -p "$HOME/.config/bat/themes"
+        $DRY_RUN_CMD mkdir -p "$HOME/.config/foot/themes"
+        $DRY_RUN_CMD mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+        $DRY_RUN_CMD mkdir -p "$HOME/.config/yazi"
+        $DRY_RUN_CMD mkdir -p "$HOME/.config/emacs/themes"
+        $DRY_RUN_CMD mkdir -p "$HOME/.config/fastfetch"
         $DRY_RUN_CMD [ -e "$HOME/.config/noctalia/palettes/nixtop.json" ] || $DRY_RUN_CMD touch "$HOME/.config/noctalia/palettes/nixtop.json"
       '';
+
+      # First-run seed: nothing ever invoked matugen automatically — the only
+      # trigger was a manual `nixtop-theme <image>` — so a fresh checkout kept
+      # empty seeded outputs forever (notably Noctalia's nixtop.json palette,
+      # which starves every downstream theme). Run matugen once against the
+      # first wallpaper when the palette bridge is still empty. Never fails
+      # the switch: best-effort, logs to stderr.
+      home.activation.ensureMatugenSeed =
+        lib.hm.dag.entryAfter
+          [
+            "writeBoundary"
+            "ensureThemeOutputDirs"
+          ]
+          ''
+            if [ ! -s "$HOME/.config/noctalia/palettes/nixtop.json" ]; then
+              WALLPAPER=""
+              if [ -d "$HOME/Pictures/Wallpapers" ]; then
+                WALLPAPER=$(find "$HOME/Pictures/Wallpapers" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) 2>/dev/null | sort | head -n 1)
+              fi
+              if [ -n "$WALLPAPER" ]; then
+                echo "matugen seed: generating themes from $WALLPAPER (run nixtop-theme <image> to re-theme)" >&2
+                $DRY_RUN_CMD ${pkgs.matugen}/bin/matugen image "$WALLPAPER" 2>&1 | head -n 20 >&2 || echo "matugen seed failed (non-fatal); run nixtop-theme <image> manually" >&2 || true
+              else
+                echo "matugen seed: no wallpaper in ~/Pictures/Wallpapers; run nixtop-theme <image> once to generate themes" >&2
+              fi
+            fi
+          '';
 
       # papirus-folders recolors the icon theme in place, which needs a writable
       # copy — a store path won't do. Seed one from nixpkgs on first activation.

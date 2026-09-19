@@ -73,9 +73,7 @@ WlrLayershell {
     readonly property int baseWidth: 200 * notchScale
     readonly property int expandedHeight: 28
     readonly property int expandedWidth: 700 * notchScale
-    // Taller than before (190) so Music/Calendar/Settings read like
-    // Ambxst's control-center cards instead of a cramped strip.
-    readonly property int fullHeight: 220 * notchScale
+    readonly property int fullHeight: 190 * notchScale
     readonly property int fullWidth: this.expandedWidth
     property real notchScale: Dat.Globals.notchScale
 

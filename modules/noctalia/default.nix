@@ -11,7 +11,7 @@ let
   # Per-user shell (modules/shell): host default, overridable per user.
   shell = config.nixtop.shell;
   shellEnabled = shell == "noctalia";
-  # swayfx is the primary compositor now; mango is archived. Noctalia supports both.
+  # Mango and swayfx are both first-class targets. Noctalia supports both.
   compositor = cfg.compositor or "sway";
 in
 {
@@ -27,7 +27,7 @@ in
   options.nixtop.noctalia.enable = lib.mkOption {
     type = lib.types.bool;
     default = shellEnabled;
-    description = "Enable Noctalia shell (follows nixtop.shell when auto; swayfx primary, mango archived).";
+    description = "Enable Noctalia shell (follows nixtop.shell when auto; sway and mango both supported).";
   };
   options.nixtop.noctalia.compositor = lib.mkOption {
     type = lib.types.enum [
@@ -108,7 +108,7 @@ in
       }
       {
         assertion = compositor == "sway" || compositor == "mango";
-        message = "nixtop.noctalia.compositor must be sway (primary) or mango (archived)";
+        message = "nixtop.noctalia.compositor must be sway or mango";
       }
     ];
   };
