@@ -9,6 +9,9 @@
   networking.extraHosts = "127.0.0.1 wonderland";
 
   nixtop.desktop.enable = true;
+  # Noctalia greeter (greetd) — SDDM stays off while this is set (see
+  # modules/core/sddm.nix and modules/noctalia/greeter.nix).
+  nixtop.greetd.greeter = "noctalia";
   # live sway/mako/waybar for dev — ~/.config/{sway,mako} → ~/nix/modules/sway/...,
   # waybar config.jsonc likewise (style.css stays matugen-owned, see modules/sway/default.nix)
   nixtop.dev.liveSway = true;
