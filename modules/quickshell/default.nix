@@ -43,9 +43,11 @@ in
     # MangoWC (Data/MangoWC.qml) is the primary backend via `mmsg watch
     # all-monitors`; Sway stays supported via the Go daemon (Data/Sway.qml).
     # Widgets pick Sway when active, else MangoWC — see WorkspacePill/SystemView.
+    # shellPkg already bundles the flake's quickshell (0.3.1) — never add
+    # pkgs.quickshell here: nixpkgs ships 0.3.0 and the two collide on
+    # bin/.quickshell-wrapped in home-manager-path (buildEnv exit 25).
     home.packages = [
       shellPkg
-      pkgs.quickshell
       pkgs.jq
     ];
 
