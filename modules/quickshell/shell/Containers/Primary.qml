@@ -14,7 +14,8 @@ Rectangle {
 
   RowLayout {
     anchors.fill: parent
-    spacing: 0
+    anchors.margins: 6
+    spacing: 6
 
     Con.CentralSwipable {
       Layout.fillHeight: true

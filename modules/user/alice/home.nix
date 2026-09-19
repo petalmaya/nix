@@ -29,11 +29,11 @@
     sway.enable = true;
   };
 
-  # Lucid on mango — nixtop.shell is per-user (modules/shell), so lewis
+  # Own nixtop-shell on mango — nixtop.shell is per-user (modules/shell), so lewis
   # stays on the host default (waybar-only) on the same host. Log into the
   # mango session at the greeter; the sway session stays bare by design.
-  nixtop.shell = "lucid";
-  nixtop.lucid.compositor = "mango";
+  nixtop.shell = "quickshell";
+  nixtop.quickshell.compositor = "mango";
 
   # wallpaper directory shared into the home (D24) – alice and rose only
   home.file."Pictures/Wallpapers".source =

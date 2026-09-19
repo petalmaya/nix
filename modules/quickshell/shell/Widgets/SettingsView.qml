@@ -3,8 +3,11 @@ import QtQuick
 import QtQuick.Layouts
 
 import qs.Data as Dat
+import qs.Generics as Gen
 import qs.Widgets as Wid
 
+// Ambxst-style settings: Power (profiles/battery), Audio (PipeWire),
+// Theme (matugen/wallpaper/shell reserve), System (toggles/advanced).
 Item {
   id: root
 
@@ -29,8 +32,8 @@ Item {
         anchors.fill: parent
 
         Repeater {
-          // Wallpaper lives in Generics/LauncherWallpaper.qml launcher mode.
-          model: ["Power", "Audio", "Advanced"]
+          // Wallpaper picker lives in Generics/LauncherWallpaper.qml launcher mode.
+          model: ["Power", "Audio", "Theme", "System"]
 
           Item {
             id: tabRect
@@ -162,6 +165,66 @@ Item {
           NumberAnimation {
             duration: Dat.MaterialEasing.emphasizedAccelTime
             easing.bezierCurve: Dat.MaterialEasing.emphasizedAccel
+          }
+        }
+      }
+
+      // Theme tab (Ambxst settings panel): matugen + wallpaper + shell reserve.
+      Rectangle {
+        color: Dat.Colors.current.surface_container_high
+        radius: Dat.Radius.xl
+        opacity: visible ? 1 : 0
+
+        Behavior on opacity {
+          NumberAnimation {
+            duration: Dat.MaterialEasing.emphasizedAccelTime
+            easing.bezierCurve: Dat.MaterialEasing.emphasizedAccel
+          }
+        }
+
+        Flickable {
+          anchors.fill: parent
+          anchors.margins: 10
+          clip: true
+          contentHeight: themeCol.height
+
+          ColumnLayout {
+            id: themeCol
+
+            width: parent.width
+            spacing: 8
+
+            Gen.TweakToggle {
+              Layout.fillWidth: true
+              active: Dat.Config.data.matugenEnabled
+              text: "Matugen theming"
+
+              onClicked: () => Dat.Config.data.matugenEnabled = !Dat.Config.data.matugenEnabled
+            }
+
+            Gen.TweakToggle {
+              Layout.fillWidth: true
+              active: Dat.Config.data.wallFgLayer
+              text: "Fg Layer Extraction"
+
+              onClicked: () => Dat.Config.data.wallFgLayer = !Dat.Config.data.wallFgLayer
+            }
+
+            Gen.TweakToggle {
+              Layout.fillWidth: true
+              active: Dat.Config.data.reservedShell
+              text: "Exclusive Shell"
+
+              onClicked: () => Dat.Config.data.reservedShell = !Dat.Config.data.reservedShell
+            }
+
+            Text {
+              Layout.fillWidth: true
+              color: Dat.Colors.current.on_surface_variant
+              font.pointSize: 9
+              text: "Wallpapers: " + Dat.Config.data.wallpaperDir
+              wrapMode: Text.Wrap
+            }
           }
         }
       }

@@ -264,8 +264,13 @@ in
         VARIANT
             elif [ "${shell}" = "quickshell" ]; then
               $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
+        # Quickshell variant — swayfx + nixtop-shell (Go IPC daemon, sway-native)
         exec nixtop-shell
         bindsym $mod+space exec qs ipc call launcher toggle
+        bindsym $mod+Shift+space exec qs ipc call notch hello
+        bindsym $mod+n exec qs ipc call notch toggle
+        bindsym $mod+m exec qs ipc call notch media
+        bindsym $mod+w exec qs ipc call notch workspaces
         VARIANT
             elif [ "${shell}" = "jes" ]; then
               # live checkout: ~/.config/sway IS the repo dir, so include jes keybinds by repo path

@@ -118,12 +118,13 @@ WlrLayershell {
   }
 
   // Thin bottom-edge strip that reveals the hidden pill; sized to the pill so only an edge touch wakes it.
+  // 8px (not 2px) so Mango trackpads find it without hunting.
   MouseArea {
     id: revealEdge
 
     anchors.bottom: parent.bottom
     anchors.horizontalCenter: parent.horizontalCenter
-    height: 2
+    height: 8
     hoverEnabled: true
     width: pill.width
   }
@@ -152,9 +153,12 @@ WlrLayershell {
     property bool forceHidden: false
 
     anchors.bottom: parent.bottom
-    anchors.bottomMargin: forceHidden ? -(height + 4) : 10
+    anchors.bottomMargin: forceHidden ? -(height + 4) : 12
     anchors.horizontalCenter: parent.horizontalCenter
-    color: Dat.Colors.withAlpha(Dat.Colors.current.surface_container_high, 0.89)
+    // Ambxst-style floating dock: solid pill with subtle outline.
+    border.color: Dat.Colors.withAlpha(Dat.Colors.current.outline_variant, 0.6)
+    border.width: 1
+    color: Dat.Colors.withAlpha(Dat.Colors.current.surface_container_high, 0.92)
     height: dockRow.implicitHeight + 16
     opacity: forceHidden ? 0 : 1
     radius: Dat.Radius.xxl
