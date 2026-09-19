@@ -1,0 +1,7 @@
+https://github.com/Sn3akyy1/lucid (tracked as the `lucid` flake input, flake = false)
+Integrated at upstream VERSION 1.1.0, locked rev ad0eeeb3401d8181b379d74bd2f1a5175b2190e5
+(2026-09-18; exact pin lives in flake.lock under `nodes.lucid.locked.rev`).
+
+Updating:
+  nix flake lock --update-input lucid   # then rebuild; activation refreshes
+                                        # ~/.config/quickshell when VERSION changes

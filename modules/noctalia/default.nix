@@ -64,6 +64,12 @@ in
           output_path = "$XDG_STATE_HOME/nixtop/theme/mango.conf";
           post_hook = "mmsg dispatch reload_config 2>/dev/null || true";
         };
+        # Starship follows Noctalia the same way (same twin pattern as mango).
+        # No post_hook: starship re-reads its config before every prompt.
+        theme.templates.user.starship = {
+          input_path = "$XDG_CONFIG_HOME/noctalia/templates/starship.toml";
+          output_path = "$XDG_CONFIG_HOME/starship.toml";
+        };
         bar."default".shadow = false;
         bar."default".contact_shadow = false;
         dock.shadow = false;
@@ -71,12 +77,15 @@ in
       };
     };
 
-    # User template input above (static — Noctalia only ever writes outputs).
+    # User template inputs above (static — Noctalia only ever writes outputs).
     xdg.configFile."noctalia/templates/mango.conf".source = ./templates/mango.conf;
+    xdg.configFile."noctalia/templates/starship.toml".source = ./templates/starship.toml;
 
-    # Noctalia owns mango's colors now, so matugen must not also write
-    # mango.conf (two writers, two palettes). Stays overridable per template.
+    # Noctalia owns mango's colors and the starship prompt now, so matugen
+    # must not also write them (two writers, two palettes). Stays overridable
+    # per template.
     nixtop.services.matugen.templates.mango.enable = lib.mkDefault false;
+    nixtop.services.matugen.templates.starship.enable = lib.mkDefault false;
 
     # Ensure palette dir exists before first matugen run (matugen writes nixtop.json)
     home.activation.ensureNoctaliaDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -92,6 +101,10 @@ in
       {
         assertion = !(config.nixtop.jes.enable or false);
         message = "nixtop.shell selects one shell – cannot enable both noctalia and jes";
+      }
+      {
+        assertion = !(config.nixtop.lucid.enable or false);
+        message = "nixtop.shell selects one shell – cannot enable both noctalia and lucid";
       }
       {
         assertion = compositor == "sway" || compositor == "mango";

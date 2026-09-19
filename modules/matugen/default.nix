@@ -85,6 +85,18 @@ let
       input_path = "fastfetch/config.jsonc";
       output_path = "~/.config/fastfetch/config.jsonc";
     };
+    # Lucid shell colors: upstream matugen templates, registered by source
+    # path instead of ./templates. Off unless the lucid shell owns them —
+    # lucid-starship is the twin of the base starship template (same rule as
+    # the noctalia twin: two writers, two palettes, so only one may run).
+    lucid-shell = {
+      src = inputs.lucid + "/support/matugen/templates/quickshell-colors.json";
+      output_path = "~/.cache/quickshell/matugen.json";
+    };
+    lucid-starship = {
+      src = inputs.lucid + "/support/matugen/templates/starship-colors.toml";
+      output_path = "~/.config/starship.toml";
+    };
     yazi = {
       input_path = "yazi/yazi-theme.toml";
       output_path = "~/.config/yazi/theme.toml";
@@ -104,9 +116,10 @@ let
   };
 
   # Per-app theming ownership (nixtop.theme.owner / nixtop.theme.apps) is
-  # parked: Noctalia does not theme these apps yet, so matugen owns every
-  # template. The options stay so existing configs keep evaluating; gate the
-  # registry here again if Noctalia ever takes over an app.
+  # parked: Noctalia takes over mango + starship via its own user templates
+  # (it disables those two registry entries), matugen owns the rest.
+  # The options stay so existing configs keep evaluating; gate the
+  # registry here again if Noctalia ever takes over another app.
   enabledTemplates = lib.filterAttrs (name: _: cfg.templates.${name}.enable or true) templates;
 
   matugenConfig = {
@@ -117,7 +130,7 @@ let
     templates = lib.mapAttrs (
       name: t:
       {
-        input_path = "${./templates}/${t.input_path}";
+        input_path = t.src or "${./templates}/${t.input_path}";
         output_path = t.output_path;
       }
       // lib.optionalAttrs (t ? post_hook) { post_hook = t.post_hook; }
@@ -144,7 +157,13 @@ in
       type = lib.types.submodule {
         options.enable = lib.mkOption {
           type = lib.types.bool;
-          default = true;
+          # Lucid's templates only run for lucid sessions (enabled from
+          # modules/lucid); everything else defaults on.
+          default =
+            !(builtins.elem name [
+              "lucid-shell"
+              "lucid-starship"
+            ]);
           description = "Run the '${name}' matugen template.";
         };
       };
