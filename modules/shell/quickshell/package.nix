@@ -3,10 +3,9 @@
 # nixtop-shell wraps bare `qs` (config resolves via ~/.config/nixtop-shell,
 # see default.nix). The greeter bakes a store copy of the config instead,
 # since it runs as its own user with no repo checkout to symlink into.
-{ pkgs, quickshellInput }:
+{ pkgs }:
 let
-  system = pkgs.stdenv.hostPlatform.system;
-  qs = quickshellInput.packages.${system}.default;
+  qs = pkgs.quickshell;
 
   configSrc = pkgs.lib.fileset.toSource {
     root = ./shell;

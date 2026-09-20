@@ -7,7 +7,7 @@
   ...
 }:
 {
-  imports = [ ./nixpak.nix ];
+  imports = [ ./flatnix.nix ];
 
   home.username = "alice";
   home.homeDirectory = "/home/alice";

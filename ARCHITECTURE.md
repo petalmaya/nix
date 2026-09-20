@@ -34,7 +34,7 @@ A file does nothing because it exists – it must be imported via `modules/defau
 
 ### `flake.nix`
 
-Pins external inputs (`nixpkgs` 26.05, `nixpkgs-unstable`, `home-manager`, `nix-flatpak`, `disko`, `sops-nix`, `noctalia-shell`/`noctalia-greeter`, `nixmacs`/`emacs-overlay`, `firefox-addons`, `quickshell`, `nixpak`, `mango`), creates the three `nixosConfigurations`, passes `inputs`/`unstable-pkgs`/`self`, imports each host's `hardware-configuration.nix` + `default.nix` + `disko.nix`, imports `modules/default.nix`, and configures Home Manager (`useGlobalPkgs`, `users = hmUsers`, `sharedModules`).
+Pins external inputs (`nixpkgs` 26.05, `nixpkgs-unstable`, `home-manager`, `nix-flatpak`, `disko`, `sops-nix`, `noctalia-shell`/`noctalia-greeter`, `nixmacs`/`emacs-overlay`, `firefox-addons`, `nixpak`, `mango`), creates the three `nixosConfigurations`, passes `inputs`/`unstable-pkgs`/`self`, imports each host's `hardware-configuration.nix` + `default.nix` + `disko.nix`, imports `modules/default.nix`, and configures Home Manager (`useGlobalPkgs`, `users = hmUsers`, `sharedModules`).
 
 `garden` is a real host with a default btrfs `disko.nix` and `zswap` (not `zram`); its `hardware-configuration.nix` is a placeholder until the laptop is installed – `nix build .#garden` is expected to fail until then.
 
@@ -68,7 +68,7 @@ Mango session registration is via the upstream flake `github:mangowm/mango` (`pr
 
 ### `modules/user/<name>/home.nix`
 
-Thin profiles: `home.username`, `home.homeDirectory`, `nixtop.*.enable` switches, `home.packages` for one-offs, `~/Pictures/Wallpapers` symlink (alice+rose → `assets/wallpaper`), `home.stateVersion`, `programs.home-manager.enable`. `nixpak.nix` (alice, rose) is imported there.
+Thin profiles: `home.username`, `home.homeDirectory`, `nixtop.*.enable` switches, `home.packages` for one-offs, `~/Pictures/Wallpapers` symlink (alice+rose → `assets/wallpaper`), `home.stateVersion`, `programs.home-manager.enable`. `flatnix.nix` (alice, rose) is imported there.
 
 Host → user matrix: `wonderland` = alice+lewis, `rabbit` = lewis, `garden` = rose.
 
@@ -76,7 +76,7 @@ Host → user matrix: `wonderland` = alice+lewis, `rabbit` = lewis, `garden` = r
 
 ```nix
 {
-  nixosModules = [ ./core ./shell/noctalia/greeter.nix ./shell/quickshell/greeter.nix ];
+  nixosModules = [ ./core ./core/apparmor.nix ./core/sddm.nix ./core/maintenance.nix ./shell/noctalia/greeter.nix ./shell/quickshell/greeter.nix ];
   homeModules  = [ ./core/zsh.nix ./core/tmux.nix ./browsers ./conf ./emacs ./mango ./matugen ./sway ./shell ];
 }
 ```

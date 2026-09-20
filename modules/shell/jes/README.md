@@ -12,10 +12,11 @@ Go helpers (music, calendar, cava, launcher, screenpicker).
   unchanged. Prebuilt ELFs (`scripts/music`, `scripts/cal`,
   `scripts/Cava-internal`, `launcher/launch`, …) are upstream builds;
   `go/` holds the upstream Go sources to rebuild them with Nix later.
-  Note: upstream symlinks `shell/JES/Bar -> ../bar` and
-  `shell/JES/Helpers -> ../helpers` are stored here as real copies —
-  Windows checkouts cannot index those symlinks, and the QML `JES.*`
-  imports resolve identically either way. Re-copy (don't re-symlink)
+  Note: upstream symlink `shell/JES/Helpers -> ../helpers` is stored here
+  as a real copy — Windows checkouts cannot index that symlink, and the
+  QML `JES.Helpers` module import resolves identically either way.
+  (The `shell/JES/Bar -> ../bar` copy was dead — nothing imports module
+  `JES.Bar` — so it was deleted.) Re-copy (don't re-symlink)
   when updating the fork.
 - `config/` — upstream `.config/JES` (`config.toml`, `wallpaper.toml`,
   `waypoints.json`, `base16.json`). Installed to `~/.config/JES/`.

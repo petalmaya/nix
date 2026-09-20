@@ -9,7 +9,7 @@ This is the reworked configuration (v2) – flat module tree by concern.
 - =modules/default.nix= exports =nixosModules= and =homeModules=; edit there to add/remove a module.
 - =modules/core= is the system baseline (bootloader, networking, sops, zram/zswap, pipewire, fonts, greetd selector, sddm/apparmor/maintenance, cachix/plymouth/nix-ld/podman, zsh/tmux).
 - =modules/browsers= is per-browser config (chromium, firefox-esr, floorp), enabled per user.
-- =modules/user/<name>/{home.nix,nixpak.nix}= are per-user profiles (alice+lewis on wonderland, lewis on rabbit, rose on garden).
+- =modules/user/<name>/{home.nix,flatnix.nix}= are per-user profiles (alice+lewis on wonderland, lewis on rabbit, rose on garden).
 - =modules/mango= is MangoWC config: shared base (=config,settings,layout,rules,animations=) + per-shell variants (=appearance,keybinds,autostart=) selected by =nixtop.shell=.
 - =modules/matugen= owns colour generation from wallpaper at runtime; it writes a Noctalia palette bridge (=~/.config/noctalia/palettes/nixtop.json=), JES colors (=~/.local/state/JES_colors.json=), and app configs. See =modules/matugen/templates=.
 - Shells are selected per user by =nixtop.shell = "noctalia" | "quickshell" | "jes" | "none"= (host default =none=, waybar-only): =modules/shell/noctalia=, =modules/shell/quickshell= (own nixtop-shell), =modules/shell/jes= (vendored fork). The greeter follows =nixtop.greetd.greeter=.
@@ -37,8 +37,9 @@ nixos-generate-config --show-hardware-config > hosts/garden/hardware-configurati
 =garden= ships a placeholder =hardware-configuration.nix= until then, so
 =nix build .#garden= is expected to fail before the laptop is installed.
 
-Secrets are managed by sops-nix: =secrets/secrets.yaml= (git-ignored; see
-=secrets/secrets.yaml.example=), =.sops.yaml=.
+Secrets are managed by sops-nix: =secrets/secrets.yaml= is tracked in git
+sops-encrypted (decryptable only on machines holding the age key); see
+=secrets/secrets.yaml.example=, =.sops.yaml=.
 
 * Wallpaper → theme
 

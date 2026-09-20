@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 {
-  imports = [ ./nixpak.nix ];
+  imports = [ ./flatnix.nix ];
 
   home.username = "rose";
   home.homeDirectory = "/home/rose";

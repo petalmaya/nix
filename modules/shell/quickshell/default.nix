@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   osConfig ? null,
   ...
 }:
@@ -10,9 +9,7 @@ let
   cfg = config.nixtop.quickshell;
   active = config.nixtop.shell == "quickshell";
 
-  shellPkg = pkgs.callPackage ./package.nix {
-    quickshellInput = inputs.quickshell;
-  };
+  shellPkg = pkgs.callPackage ./package.nix { };
 
   liveQuickshell =
     if osConfig != null then
@@ -37,8 +34,7 @@ in
   };
 
   config = lib.mkIf (cfg.enable && active) {
-    # shellPkg bundles the flake's quickshell — never add pkgs.quickshell
-    # here too: the two versions collide in home-manager-path (exit 25).
+    # shellPkg already wraps pkgs.quickshell, so don't list it separately.
     home.packages = [
       shellPkg
       pkgs.jq
