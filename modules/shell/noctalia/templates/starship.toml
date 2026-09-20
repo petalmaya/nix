@@ -1,6 +1,6 @@
 # Starship prompt — rendered by NOCTALIA (not matugen) from the live palette.
 # Registered as [theme.templates.user.starship] in Noctalia's settings (see
-# modules/noctalia/default.nix), so every Noctalia theme change re-renders
+# modules/shell/noctalia/default.nix), so every Noctalia theme change re-renders
 # ~/.config/starship.toml and the prompt follows Noctalia with no reload
 # (starship re-reads its config per prompt).
 # Syntax is Noctalia's template engine (same {{ }} expressions as the matugen

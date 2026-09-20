@@ -28,7 +28,7 @@ in
     # but we enforce Wayland compositor and default session here so sway
     # is the pre-selected desktop.
     services.displayManager = {
-      # sway is the default desktop (user asked to split sway config + set default)
+      # sway is the default desktop
       defaultSession = lib.mkDefault "sway";
       # SDDM Wayland vs X11 – force Wayland when X is not enabled, matching
       # the silentSDDM module's logic, but ensure the flag is explicit.

@@ -14,11 +14,6 @@ let
   # symlink is read-only and Noctalia's write would fail.
   noctaliaOwnsStarship =
     (config.nixtop.shell or "none") == "noctalia" && (config.nixtop.noctalia.enable or false);
-  # Lucid's starship comes from its own matugen template (twin pattern, same
-  # as noctalia above) — same read-only-symlink reason to yield.
-  lucidOwnsStarship =
-    (config.nixtop.services.matugen.enable or false)
-    && (config.nixtop.services.matugen.templates.lucid-starship.enable or false);
   hostName = if osConfig != null then osConfig.networking.hostName or "wonderland" else "wonderland";
 in
 {
@@ -29,11 +24,9 @@ in
       enable = true;
       enableZshIntegration = true;
     };
-    xdg.configFile."starship.toml" =
-      lib.mkIf (!matugenOwnsStarship && !noctaliaOwnsStarship && !lucidOwnsStarship)
-        {
-          source = ./starship.toml;
-        };
+    xdg.configFile."starship.toml" = lib.mkIf (!matugenOwnsStarship && !noctaliaOwnsStarship) {
+      source = ./starship.toml;
+    };
 
     programs.zsh = {
       enable = true;

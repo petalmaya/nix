@@ -1,4 +1,4 @@
-#+TITLE: Nixtop – Alice's NixOS
+#+TITLE: Nixtop – NixOS Flake
 
 * Overview
 
@@ -7,12 +7,18 @@ This is the reworked configuration (v2) – flat module tree by concern.
 - =flake.nix= is the entry point. =nixosConfigurations.wonderland/rabbit/garden= are the hosts.
 - =hosts/<host>/{default.nix,disko.nix,hardware-configuration.nix}= is host policy.
 - =modules/default.nix= exports =nixosModules= and =homeModules=; edit there to add/remove a module.
-- =modules/core= is the system baseline (bootloader, networking, sops, zram/zswap, pipewire, fonts, etc).
+- =modules/core= is the system baseline (bootloader, networking, sops, zram/zswap, pipewire, fonts, greetd selector, sddm/apparmor/maintenance, cachix/plymouth/nix-ld/podman, zsh/tmux).
+- =modules/browsers= is per-browser config (chromium, firefox-esr, floorp), enabled per user.
 - =modules/user/<name>/{home.nix,nixpak.nix}= are per-user profiles (alice+lewis on wonderland, lewis on rabbit, rose on garden).
 - =modules/mango= is MangoWC config: shared base (=config,settings,layout,rules,animations=) + per-shell variants (=appearance,keybinds,autostart=) selected by =nixtop.shell=.
-- =modules/matugen= owns colour generation from wallpaper at runtime; it writes a Noctalia palette bridge (=~/.config/noctalia/palettes/nixtop.json=) and app configs. See =modules/matugen/templates=.
-- =modules/noctalia= and =modules/quickshell= are alternative shells selected by =nixtop.shell = "noctalia" | "quickshell"= (default =noctalia=). The greeter follows =nixtop.greetd.greeter=.
+- =modules/matugen= owns colour generation from wallpaper at runtime; it writes a Noctalia palette bridge (=~/.config/noctalia/palettes/nixtop.json=), JES colors (=~/.local/state/JES_colors.json=), and app configs. See =modules/matugen/templates=.
+- Shells are selected per user by =nixtop.shell = "noctalia" | "quickshell" | "jes" | "none"= (host default =none=, waybar-only): =modules/shell/noctalia=, =modules/shell/quickshell= (own nixtop-shell), =modules/shell/jes= (vendored fork). The greeter follows =nixtop.greetd.greeter=.
 - Theming ownership is switchable: =nixtop.theme.owner = "auto" | "matugen" | "noctalia"= (default =auto= follows shell) plus per-app =nixtop.theme.apps.<app>=.
+
+* Prerequisites
+
+- Nix with =nix-command= + =flakes= enabled.
+- A sops age key at =/var/lib/sops-nix/keys.txt= matching =.sops.yaml= (see =secrets/secrets.yaml.example=).
 
 * Quick start
 
@@ -28,7 +34,11 @@ On first install for =garden=, generate hardware config:
 nixos-generate-config --show-hardware-config > hosts/garden/hardware-configuration.nix
 #+END_SRC
 
-Secrets are managed by sops-nix: =secrets/secrets.yaml=, =.sops.yaml=.
+=garden= ships a placeholder =hardware-configuration.nix= until then, so
+=nix build .#garden= is expected to fail before the laptop is installed.
+
+Secrets are managed by sops-nix: =secrets/secrets.yaml= (git-ignored; see
+=secrets/secrets.yaml.example=), =.sops.yaml=.
 
 * Wallpaper → theme
 
@@ -42,11 +52,12 @@ nixtop-theme ~/Pictures/Wallpapers/your.jpg
 - =nixtop.dev.liveEmacs= (default on) – =~/ .config/emacs= → repo =modules/emacs/emacs=
 - =nixtop.dev.liveMango= – =~/ .config/mango= → repo =modules/mango=
 - =nixtop.dev.liveMatugen= – =~/ .config/matugen/templates= → repo =modules/matugen/templates=
-- =nixtop.dev.liveQuickshell= – =~/ .config/quickshell= → repo =modules/quickshell/shell=
+- =nixtop.dev.liveQuickshell= – =~/ .config/nixtop-shell= → repo =modules/shell/quickshell/shell=
+- =nixtop.dev.liveSway= – =~/ .config/sway= → repo =modules/sway/sway=
+- =nixtop.dev.liveMako= – =~/ .config/mako= → repo =modules/sway/mako=
+- =nixtop.dev.liveWaybar= – =~/ .config/waybar/config= → repo =modules/sway/waybar/config.jsonc= (config only; =style.css= stays matugen-owned)
 
 Editing a template with the flag off = rebuild.
-
-See =PLAN.md §8.4= for the anti-hell rule (no per-file mkOutOfStoreSymlink, one symlink per flag, generated files in =~/ .local/state=).
 
 * Layout
 
@@ -55,16 +66,20 @@ flake.nix
 ├── hosts/wonderland, rabbit, garden
 ├── modules/
 │   ├── default.nix          # nixosModules / homeModules lists
-│   ├── core/                # NixOS baseline + greetd selector + cachix/plymouth/nix-ld/podman + zsh/tmux (HM)
-│   ├── browsers/            # firefox-esr, floorp
-│   ├── conf/                # foot, fetch, yazi
-│   ├── emacs/               # nixmacs + live-editable emacs tree
+│   ├── core/                # NixOS baseline + greetd/sddm selector + cachix/plymouth/nix-ld/podman/apparmor/maintenance + zsh/tmux (HM)
+│   ├── browsers/            # chromium, firefox-esr, floorp
+│   ├── conf/                # foot, fetch, yazi, gtk
+│   ├── emacs/               # vendored emacs tree (GPL) + live-editable config
 │   ├── mango/               # shared + variants/noctalia|quickshell
-│   ├── matugen/             # 11 templates + palette bridge + nixtop-theme CLI
-│   ├── noctalia/            # shell + greeter (interim/default)
-│   └── quickshell/          # own shell (shell/ + package.nix), deferred
-├── assets/wallpaper, font
+│   ├── matugen/             # templates + palette bridge + nixtop-theme CLI
+│   └── shell/               # noctalia/ + quickshell/ + jes/ (vendored, see NOTICE.md)
+├── assets/wallpaper, font, boilers (future dev-shell templates)
 └── secrets/
 #+END_SRC
 
-See =ARCHITECTURE.md= for the full map (ported from =pre-rework/ARCHITECTURE.md=).
+See =ARCHITECTURE.md= for the full map.
+
+* Licensing
+
+Root config is Apache-2.0 (=LICENSE=); vendored subtrees keep their own
+licenses — see =NOTICE.md= (emacs GPL-3.0, quickshell MIT, JES BSD-3-Clause).

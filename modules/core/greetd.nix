@@ -41,7 +41,7 @@ in
       };
 
       # The actual default_session.command is set by the selected greeter module
-      # (modules/noctalia/greeter.nix or modules/quickshell/greeter.nix).
+      # (modules/shell/noctalia/greeter.nix or modules/shell/quickshell/greeter.nix).
       # We only assert that exactly one greeter is active and that services.greetd
       # is not left without a command – the greeter modules themselves are
       # responsible for filling settings.default_session when their selector matches.

@@ -86,14 +86,9 @@ let
       ''
     else if shell == "jes" then
       ''
-        # JES variant — swayfx + Just Enough Shell (vendored fork, modules/jes)
+        # JES variant — swayfx + Just Enough Shell (modules/shell/jes)
         exec jes-cli start-daemon
         include ~/.config/sway/jes-keybinds.conf
-      ''
-    else if shell == "lucid" then
-      ''
-        # Lucid on mango: the mango session autostarts it
-        # (modules/mango/variants/lucid/autostart.conf), so sway stays empty.
       ''
     else
       ''
@@ -102,7 +97,7 @@ let
   );
 
   autostartVariant =
-    if shell == "noctalia" || shell == "quickshell" || shell == "jes" || shell == "lucid" then
+    if shell == "noctalia" || shell == "quickshell" || shell == "jes" then
       ''
         # Autostart — shell variant owns the bar AND notifications, so waybar AND mako are NOT autostarted here.
         # swayidle + polkit are still needed for all shells.
@@ -113,7 +108,7 @@ let
       builtins.readFile ./sway/autostart.conf;
 
   # JES keybinds file — copied as jes-keybinds.conf, included from variant.conf
-  jesKeybinds = ../jes/sway/keybinds.conf;
+  jesKeybinds = ../shell/jes/sway/keybinds.conf;
 
   swayConfig = pkgs.runCommand "sway-config" { } ''
     mkdir -p $out
@@ -225,7 +220,7 @@ in
 
       # Writable theme outputs matugen needs before its first run. style.css is
       # matugen-owned (never HM-managed): seed a writable copy once, and drop
-      # the stale store symlink from before the fix so old checkouts heal.
+      # the pre-fix store symlink so old checkouts heal.
       home.activation.ensureSwayThemeDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
         $DRY_RUN_CMD mkdir -p "$HOME/.config/waybar"
@@ -276,12 +271,7 @@ in
               # live checkout: ~/.config/sway IS the repo dir, so include jes keybinds by repo path
               $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
         exec jes-cli start-daemon
-        include ~/nix/modules/jes/sway/keybinds.conf
-        VARIANT
-            elif [ "${shell}" = "lucid" ]; then
-              # lucid targets mango: mango autostart owns it, sway variant stays empty
-              $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
-        # lucid on mango (see modules/mango/variants/lucid/)
+        include ~/nix/modules/shell/jes/sway/keybinds.conf
         VARIANT
             else
               $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
@@ -317,8 +307,8 @@ in
       xdg.configFile."mako".recursive = true;
     })
 
-    # waybar config is always present so the bar works even when its package is
-    # disabled; only the package itself stays conditional on useWaybar.
+    # waybar config is always present so the bar works even when its package
+    # is not installed; the package itself stays conditional on useWaybar.
     (lib.mkIf (config.nixtop.sway.enable && !liveWaybar) {
       xdg.configFile."waybar/config".source = waybarConfig + "/config";
     })

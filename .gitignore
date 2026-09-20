@@ -5,18 +5,9 @@ result-*
 .direnv/
 .direnvrc
 
-# matugen runtime outputs that render back into the templates tree
-modules/matugen/templates/cozy-ui/assets/
-modules/matugen/templates/blacklingerie/originals/
-modules/matugen/templates/cozy-ui/colors.sh
-modules/matugen/templates/blacklingerie/colors.sh
-
 # quickshell runtime state
 .quickshell/
 .qs/
-
-# dropped clone – whole tbnixifedandsolved tree is intentionally ignored until deletion
-modules/quickshell/tbnixifedandsolved/
 
 # Nix build outputs
 flake.lock.backup

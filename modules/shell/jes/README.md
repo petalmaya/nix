@@ -23,8 +23,8 @@ Go helpers (music, calendar, cava, launcher, screenpicker).
   matugen registry (`jes` template) to `~/.local/state/JES_colors.json`,
   which `shell.qml` watches. JES stays themed via `nixtop-theme <image>`.
 - `go/` — upstream `for-quickshell/go` sources (reference for Nix builds).
-- `sway/keybinds.conf` — JES keybinds for our swayfx, included via
-  `sway/variant.conf` when `nixtop.shell == "jes"`.
+- `sway/keybinds.conf` — JES keybinds for swayfx, included via
+  `modules/sway` `variant.conf` when `nixtop.shell == "jes"`.
 - `jes-cli` — upstream CLI, packaged on PATH via `writeShellScriptBin`
   (upstream drops it in `~/.local/bin`, which sway's exec PATH lacks).
 - `package.nix` — `qs` wrapper + runtime deps for JES.

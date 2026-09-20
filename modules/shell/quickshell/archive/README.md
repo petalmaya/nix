@@ -15,7 +15,7 @@ before the Sway port (2026-09).
 
 Sway is now primary:
 
-- `Data/Sway.qml` — sway IPC via `nixtop-sway-ipc` (Go, `modules/quickshell/ipc/daemon.go`).
+- `Data/Sway.qml` — sway IPC via `nixtop-sway-ipc` (Go, `modules/shell/quickshell/ipc/daemon.go`).
   Mirrors `MangoWC`'s shape (`focusedOutput`, `currentWorkspace`, `workspaces`,
   `currentWorkspaceByOutput`) so widgets (`WorkspacePill`, `SystemView`,
   `LauncherWorkspaces`, `Globals`) can swap backends with `Sway.active ? Sway : MangoWC`.

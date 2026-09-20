@@ -170,22 +170,6 @@
         "type": "github"
       }
     },
-    "lucid": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1789721353,
-        "narHash": "sha256-AYyxlCuVo+XCsctlCn1Pf/oNJeLnuGkAP/duniGgpQc=",
-        "owner": "Sn3akyy1",
-        "repo": "lucid",
-        "rev": "ad0eeeb3401d8181b379d74bd2f1a5175b2190e5",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Sn3akyy1",
-        "repo": "lucid",
-        "type": "github"
-      }
-    },
     "mango": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -386,7 +370,6 @@
         "emacs-overlay": "emacs-overlay",
         "firefox-addons": "firefox-addons",
         "home-manager": "home-manager",
-        "lucid": "lucid",
         "mango": "mango",
         "nix-flatpak": "nix-flatpak",
         "nixpak": "nixpak",

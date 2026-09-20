@@ -10,8 +10,8 @@
 
   nixtop.desktop.enable = true;
 
-  # garden is a new laptop – use zswap instead of zram (D14)
-  # zswap option not in nixos-26.05; use kernel params + disable zram
+  # garden is a new laptop: zswap via kernel params, zram off.
+  # (The zswap NixOS option is not in nixos-26.05.)
   zramSwap.enable = lib.mkForce false;
   boot.kernelParams = [
     "zswap.enabled=1"
@@ -20,11 +20,10 @@
 
   hardware.enableAllFirmware = true;
 
-  # rose is the only user on garden (D13)
-  # placeholder password – real sops secret when laptop arrives (D14)
+  # rose is the only user on garden.
+  # Placeholder password until the laptop is provisioned with a sops secret.
   users.users.rose = {
     isNormalUser = true;
-    # use placeholder; will be sops.hashedPasswordFile once secret provisioned
     initialPassword = "rose";
     extraGroups = [
       "networkmanager"
@@ -36,7 +35,7 @@
     shell = pkgs.zsh;
   };
 
-  # keep wifi secret logic consistent
+  # Wi-Fi PSK from sops, written as a NetworkManager keyfile on activation.
   sops.secrets.wifi_password = { };
   system.activationScripts.wifiKeyfile = {
     deps = [ "setupSecrets" ];

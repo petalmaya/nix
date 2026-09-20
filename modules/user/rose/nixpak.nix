@@ -6,14 +6,13 @@
   ...
 }:
 {
-  # Per-user Flatpak for rose (garden) – same shape as alice's, smaller set for now.
+  # Per-user Flatpaks via nix-flatpak.
   services.flatpak = {
     enable = true;
     update.onActivation = true;
     packages = [
       "com.github.tchx84.Flatseal"
       "dev.vencord.Vesktop"
-      # add more per-user flatpaks here as needed
     ];
   };
 }

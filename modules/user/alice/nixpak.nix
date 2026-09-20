@@ -6,10 +6,7 @@
   ...
 }:
 {
-  # Per-user Flatpak via nix-flatpak (D6) – this file *is* the per-user flatpak list.
-  # Historically named nixpak.nix (the sandboxer nixpak is a different project);
-  # we keep the filename for compatibility but this file now defines flatpaks, not sandboxes.
-  # lewis has no such file → no flatpaks.
+  # Per-user Flatpaks via nix-flatpak (filename is historical).
   services.flatpak = {
     enable = true;
     update.onActivation = true;

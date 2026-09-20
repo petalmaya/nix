@@ -2,16 +2,14 @@
   config,
   lib,
   pkgs,
-  inputs,
   osConfig ? null,
   ...
 }:
 let
   cfg = config.nixtop.services.matugen;
 
-  # All matugen templates. To add one: drop the source under ./templates/
-  # and register its input path, output path, and optional reload hook below.
-  # (mango is archived — the sway session themes via the sway template.)
+  # Matugen template registry. To add one: drop the source under ./templates/
+  # and register its input path, output path, and optional reload hook.
   templates = {
     noctalia = {
       input_path = "noctalia/palette.json";
@@ -85,18 +83,6 @@ let
       input_path = "fastfetch/config.jsonc";
       output_path = "~/.config/fastfetch/config.jsonc";
     };
-    # Lucid shell colors: upstream matugen templates, registered by source
-    # path instead of ./templates. Off unless the lucid shell owns them —
-    # lucid-starship is the twin of the base starship template (same rule as
-    # the noctalia twin: two writers, two palettes, so only one may run).
-    lucid-shell = {
-      src = inputs.lucid + "/support/matugen/templates/quickshell-colors.json";
-      output_path = "~/.cache/quickshell/matugen.json";
-    };
-    lucid-starship = {
-      src = inputs.lucid + "/support/matugen/templates/starship-colors.toml";
-      output_path = "~/.config/starship.toml";
-    };
     yazi = {
       input_path = "yazi/yazi-theme.toml";
       output_path = "~/.config/yazi/theme.toml";
@@ -108,18 +94,15 @@ let
     };
     "papirus-icons" = {
       input_path = "papirus-icons/colors";
-      # State, not templates: matugen cannot write back into its own
-      # read-only template source (that failure aborted whole runs).
+      # State, not templates: matugen cannot write into its own read-only
+      # template source, so this output lives in ~/.local/state.
       output_path = "~/.local/state/nixtop/theme/papirus-colors";
       post_hook = "bash ~/.config/matugen/templates/papirus-icons/apply.sh 2>/dev/null || true";
     };
   };
 
-  # Per-app theming ownership (nixtop.theme.owner / nixtop.theme.apps) is
-  # parked: Noctalia takes over mango + starship via its own user templates
-  # (it disables those two registry entries), matugen owns the rest.
-  # The options stay so existing configs keep evaluating; gate the
-  # registry here again if Noctalia ever takes over another app.
+  # Noctalia takes over mango + starship via its own user templates (it
+  # disables those two registry entries); matugen owns the rest.
   enabledTemplates = lib.filterAttrs (name: _: cfg.templates.${name}.enable or true) templates;
 
   matugenConfig = {
@@ -130,7 +113,7 @@ let
     templates = lib.mapAttrs (
       name: t:
       {
-        input_path = t.src or "${./templates}/${t.input_path}";
+        input_path = "${./templates}/${t.input_path}";
         output_path = t.output_path;
       }
       // lib.optionalAttrs (t ? post_hook) { post_hook = t.post_hook; }
@@ -157,13 +140,7 @@ in
       type = lib.types.submodule {
         options.enable = lib.mkOption {
           type = lib.types.bool;
-          # Lucid's templates only run for lucid sessions (enabled from
-          # modules/lucid); everything else defaults on.
-          default =
-            !(builtins.elem name [
-              "lucid-shell"
-              "lucid-starship"
-            ]);
+          default = true;
           description = "Run the '${name}' matugen template.";
         };
       };
@@ -172,7 +149,7 @@ in
     }
   );
 
-  # Reserved theming-owner options (see the parked-gating note above).
+  # Reserved theming-owner options (owner follows nixtop.shell unless overridden per app).
   options.nixtop.theme.owner = lib.mkOption {
     type = lib.types.enum [
       "auto"
@@ -273,12 +250,11 @@ in
         $DRY_RUN_CMD [ -e "$HOME/.config/noctalia/palettes/nixtop.json" ] || $DRY_RUN_CMD touch "$HOME/.config/noctalia/palettes/nixtop.json"
       '';
 
-      # First-run seed: nothing ever invoked matugen automatically — the only
-      # trigger was a manual `nixtop-theme <image>` — so a fresh checkout kept
-      # empty seeded outputs forever (notably Noctalia's nixtop.json palette,
-      # which starves every downstream theme). Run matugen once against the
-      # first wallpaper when the palette bridge is still empty. Never fails
-      # the switch: best-effort, logs to stderr.
+      # First-run seed: matugen only runs on demand (`nixtop-theme <image>`),
+      # so a fresh checkout would keep empty seeded outputs forever (notably
+      # Noctalia's nixtop.json palette, which starves every downstream theme).
+      # Run matugen once against the first wallpaper while the palette bridge
+      # is still empty. Never fails the switch: best-effort, logs to stderr.
       home.activation.ensureMatugenSeed =
         lib.hm.dag.entryAfter
           [

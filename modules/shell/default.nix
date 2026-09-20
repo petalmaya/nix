@@ -5,18 +5,21 @@
   ...
 }:
 {
+  imports = [
+    ./noctalia
+    ./quickshell
+    ./jes
+  ];
+
   # Per-user shell selection. Defaults to the host's nixtop.shell (NixOS
-  # option, read via osConfig); setting it in a user's home.nix overrides the
-  # host for that user only — e.g. alice on JES while lewis stays waybar-only
-  # on the same host. All HM shell consumers (sway variant, jes/noctalia/
-  # quickshell enables, mango variant) read this, never osConfig directly.
-  # NixOS-side consumers (greeter default session) still follow the host value.
+  # option, read via osConfig); a user's home.nix may override it for that
+  # user only. Every shell module below follows this value, and the mango /
+  # sway variants adapt to it. "none" is waybar-only (no shell).
   options.nixtop.shell = lib.mkOption {
     type = lib.types.enum [
       "noctalia"
       "quickshell"
       "jes"
-      "lucid"
       "none"
     ];
     default = if osConfig != null then osConfig.nixtop.shell or "none" else "none";
