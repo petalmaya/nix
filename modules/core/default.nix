@@ -22,7 +22,6 @@
         "noctalia"
         "quickshell"
         "jes"
-        "lucid"
         "none"
       ];
       default = "none";
@@ -43,7 +42,7 @@
     nixtop.dev.liveEmacs = lib.mkOption {
       type = lib.types.bool;
       default = true;
-      description = "Symlink emacs config dir live into the repo (D23).";
+      description = "Symlink emacs config dir live into the repo.";
     };
     nixtop.dev.liveMango = lib.mkOption {
       type = lib.types.bool;
@@ -145,8 +144,8 @@
         shell = pkgs.zsh;
       };
 
-      # rose user is host-specific (garden) – defined in hosts/garden/default.nix,
-      # but we ensure the secret is optional so garden can have placeholder password.
+      # rose is defined on garden with a placeholder password, so no
+      # rose secret is required here.
 
       systemd.oomd.enable = true;
       system.stateVersion = "26.05";

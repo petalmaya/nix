@@ -9,11 +9,9 @@
   networking.extraHosts = "127.0.0.1 wonderland";
 
   nixtop.desktop.enable = true;
-  # Noctalia greeter (greetd) — SDDM stays off while this is set (see
-  # modules/core/sddm.nix and modules/noctalia/greeter.nix).
+  # SDDM stays off while the noctalia greeter is set (see modules/core/sddm.nix).
   nixtop.greetd.greeter = "noctalia";
-  # live sway/mako/waybar for dev — ~/.config/{sway,mako} → ~/nix/modules/sway/...,
-  # waybar config.jsonc likewise (style.css stays matugen-owned, see modules/sway/default.nix)
+  # Live symlinks for dev (style.css stays matugen-owned, see modules/sway/default.nix).
   nixtop.dev.liveSway = true;
   nixtop.dev.liveMako = true;
   nixtop.dev.liveWaybar = true;
@@ -43,8 +41,7 @@
 
   systemd.tpm2.enable = false;
 
-  # wifi secret activation (moved from hosts/common/home-wifi.nix – keep in core or host)
-  # imported via core/wifi.nix if exists, but we keep activation here for now:
+  # Wi-Fi PSK from sops, written as a NetworkManager keyfile on activation.
   sops.secrets.wifi_password = { };
   system.activationScripts.wifiKeyfile = {
     deps = [ "setupSecrets" ];

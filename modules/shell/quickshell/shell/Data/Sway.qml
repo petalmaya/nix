@@ -3,7 +3,7 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
-// Sway IPC — event-driven via Go daemon (modules/quickshell/ipc/daemon.go)
+// Sway IPC — event-driven via Go daemon (modules/shell/quickshell/ipc/daemon.go)
 // The daemon watches $SWAYSOCK and writes a compact snapshot to
 // ~/.cache/nixtop-shell/sway.json. This QML only FileViews that file,
 // so we never spawn `swaymsg` per frame. Fallback to direct swaymsg

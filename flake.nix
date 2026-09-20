@@ -68,15 +68,6 @@
       url = "github:uiriansan/SilentSDDM";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # Lucid shell (Quickshell, MIT). Non-flake source: modules/lucid copies
-    # the shell tree out at activation so its state files stay writable, and
-    # layers mango/foot adaptations on top. Update with
-    # `nix flake lock --update-input lucid` (see modules/lucid/UPSTREAM).
-    lucid = {
-      url = "github:Sn3akyy1/lucid";
-      flake = false;
-    };
   };
 
   outputs =
@@ -98,8 +89,8 @@
             config.allowUnfree = true;
           };
           # mango HM module if the flake exposes one, otherwise null
-          # noctalia HM is imported defensively inside modules/noctalia/default.nix
-          # (old noctaniri did builtins.attrValues ...), so we don't add it here
+          # noctalia HM is imported defensively inside modules/shell/noctalia/default.nix,
+          # so we don't add it here
           mangoHM =
             if inputs.mango ? homeManagerModules then
               inputs.mango.homeManagerModules.default
@@ -125,7 +116,6 @@
             ]
             ++ (import ./modules/default.nix).nixosModules
             ++ [
-              # third-party NixOS modules
               { nixpkgs.overlays = [ inputs.emacs-overlay.overlays.default ]; }
               inputs.nix-flatpak.nixosModules.nix-flatpak
               inputs.disko.nixosModules.disko
@@ -177,10 +167,10 @@
         };
       };
 
-      # Bare `nix fmt` formats the whole tree (minus the archived pre-rework
-      # reference); explicit paths still pass straight through to nixfmt.
-      # A bare nixfmt invocation would format stdin instead, so the wrapper
-      # supplies the file list when no args are given.
+      # Bare `nix fmt` formats the whole tree; explicit paths still pass
+      # straight through to nixfmt. A bare nixfmt invocation would format
+      # stdin instead, so the wrapper supplies the file list when no args
+      # are given.
       formatter.x86_64-linux =
         let
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
@@ -193,7 +183,7 @@
           ];
           text = ''
             if [ "$#" -eq 0 ]; then
-              exec find . -name '*.nix' -not -path './pre-rework/*' -exec nixfmt {} +
+              exec find . -name '*.nix' -exec nixfmt {} +
             fi
             exec nixfmt "$@"
           '';

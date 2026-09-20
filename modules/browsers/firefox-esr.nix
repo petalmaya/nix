@@ -25,7 +25,7 @@ in
     programs.firefox = {
       enable = true;
       package = pkgs.firefox-esr;
-      # updated behavior for 26.05 – use XDG config path
+      # XDG config path (nixpkgs 26.05).
       configPath = "${config.xdg.configHome}/mozilla/firefox";
       nativeMessagingHosts = [ pywalfox-manifest ];
       profiles.${config.home.username} = {

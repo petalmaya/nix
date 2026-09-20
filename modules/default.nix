@@ -4,8 +4,8 @@
     ./core/apparmor.nix
     ./core/sddm.nix
     ./core/maintenance.nix
-    ./noctalia/greeter.nix
-    ./quickshell/greeter.nix
+    ./shell/noctalia/greeter.nix
+    ./shell/quickshell/greeter.nix
   ];
 
   homeModules = [
@@ -16,10 +16,6 @@
     ./emacs
     ./mango
     ./matugen
-    ./noctalia
-    ./quickshell
-    ./jes
-    ./lucid
     ./sway
     ./shell
   ];

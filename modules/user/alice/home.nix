@@ -20,30 +20,22 @@
     apps.fetch.enable = true;
     apps.yazi.enable = true;
     apps.chromium.enable = true;
-    # floorp optional – disabled by default, enable if wanted
-    # apps.floorp.enable = true;
-    # firefox-esr disabled – switched to chromium per request
-    # apps.firefox-esr.enable = false;
     apps.emacs.enable = true;
 
     sway.enable = true;
   };
 
-  # Noctalia on mango — nixtop.shell is per-user (modules/shell), so lewis
-  # stays on the host default (waybar-only) on the same host. Log into the
-  # mango session at the greeter; the sway session stays bare by design.
+  # Noctalia shell is per-user: lewis on the same host keeps the host default.
   nixtop.shell = "noctalia";
   nixtop.noctalia.compositor = "mango";
 
-  # wallpaper directory shared into the home (D24) – alice and rose only
   home.file."Pictures/Wallpapers".source =
     config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/assets/wallpaper";
 
-  # Inline packages from the old group modules (communication/creative/desktop/gaming/media/tools/launchers)
-  # – brought over flat, not as extra .nixs, per user request.
+  # Flat package list, grouped by use.
   home.packages = lib.filter (p: p != null) (
     (with pkgs; [
-      # communication (old nixtop.apps.communication)
+      # communication
       links2
       transmission_4-gtk
       nicotine-plus

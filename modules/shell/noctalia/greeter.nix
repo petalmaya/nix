@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 {
@@ -17,9 +16,5 @@
         };
       };
     };
-
-    # Noctalia greeter handles its own background/compositor – just enable the module.
-    # The upstream flake's NixOS module sets services.greetd appropriately.
-    # No manual swaybg/Mango command needed here (per user feedback that the greeter owns its background).
   };
 }

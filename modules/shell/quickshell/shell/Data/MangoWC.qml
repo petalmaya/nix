@@ -3,7 +3,7 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
-// Mango IPC — event-driven via Go daemon (modules/quickshell/ipc/daemon.go
+// Mango IPC — event-driven via Go daemon (modules/shell/quickshell/ipc/daemon.go
 // mango mode). The daemon watches `mmsg watch all-monitors` and writes a
 // compact snapshot to ~/.cache/nixtop-shell/mango.json. This QML only
 // FileViews that file, so per-event JSON parsing stays in Go instead of
