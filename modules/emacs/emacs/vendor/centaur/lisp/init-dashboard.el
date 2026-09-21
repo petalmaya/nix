@@ -35,9 +35,8 @@
   (require 'init-custom))
 
 ;; Dashboard. Always declared so <f2> / `open-dashboard' exists in every
-;; session, including the EWM `--fg-daemon' compositor where
-;; `flutter-dashboard' defaults to nil (daemonp) and session restore runs
-;; instead. Auto-show at startup only when `flutter-dashboard' is set.
+;; session. Auto-show at startup only when `flutter-dashboard' is set
+;; (default on, including the EWM compositor daemon).
 (use-package dashboard
     :diminish
     :autoload dashboard-setup-startup-hook

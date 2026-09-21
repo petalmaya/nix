@@ -339,8 +339,14 @@
   :config (dolist (mode '(dashboard-mode emacs-news-mode))
             (add-to-list 'page-break-lines-modes mode)))
 
-;; Display transient in the child frame
+;; No mode line inside transient popups, with or without the overlay below.
+(with-eval-after-load 'transient
+  (setq transient-mode-line-format nil))
+
+;; Display transient in a floating overlay, but only when the childframe
+;; completion style is on (default is the plain minibuffer).
 (use-package transient-posframe
+  :if (eq flutter-completion-style 'childframe)
   :diminish
   :defines posframe-border-width
   :functions childframe-completion-workable-p
@@ -354,8 +360,7 @@
            (if (childframe-completion-workable-p)
                (transient-posframe-mode 1)
              (transient-posframe-mode -1))))
-  :init (setq transient-mode-line-format nil
-              transient-posframe-border-width (or (bound-and-true-p posframe-border-width) 2)
+  :init (setq transient-posframe-border-width (or (bound-and-true-p posframe-border-width) 2)
               transient-posframe-parameters '((left-fringe . 8)
                                               (right-fringe . 8))))
 

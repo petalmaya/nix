@@ -139,7 +139,8 @@
 ;; anything above
 (require 'init-extras)
 
-;; EWM overlay: inert without ewm.el (see lisp/init-ewm.el).
+;; EWM compositor config. Self-gating (see lisp/init-ewm.el): dormant in
+;; nested `emacs' editor sessions, active once `ewm' loads.
 (require 'init-ewm)
 
 ;;; init.el ends here

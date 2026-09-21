@@ -14,9 +14,9 @@
 ;; (setq flutter-use-exec-path-from-shell nil)    ; Use `exec-path-from-shell' or not. If using emacs-plus with path ejection, set to nil
 ;; (setq flutter-icon nil)                        ; Display icons or not: t or nil
 ;; (setq flutter-package-archives 'melpa)         ; Package repo: melpa, bfsu, iscas, netease, sjtu, tencent, tuna or ustc
-;; (setq flutter-completion-style 'minibuffer)    ; Completion display style: minibuffer or childframe
+;; (setq flutter-completion-style 'childframe)    ; Completion display: minibuffer (default) or childframe
 ;; (setq flutter-frame-maximized-on-startup t)    ; Maximize frame on startup or not: t or nil
-;; (setq flutter-dashboard nil)                   ; Display dashboard at startup or not: t or nil
+;; (setq flutter-dashboard nil)                   ; Show dashboard at startup (default t)
 ;; (setq flutter-lsp nil)                         ; Enable lsp or not: t or nil
 ;; (setq flutter-tree-sitter nil)                 ; Enable tree-sitter or not: t or nil. Only available in 29+.
 ;; (setq flutter-chinese-calendar t)              ; Support Chinese calendar or not: t or nil

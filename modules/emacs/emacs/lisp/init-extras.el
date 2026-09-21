@@ -37,18 +37,11 @@
 ;;
 ;;; Code:
 
-;; --- Completion style: minibuffer, not childframe -----------------------
-;; Centaur defaults `flutter-completion-style' to 'childframe: the
-;; *-posframe packages (vertico-posframe, which-key-posframe,
-;; transient-posframe, hydra-posframe) render the M-x prompt and popup
-;; hints in floating childframes.  The vertico part only arms itself on
-;; server-created frames (emacsclient), so a plain `emacs' session
-;; looks normal — but the first client frame flips it on GLOBALLY and
-;; every frame afterwards gets the floating prompt (the "M-x in the
-;; middle of the screen" effect).  This fork prefers the classic
-;; bottom-minibuffer look, so disable childframe completion entirely;
-;; the defcustom gates all of the *-posframe packages.
-(setq flutter-completion-style 'minibuffer)
+;; --- Completion style ---------------------------------------------------
+;; Minibuffer vertico/orderless is the default (see
+;; `flutter-completion-style' in vendor/centaur/lisp/init-custom.el).
+;; Flip it to 'childframe with M-x customize for Centaur's floating
+;; posframe look.
 
 ;; --- Nix ---------------------------------------------------------------
 ;; nil comes from the flake; eglot auto-starts it because init-lsp.el

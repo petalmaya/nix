@@ -1,6 +1,7 @@
 # EWM tools (Home Manager side). Per-user, independent of nixtop.shell.
-# The elisp overlay (lisp/init-ewm.el) loads regardless but stays inert
-# without ewm.el; this module only adds packages plus the zsh hook.
+# The compositor elisp (lisp/init-ewm.el) is dormant until `ewm' loads,
+# so nested `emacs' stays a plain editor; this module only adds
+# packages plus the zsh hook.
 {
   config,
   lib,

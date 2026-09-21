@@ -34,12 +34,17 @@
   (require 'init-const))
 
 (when emacs/>=29p
-  ;; Optionally use the `orderless' completion style.
+  ;; Fuzzy matching: space-separated terms, initialisms ("fb" → "find-buffer")
+  ;; and flex (fuzzy-letter) matching as you type M-x.
   (use-package orderless
     :custom
     (completion-styles '(orderless basic))
     (completion-category-defaults nil)
     (completion-category-overrides '((file (styles basic partial-completion))))
+    (orderless-matching-styles '(orderless-literal
+                                 orderless-regexp
+                                 orderless-initialism
+                                 orderless-flex))
     (orderless-component-separator #'orderless-escapable-split-on-space))
 
   ;; Support Pinyin
@@ -53,9 +58,11 @@
       (orderless-regexp (pinyinlib-build-regexp-string str)))
     (add-to-list 'orderless-matching-styles 'orderless-regexp-pinyin))
 
-  ;; VERTical Interactive COmpletion
+  ;; Vertical minibuffer list for M-x, buffers, files, ...
   (use-package vertico
-    :custom (vertico-count 15)
+    :custom
+    (vertico-count 15)
+    (vertico-cycle t)
     :bind (:map vertico-map
            ("RET" . vertico-directory-enter)
            ("DEL" . vertico-directory-delete-char)
@@ -63,8 +70,10 @@
     :hook ((after-init . vertico-mode)
            (rfn-eshadow-update-overlay . vertico-directory-tidy)))
 
-  ;; Display vertico in the child frame
+  ;; Floating completion overlay. Off unless `flutter-completion-style'
+  ;; is 'childframe (default is the minibuffer above).
   (use-package vertico-posframe
+    :if (eq flutter-completion-style 'childframe)
     :functions (childframe-completion-workable-p
                 posframe-poshandler-frame-center-near-bottom)
     :commands vertico-posframe-mode

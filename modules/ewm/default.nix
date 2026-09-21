@@ -77,9 +77,11 @@ in
     systemd.user.services.ewm.serviceConfig.TimeoutStartSec = lib.mkDefault "10min";
 
     # Clipboard plus the media/brightness keys the default bindings use.
+    # pamixer matches the repo's sway audio convention (upstream uses wpctl).
     environment.systemPackages = with pkgs; [
       wl-clipboard
       brightnessctl
+      pamixer
     ];
 
     # Must be session env: EWM reads it before any elisp runs.

@@ -62,6 +62,23 @@ original copyright headers are retained.
   so binding it aborts init with "starts with non-prefix key"); `init-shell.el` uses upstream's cache path and
   moves ghostel to `C-c t`.
 
+- **EWM/compositor + completion pass (2026-09-21)**:
+  `lisp/init-ewm.el` rewritten from an init-time overlay to a
+  compositor-only setup (runs after `ewm' loads, so nested `emacs' is
+  untouched); wallpaper default is
+  `gothic_anime_girl_red_armchair.png`; new
+  `M-x flutter-ewm-set-wallpaper` picker; daily super-key bindings
+  (fullscreen, float, next surface, lock, ...); dashboard opens on the
+  first compositor frame. `init-custom.el` defaults flipped:
+  `flutter-completion-style` → minibuffer (posframe overlay off,
+  opt-in via customize), `flutter-dashboard` → t (dashboard on
+  startup, including the EWM daemon). `init-completion.el`: vertico
+  cycles, orderless gains initialism + flex fuzzy matching, and
+  `vertico-posframe` only installs for the childframe style (same for
+  `transient-posframe` in init-ui.el and `which-key-posframe` in
+  init-utils.el). `lisp/init-extras.el` no longer overrides the
+  completion style (it used to clobber custom.el).
+
 ## Renaming
 
 All user-facing "pinaceae Emacs" branding (frame title, dashboard

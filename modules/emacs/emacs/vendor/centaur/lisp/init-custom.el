@@ -135,8 +135,10 @@ If using emacs-plus with path ejection, set to nil."
                               name)))
                     flutter-package-archives-alist)))
 
-(defcustom flutter-completion-style 'childframe
-  "Completion display style."
+(defcustom flutter-completion-style 'minibuffer
+  "Completion display style.
+Minibuffer keeps vertico/hydra/transient/which-key prompts at the
+bottom; childframe floats them in posframe overlays (needs a GUI frame)."
   :group 'flutter
   :type '(choice (const :tag "Minibuffer" minibuffer)
                  (const :tag "Child Frame" childframe)))
@@ -146,9 +148,10 @@ If using emacs-plus with path ejection, set to nil."
   :group 'flutter
   :type 'boolean)
 
-(defcustom flutter-dashboard (not (daemonp))
+(defcustom flutter-dashboard t
   "Display dashboard at startup or not.
-If Non-nil, use dashboard, otherwise will restore previous session."
+When non-nil the dashboard opens on startup (including the EWM
+compositor); otherwise the previous tabspaces session restores."
   :group 'flutter
   :type 'boolean)
 

@@ -102,8 +102,10 @@
         (which-key-add-major-mode-key-based-replacements
           mode (car map) (cdr map))))))
 
-;; Show 'which-key' in the child frame
+;; Show 'which-key' in a floating overlay, but only when the childframe
+;; completion style is on (default is the plain minibuffer).
 (use-package which-key-posframe
+  :if (eq flutter-completion-style 'childframe)
   :diminish
   :defines posframe-border-width
   :functions childframe-completion-workable-p
