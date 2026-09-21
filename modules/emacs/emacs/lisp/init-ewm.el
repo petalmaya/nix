@@ -40,12 +40,30 @@
 ;;
 ;;; Code:
 
-;; From Nix (withPackages), never Elpaca — hence :ensure nil. :demand t
-;; loads the elisp at startup; the compositor itself starts on demand.
+;; From Nix (withPackages), never Elpaca — hence :ensure nil.
+;; Defensive: never abort init.el.  ewm.el itself does
+;; `(require 'ewm-core)' (or module-load $EWM_MODULE_PATH); if ewm.el is
+;; present but ewm-core.so is not on the load-path the require fails with
+;; "Cannot open load file: ewm-core" and previously killed the whole init
+;; (then ewm.service exited 255).  So:
+;;  - only attempt when BOTH libraries locate;
+;;  - do NOT :demand at init (the ewm-launch wrapper runs
+;;    `emacs --fg-daemon --eval "(require 'ewm)" --eval "(ewm-start-module)"'
+;;    after init, which is the real load point);
+;;  - defer config with :commands/:after so a missing module stays inert.
+(defun flutter-ewm-available-p ()
+  "Non-nil when the Nix-provided EWM elisp + module are loadable."
+  (and (locate-library "ewm")
+       (or (and (getenv "EWM_MODULE_PATH")
+                (file-exists-p (getenv "EWM_MODULE_PATH")))
+           (locate-library "ewm-core"))))
+
 (use-package ewm
   :ensure nil
-  :demand t
-  :if (locate-library "ewm")
+  :if (flutter-ewm-available-p)
+  :commands (ewm-start-module ewm-list-outputs ewm-list-xdg-apps
+             ewm-launch-xdg-command ewm-lock-session ewm-toggle-fullscreen
+             ewm-next-surface-buffer ewm-frame-new ewm-frame-close)
   :custom
   ;; Same xkb as the OS (NixOS + sway + mango); EWM keeps its own
   ;; per-seat state, so the setting is repeated here.
@@ -109,9 +127,14 @@
                  `(,(ewm-surface-match :app "zenity") display-buffer-same-window))))
 
 ;; Frame/float/session controls on C-c e, in this config's hydra idiom.
+;; pretty-hydra comes from Elpaca (not Nix), so no :ensure nil here —
+;; let Elpaca provide it.  Guard on both EWM and pretty-hydra so a
+;; half-installed tree skips the hydra instead of failing init with
+;; "Cannot open load file: hydra".
 (use-package pretty-hydra
-  :ensure nil
-  :if (locate-library "ewm")
+  :if (and (flutter-ewm-available-p)
+           (or (featurep 'pretty-hydra)
+               (locate-library "pretty-hydra")))
   :after ewm
   :bind ("C-c e" . flutter-ewm-hydra/body)
   :config

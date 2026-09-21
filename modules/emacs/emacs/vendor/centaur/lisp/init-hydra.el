@@ -32,6 +32,11 @@
 
 (use-package hydra
   :ensure nil
+  :demand t
+  ;; Managed explicitly in lisp/my-elpaca.el (explicit :repo, no menu
+  ;; fetch). Skip instead of aborting init if the build is missing —
+  ;; my-elpaca.el already defined an inert :pretty-hydra fallback.
+  :if (or (featurep 'hydra) (locate-library "hydra"))
   :defines (consult-imenu-config posframe-border-width)
   :functions childframe-completion-workable-p
   :hook ((emacs-lisp-mode . hydra-add-imenu)
@@ -66,6 +71,10 @@
 
 (use-package pretty-hydra
   :ensure nil
+  :demand t
+  ;; Same as hydra above: skip when missing, vendor `:pretty-hydra'
+  ;; blocks are inert via the fallback keyword in my-elpaca.el.
+  :if (or (featurep 'pretty-hydra) (locate-library "pretty-hydra"))
   :functions icons-displayable-p
   :bind ("<f6>" . toggles-hydra/body)
   :hook (emacs-lisp-mode . pretty-hydra-add-imenu)

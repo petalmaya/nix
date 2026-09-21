@@ -113,6 +113,9 @@
 ;; extras the same treatment so they feel native.
 (use-package pretty-hydra
   :ensure nil
+  ;; Skip (rather than break init) when the build is missing; the
+  ;; `:pretty-hydra' fallback in my-elpaca.el already kept parsing safe.
+  :if (or (featurep 'pretty-hydra) (locate-library "pretty-hydra"))
   ;; Same idiom as init-hydra.el: the hydra is defined when pretty-hydra
   ;; loads (first F6 or C-c m press), and every command it calls is
   ;; autoloaded via the :commands above, so nothing needs eager loading.

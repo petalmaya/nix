@@ -115,21 +115,41 @@
 ;; hydra is a dependency of pretty-hydra. Queue it explicitly first so
 ;; the later `use-package hydra' in init-hydra.el does not trigger the
 ;; "hydra previously queued as dependency of: (pretty-hydra)" warning.
-(elpaca hydra)
+;; Explicit :repo so this never depends on Elpaca's menu fetch (which
+;; failed in the field and left hydra missing, breaking pretty-hydra
+;; and every `:pretty-hydra' use-package form).
+(elpaca (hydra :repo "https://github.com/abo-abo/hydra"))
 
 ;; pretty-hydra registers the `:pretty-hydra' use-package keyword when
 ;; its file loads, and many modules use that keyword in their
 ;; `use-package' forms — so it must be loaded before any of them parse.
 ;; Install it now (after compat/transient/hydra so its dependencies
 ;; are already queued), block until it is ready, then load it.
-(elpaca pretty-hydra)
+;; Explicit recipe (MELPA: jerrypnz/major-mode-hydra.el, file
+;; pretty-hydra.el) for the same menu-independence reason as above.
+(elpaca (pretty-hydra :repo "https://github.com/jerrypnz/major-mode-hydra.el"
+                      :files ("pretty-hydra.el")))
 
 ;; Block here so everything below can safely assume packages exist.
 (elpaca-wait)
 
-;; Register the `:pretty-hydra' keyword for the rest of init.
-(with-demoted-errors "pretty-hydra: %S"
-  (require 'pretty-hydra))
+;; Register the `:pretty-hydra' keyword for the rest of init.  If the
+;; load fails, fall back to an inert `:pretty-hydra' keyword so the
+;; dozen vendor modules using it still parse (their hydras are skipped
+;; instead of aborting init with "Unrecognized keyword: :pretty-hydra").
+;; The old `with-demoted-errors' hid the failure and left the keyword
+;; undefined, which produced exactly that cascade plus a later
+;; "Cannot open load file: hydra".
+(if (condition-case err
+        (progn (require 'pretty-hydra) t)
+      (error
+       (warn "pretty-hydra failed to load: %S; :pretty-hydra blocks ignored" err)
+       nil))
+    nil
+  (when (fboundp 'use-package-define-keyword)
+    (use-package-define-keyword :pretty-hydra
+      (lambda (name _keyword args rest state)
+        (use-package-process-keywords name rest state)))))
 
 ;; --- Built-in packages under Elpaca ----------------------------------
 ;; Centaur's config was written for package.el, which treats Emacs's
