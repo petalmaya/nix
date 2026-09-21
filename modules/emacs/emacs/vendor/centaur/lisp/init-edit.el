@@ -265,9 +265,11 @@
         (goto-char node-start)))
     (add-to-list 'er/try-expand-list 'treesit-mark-bigger-node)))
 
-;; Multiple cursors
+;; Multiple cursors. The hydra lives on C-c M-m: plain C-c m is the
+;; media hydra (see lisp/init-extras.el), which loads later and would
+;; shadow this binding.
 (use-package multiple-cursors
-  :bind (("C-c m" . multiple-cursors-hydra/body)
+  :bind (("C-c M-m" . multiple-cursors-hydra/body)
          ("C-S-c C-S-c"   . mc/edit-lines)
          ("C->"           . mc/mark-next-like-this)
          ("C-<"           . mc/mark-previous-like-this)
@@ -330,6 +332,10 @@
   :init (setq hungry-delete-chars-to-skip " \t\f\v"
               hungry-delete-except-modes
               '(help-mode minibuffer-mode minibuffer-inactive-mode calc-mode)))
+
+;; Aggressive indent (toggled from the F6 hydra; off by default).
+(use-package aggressive-indent
+  :diminish)
 
 ;; Move to the beginning/end of line or code
 (use-package mwim

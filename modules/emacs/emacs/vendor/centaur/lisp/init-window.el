@@ -71,11 +71,11 @@
      ("l" enlarge-window-horizontally "→")
      ("n" balance-windows "balance"))
     "Split"
-    (("r" split-window-right "horizontally" :exit t)
-     ("R" split-window-horizontally-instead "horizontally instead" :exit t)
-     ("v" split-window-below "vertically" :exit t)
-     ("V" split-window-vertically-instead "vertically instead" :exit t)
-     ("t" split-window-toggle "toggle" :exit t))
+    (("v" split-window-right "side-by-side")
+     ("V" split-window-horizontally-instead "side-by-side, keep other")
+     ("b" split-window-below "stacked")
+     ("B" split-window-vertically-instead "stacked, keep other")
+     ("t" flutter-split-window-toggle "toggle orientation" :exit t))
     "Zoom"
     (("+" text-scale-increase "in")
      ("=" text-scale-increase "in")

@@ -71,10 +71,13 @@ deliberately.
     `mod+Return/d/f/q` → `s-<return>/d/f/q`, sway `mod+1..9` workspaces
     → `s-1..9` frames, sway `mod+Shift+space` float → `s-S-SPC`.
     Exiting Emacs (`C-x C-c`, hydra `x`) exits the compositor.
-- Editing: expand-region, multiple-cursors, iedit, hungry-delete,
-  smartparens, avy, vundo, drag-stuff, …
+- Editing: expand-region (`C-=`), multiple-cursors hydra (`C-c M-m`,
+  mark with `C->`/`C-<`), iedit (`C-;`), hungry-delete,
+  smartparens, avy (`C-:`, `M-z`, `M-o`), vundo (`C-x u`), drag-stuff, …
 - UI: doom-modeline, dashboard (F2), which-key, solaire-mode, hydras
-  (F6 toggles, `C-c m` media), treemacs, tabspaces workspaces
+  (F6 toggles, `C-c m` media, `C-c w` windows: `v`/`b` side-by-side /
+  stacked splits, `t` toggle orientation, `TAB` other window),
+  treemacs, tabspaces workspaces
 - Programming: eglot LSP, dape debugger, gptel AI, tree-sitter,
   apheleia formatting, devdocs, quickrun
 - Languages: c/c++, go, rust, python, ruby, elixir, web/js/css, org,

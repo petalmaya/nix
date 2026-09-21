@@ -78,6 +78,14 @@ original copyright headers are retained.
   `transient-posframe` in init-ui.el and `which-key-posframe` in
   init-utils.el). `lisp/init-extras.el` no longer overrides the
   completion style (it used to clobber custom.el).
+- **Keybind audit (2026-09-21)**: defined the missing
+  `revert-buffer-quick` (`s-r`) and `flutter-split-window-toggle`
+  (window hydra `t`); installed `aggressive-indent` (toggles hydra
+  `a`); window hydra splits re-keyed to vim mnemonics (`v`
+  side-by-side, `b` stacked, was: misleading horizontal/vertical
+  labels); multiple-cursors hydra moved to `C-c M-m` (`C-c m` is the
+  media hydra; `C-c m` in smerge buffers still opens the merge hydra
+  by design).
 
 ## Renaming
 

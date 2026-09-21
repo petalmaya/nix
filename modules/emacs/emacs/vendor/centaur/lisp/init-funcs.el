@@ -122,6 +122,11 @@ Same as `replace-string' `C-q' `C-m' `RET' `RET'."
   (switch-to-buffer (get-buffer-create "*scratch*"))
   (lisp-interaction-mode))
 
+(defun revert-buffer-quick ()
+  "Revert the current buffer without confirmation."
+  (interactive)
+  (revert-buffer nil t))
+
 (defun save-buffer-as-utf8 (coding-system)
   "Revert a buffer with `CODING-SYSTEM' and save as UTF-8."
   (interactive "zCoding system for visited file (default nil):")
@@ -501,7 +506,8 @@ theme (themes/pinaceae-theme.el), so they are ignored."
 
 ;; Rearrange split windows
 (defun split-window-horizontally-instead ()
-  "Kill other windows and split the current window is on the top half of the frame."
+  "Split side-by-side, keeping the other window's buffer.
+Kills other windows first, then splits left/right."
   (interactive)
   (let* ((next-window (next-window))
          (other-buffer (and next-window (window-buffer next-window))))
@@ -511,7 +517,8 @@ theme (themes/pinaceae-theme.el), so they are ignored."
       (set-window-buffer next-window other-buffer))))
 
 (defun split-window-vertically-instead ()
-  "Kill other windows and split the current window is on left half of the frame."
+  "Split stacked, keeping the other window's buffer.
+Kills other windows first, then splits top/bottom."
   (interactive)
   (let* ((next-window (next-window))
          (other-buffer (and next-window (window-buffer next-window))))
@@ -519,6 +526,26 @@ theme (themes/pinaceae-theme.el), so they are ignored."
     (split-window-vertically)
     (when other-buffer
       (set-window-buffer next-window other-buffer))))
+
+(defun flutter-split-window-toggle ()
+  "Toggle a two-window frame between side-by-side and stacked."
+  (interactive)
+  (unless (= (count-windows) 2)
+    (user-error "Need exactly 2 windows to toggle"))
+  (let* ((win1 (selected-window))
+         (win2 (next-window win1))
+         (buf1 (window-buffer win1))
+         (buf2 (window-buffer win2))
+         (edges2 (window-edges win2))
+         ;; Same top edge means the windows sit next to each other.
+         (side-by-side (= (nth 1 (window-edges win1)) (nth 1 edges2))))
+    (delete-other-windows win1)
+    (if side-by-side
+        (split-window-vertically)
+      (split-window-horizontally))
+    (set-window-buffer (next-window win1) buf2)
+    (select-window win1)
+    (set-window-buffer win1 buf1)))
 
 
 
