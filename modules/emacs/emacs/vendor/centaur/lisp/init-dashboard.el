@@ -58,7 +58,7 @@
     :init
     (setq dashboard-banner-logo-title "Flutter Emacs"
           dashboard-startup-banner 'official ; the Centaur logo was dropped with the branding
-          dashboard-page-separator "\n\f\n"
+          dashboard-page-separator "\n\n"
           dashboard-projects-backend 'project-el
           dashboard-path-style 'truncate-middle
           dashboard-path-max-length 60
