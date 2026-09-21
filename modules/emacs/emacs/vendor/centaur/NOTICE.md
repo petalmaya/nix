@@ -57,8 +57,9 @@ original copyright headers are retained.
   silently, Elpaca fails loudly.
 - **Targeted upstream sync (2026-09-21, flutter-* names kept)**:
   `init-base.el` gains `markdown-ts-mode` plus a `C-x C-m` M-x alias;
-  `init-window.el` ports `winner` restores, the upstream ace-window hydra
-  and a `C-x o w` alias; `init-shell.el` uses upstream's cache path and
+  `init-window.el` ports `winner` restores and the upstream ace-window hydra
+  on `C-c w` (a `C-x o w` alias was dropped: `C-x o` is not a prefix key,
+  so binding it aborts init with "starts with non-prefix key"); `init-shell.el` uses upstream's cache path and
   moves ghostel to `C-c t`.
 
 ## Renaming

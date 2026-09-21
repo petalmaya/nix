@@ -34,9 +34,11 @@
   (require 'init-const)
   (require 'init-custom))
 
-;; Dashboard
-(when flutter-dashboard
-  (use-package dashboard
+;; Dashboard. Always declared so <f2> / `open-dashboard' exists in every
+;; session, including the EWM `--fg-daemon' compositor where
+;; `flutter-dashboard' defaults to nil (daemonp) and session restore runs
+;; instead. Auto-show at startup only when `flutter-dashboard' is set.
+(use-package dashboard
     :diminish
     :autoload dashboard-setup-startup-hook
     :functions icons-displayable-p nerd-icons-mdicon nerd-icons-octicon
@@ -116,7 +118,8 @@
               (nerd-icons-octicon "nf-oct-heart" :height 1.2 :face 'nerd-icons-lred)
             (propertize ">" 'face 'dashboard-footer)))
 
-    (dashboard-setup-startup-hook)
+    (when flutter-dashboard
+      (dashboard-setup-startup-hook))
     :config
     (with-no-warnings
       ;; Insert copyright
@@ -163,7 +166,7 @@
           (tabspaces-switch-or-create-workspace tabspaces-default-tab))
 
         ;; Recover layout
-        (flutter-recover-layout)))))
+        (flutter-recover-layout))))
 
 (provide 'init-dashboard)
 

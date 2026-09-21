@@ -93,7 +93,6 @@
   (aw-mode-line-face ((t (:inherit mode-line-emphasis :bold t))))
   :bind (([remap other-window] . ace-window)
          ("C-c w" . ace-window-hydra/body)
-         ("C-x o w" . ace-window-hydra/body)
          ("C-x |" . split-window-horizontally-instead)
          ("C-x _" . split-window-vertically-instead))
   :config

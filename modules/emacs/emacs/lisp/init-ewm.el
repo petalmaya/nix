@@ -129,7 +129,26 @@
                    ewm-display-buffer-floating))
     ;; Keep dialogs tiled when they should behave like Emacs windows.
     (add-to-list 'display-buffer-alist
-                 `(,(ewm-surface-match :app "zenity") display-buffer-same-window))))
+                 `(,(ewm-surface-match :app "zenity") display-buffer-same-window)))
+
+  ;; Wallpaper (upstream Wallpapers wiki: swaybg works, as do swww/wbg/
+  ;; mpvpaper). Frames are semi-transparent (`alpha-background' 88 in
+  ;; early-init.el), so a layer-shell wallpaper shows through. Runs in
+  ;; :config, i.e. only once EWM itself loads, so plain Emacs sessions
+  ;; are unaffected. Change the image via `flutter-ewm-wallpaper'.
+  (defcustom flutter-ewm-wallpaper
+    (expand-file-name "Pictures/Wallpapers/nixos_anime_girl_black_cat.png"
+                      (getenv "HOME"))
+    "Image shown behind semi-transparent EWM frames via swaybg."
+    :type 'file
+    :group 'flutter)
+  (when (executable-find "swaybg")
+    (ignore-errors (call-process "pkill" nil nil nil "-x" "swaybg"))
+    (if (file-exists-p flutter-ewm-wallpaper)
+        (start-process "ewm-swaybg" nil
+                       "swaybg" "-i" flutter-ewm-wallpaper "-m" "fill")
+      (display-warning 'init-ewm (format "Wallpaper not found: %s"
+                                        flutter-ewm-wallpaper)))))
 
 ;; Frame/float/session controls on C-c e, in this config's hydra idiom.
 ;; pretty-hydra is queued explicitly in lisp/my-elpaca.el (explicit

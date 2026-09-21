@@ -161,7 +161,12 @@ Install the doc if it's not installed."
 ;; Miscellaneous Programming Modes
 ;; ---------------------------------------------------------------------------
 (use-package cask-mode)
-(use-package cmake-mode)
+;; MELPA recipe is gitlab + custom :files, which Elpaca's menu importer
+;; chokes on ("Unhandled error in elpaca-queue-dependencies"); spell it
+;; out like qml-ts-mode in init-extras.el.
+(use-package cmake-mode
+  :ensure (:repo "https://gitlab.kitware.com/cmake/cmake.git"
+                 :files ("Auxiliary/*.el")))
 (use-package csv-mode)
 (use-package cue-sheet-mode)
 (use-package dart-mode)
