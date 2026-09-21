@@ -241,6 +241,14 @@
         icons.enable = true;
       };
 
+      # Session chooser entries: greeters and SDDM enumerate
+      # /run/current-system/sw/share/{wayland,x}sessions, but
+      # sessionPackages alone doesn't link those dirs into the system path.
+      environment.pathsToLink = [
+        "/share/wayland-sessions"
+        "/share/xsessions"
+      ];
+
       programs.sway = {
         enable = true;
         package = pkgs.swayfx;
