@@ -4,8 +4,8 @@
 |---|---|
 | **Source** | <https://github.com/seagle0128/.emacs.d> |
 | **Author** | Vincent Zhang (seagle0128) |
-| **Version** | 8.3.1 |
-| **Retrieved** | 2026-08-25 |
+| **Version** | 8.3.1 + targeted upstream sync (master as of 2026-09-21) |
+| **Retrieved** | 2026-09-21 |
 | **License** | GNU GPL v3 or later (see `../LICENSE`) |
 
 The `lisp/init-*.el` files in this directory are the Centaur Emacs
@@ -55,6 +55,11 @@ original copyright headers are retained.
   real package, just a config hook for the built-in
   `electric-pair-mode`; package.el swallowed the failed install
   silently, Elpaca fails loudly.
+- **Targeted upstream sync (2026-09-21, flutter-* names kept)**:
+  `init-base.el` gains `markdown-ts-mode` plus a `C-x C-m` M-x alias;
+  `init-window.el` ports `winner` restores, the upstream ace-window hydra
+  and a `C-x o w` alias; `init-shell.el` uses upstream's cache path and
+  moves ghostel to `C-c t`.
 
 ## Renaming
 

@@ -22,6 +22,9 @@
     apps.chromium.enable = true;
     apps.emacs.enable = true;
 
+    # EWM overlay + tools. Pick "ewm" at login, or Noctalia as before.
+    ewm.enable = true;
+
     sway.enable = true;
   };
 

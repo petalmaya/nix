@@ -105,12 +105,8 @@
   (elcord-display-buffer-details t)
   (elcord-use-major-mode-as-main-icon t))
 
-;; --- Ghostel in the project menu -----------------------------------------
-;; Centaur's init-shell.el brings ghostel (in-Emacs terminal via
-;; Ghostty's VT engine); make it available from project.el's switch
-;; menu like a first-class citizen.
-(with-eval-after-load 'project
-  (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t))
+;; Ghostel's project entries live in init-shell.el (loaded earlier);
+;; not duplicated here.
 
 ;; --- Media hydra ----------------------------------------------------------
 ;; The config's idiom is hydras (see init-hydra.el); give the media

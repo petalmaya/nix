@@ -157,7 +157,7 @@
   :ensure nil
   :hook ((after-init . size-indication-mode)
          (text-mode . visual-line-mode)
-         ((prog-mode markdown-mode conf-mode) . enable-trailing-whitespace))
+         ((prog-mode markdown-mode markdown-ts-mode conf-mode) . enable-trailing-whitespace))
   :init
   (setq column-number-mode t
         line-number-mode t
@@ -273,8 +273,10 @@
                2)))))
 
 ;; Global keybindings
+;; C-x C-m is an M-x alias. Ghostel moved to C-c t so the two can't be confused.
 (bind-keys ("s-r"     . revert-buffer-quick)
            ("C-x K"   . delete-this-file)
+           ("C-x C-m" . execute-extended-command)
            ("C-c C-l" . reload-init-file))
 
 (provide 'init-base)

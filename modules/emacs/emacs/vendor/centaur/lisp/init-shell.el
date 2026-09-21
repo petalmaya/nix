@@ -107,13 +107,15 @@
   (advice-add 'gud-filter :around #'my/advice-compilation-filter))
 
 ;; Better terminal emulator
+;; C-c t: C-x m sat one key from the C-x C-m alias. Project m/M and the
+;; popterm C-` backend below are unchanged.
 (use-package ghostel
   :functions ghostel-send-key
   :custom
-  (ghostel-module-directory (expand-file-name ".cache" user-emacs-directory))
+  (ghostel-module-directory (locate-user-emacs-file ".cache"))
   (ghostel-shell (or (executable-find "pwsh") (getenv "SHELL") "/bin/sh"))
   (ghostel-term (if sys/win32p "xterm-256color" "xterm-ghostty"))
-  :bind (("C-x m" . ghostel)
+  :bind (("C-c t" . ghostel)
          :map ghostel-semi-char-mode-map
          ("C-s" . consult-line)
          ("C-k" . my/ghostel-send-C-k-and-kill)

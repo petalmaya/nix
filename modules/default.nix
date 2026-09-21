@@ -4,6 +4,7 @@
     ./core/apparmor.nix
     ./core/sddm.nix
     ./core/maintenance.nix
+    ./ewm
     ./shell/noctalia/greeter.nix
     ./shell/quickshell/greeter.nix
   ];
@@ -14,6 +15,7 @@
     ./browsers
     ./conf
     ./emacs
+    ./ewm/home.nix
     ./mango
     ./matugen
     ./sway

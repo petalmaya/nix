@@ -63,6 +63,10 @@
       url = "github:uiriansan/SilentSDDM";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # No nixpkgs follows: EWM needs newer deps than our 26.05 pin, so it
+    # builds against its own locked unstable (see modules/ewm/).
+    ewm.url = "https://codeberg.org/ezemtsov/ewm/archive/master.tar.gz";
   };
 
   outputs =

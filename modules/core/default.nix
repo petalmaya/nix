@@ -92,6 +92,11 @@
       networking.enableIPv6 = true;
       time.timeZone = "America/Edmonton";
 
+      # Caps Lock is Ctrl: console + X11 here, each compositor carries
+      # its own (sway, mango, EWM).
+      services.xserver.xkb.options = "ctrl:nocaps";
+      console.useXkbConfig = true;
+
       programs.zsh.enable = true;
 
       services.openssh = {

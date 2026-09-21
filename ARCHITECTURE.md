@@ -76,8 +76,8 @@ Host → user matrix: `wonderland` = alice+lewis, `rabbit` = lewis, `garden` = r
 
 ```nix
 {
-  nixosModules = [ ./core ./core/apparmor.nix ./core/sddm.nix ./core/maintenance.nix ./shell/noctalia/greeter.nix ./shell/quickshell/greeter.nix ];
-  homeModules  = [ ./core/zsh.nix ./core/tmux.nix ./browsers ./conf ./emacs ./mango ./matugen ./sway ./shell ];
+  nixosModules = [ ./core ./core/apparmor.nix ./core/sddm.nix ./core/maintenance.nix ./ewm ./shell/noctalia/greeter.nix ./shell/quickshell/greeter.nix ];
+  homeModules  = [ ./core/zsh.nix ./core/tmux.nix ./browsers ./conf ./emacs ./ewm/home.nix ./mango ./matugen ./sway ./shell ];
 }
 ```
 
@@ -92,7 +92,8 @@ Shell HM modules live under `modules/shell/` (`noctalia/`, `quickshell/`,
 | `nixtop.terminal.*` | zsh, tmux, foot (foot lives in `conf/` but keeps `nixtop.terminal.foot`) |
 | `nixtop.apps.*` | `fetch`, `yazi`, `firefox-esr`, `floorp`, `emacs` |
 | `nixtop.services.*` | `matugen` (plus future services) |
-| `nixtop.shell` | `"noctalia"` \| `"quickshell"` \| `"jes"` \| `"none"` – the single switch for shell/Mango variant/theming default |
+| `nixtop.shell` | `"noctalia"` \| `"quickshell"` \| `"jes"` \| `"none"` – the single switch for shell/Mango variant/theming default (EWM is separate, next row) |
+| `nixtop.ewm.enable` | Extra `ewm` login session (NixOS) + Emacs overlay (HM). Independent of `nixtop.shell` |
 | `nixtop.theme.*` | `owner` / `apps.<app>` – who writes the generated config (matugen vs noctalia) |
 | `nixtop.dev.*` | `liveEmacs` (default on), `liveMango`/`liveMatugen`/`liveQuickshell`/`liveSway`/`liveMako` (whole-dir, default off), `liveWaybar` (config file only — `style.css` is matugen-owned, default off), `~/Pictures/Wallpapers` (always-on, alice+rose) |
 

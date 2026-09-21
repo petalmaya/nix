@@ -139,4 +139,7 @@
 ;; anything above
 (require 'init-extras)
 
+;; EWM overlay: inert without ewm.el (see lisp/init-ewm.el).
+(require 'init-ewm)
+
 ;;; init.el ends here

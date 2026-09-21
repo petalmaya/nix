@@ -9,6 +9,9 @@
   networking.extraHosts = "127.0.0.1 wonderland";
 
   nixtop.desktop.enable = true;
+  # Extra EWM session at login; Alice's HM toggle adds the overlay.
+  # Noctalia stays the default.
+  nixtop.ewm.enable = true;
   # SDDM stays off while the noctalia greeter is set (see modules/core/sddm.nix).
   nixtop.greetd.greeter = "noctalia";
   # Live symlinks for dev (style.css stays matugen-owned, see modules/sway/default.nix).

@@ -36,6 +36,21 @@
   :hook (window-setup . (lambda ()
                           (windmove-default-keybindings 'super))))
 
+;; Restore old window configurations (winner-undo/redo in the hydra below)
+(use-package winner
+  :ensure nil
+  :hook window-setup
+  :init (setq winner-boring-buffers '("*Completions*"
+                                      "*Compile-Log*"
+                                      "*inferior-lisp*"
+                                      "*Fuzzy Completions*"
+                                      "*Apropos*"
+                                      "*Help*"
+                                      "*cvs*"
+                                      "*Buffer List*"
+                                      "*Ibuffer*"
+                                      "*esh command on file*")))
+
 ;; Quickly switch windows
 (use-package ace-window
   :pretty-hydra
@@ -56,11 +71,11 @@
      ("l" enlarge-window-horizontally "→")
      ("n" balance-windows "balance"))
     "Split"
-    (("r" split-window-right "horizontally")
+    (("r" split-window-right "horizontally" :exit t)
      ("R" split-window-horizontally-instead "horizontally instead" :exit t)
-     ("v" split-window-below "vertically")
+     ("v" split-window-below "vertically" :exit t)
      ("V" split-window-vertically-instead "vertically instead" :exit t)
-     ("t" toggle-window-split "toggle" :exit t))
+     ("t" split-window-toggle "toggle" :exit t))
     "Zoom"
     (("+" text-scale-increase "in")
      ("=" text-scale-increase "in")
@@ -70,43 +85,18 @@
     (("o" set-frame-font "frame font")
      ("f" make-frame-command "new frame")
      ("d" delete-frame "delete frame")
-     ("<left>" tab-bar-history-back "previous layout")
-     ("<right>" tab-bar-history-back "next layout"))))
+     ("<left>" winner-undo "winner undo")
+     ("<right>" winner-redo "winner redo"))))
   :custom-face
   (aw-leading-char-face ((t (:inherit font-lock-keyword-face :foreground unspecified :bold t :height 3.0))))
   (aw-minibuffer-leading-char-face ((t (:inherit font-lock-keyword-face :bold t :height 1.0))))
   (aw-mode-line-face ((t (:inherit mode-line-emphasis :bold t))))
   :bind (([remap other-window] . ace-window)
          ("C-c w" . ace-window-hydra/body)
+         ("C-x o w" . ace-window-hydra/body)
          ("C-x |" . split-window-horizontally-instead)
          ("C-x _" . split-window-vertically-instead))
   :config
-  (defun toggle-window-split ()
-    (interactive)
-    (if (= (count-windows) 2)
-        (let* ((this-win-buffer (window-buffer))
-               (next-win-buffer (window-buffer (next-window)))
-               (this-win-edges (window-edges (selected-window)))
-               (next-win-edges (window-edges (next-window)))
-               (this-win-2nd (not (and (<= (car this-win-edges)
-                                           (car next-win-edges))
-                                       (<= (cadr this-win-edges)
-                                           (cadr next-win-edges)))))
-               (splitter
-                (if (= (car this-win-edges)
-                       (car (window-edges (next-window))))
-                    'split-window-horizontally
-                  'split-window-vertically)))
-          (delete-other-windows)
-          (let ((first-win (selected-window)))
-            (funcall splitter)
-            (if this-win-2nd (other-window 1))
-            (set-window-buffer (selected-window) this-win-buffer)
-            (set-window-buffer (next-window) next-win-buffer)
-            (select-window first-win)
-            (if this-win-2nd (other-window 1))))
-      (user-error "`toggle-window-split' only supports two windows")))
-
   ;; Bind hydra to dispatch list
   (add-to-list 'aw-dispatch-alist '(?w ace-window-hydra/body) t))
 
