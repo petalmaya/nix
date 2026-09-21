@@ -48,15 +48,18 @@
 
 ;; PERF: Many elisp file API calls consult `file-name-handler-alist'.
 ;; Setting it to nil speeds up startup significantly.
-;; Reduce file-name operations on `load-path'. No dynamic modules are
-;; loaded this early, so we skip .so/.dll search. Also skip .gz to
-;; avoid decompression checks.
+;; Reduce file-name operations on `load-path'. Skip .gz to avoid
+;; decompression checks. Keep .so: EWM's compositor is a dynamic module
+;; (ewm-core.so) that must be locatable during init and by the
+;; `ewm-launch --eval "(require 'ewm)"' that runs before
+;; `emacs-startup-hook' restores the defaults — stripping .so made both
+;; fail with "Cannot open load file: ewm-core".
 ;; We restore them after startup.
 (let ((default-file-name-handler-alist file-name-handler-alist)
       (default-load-suffixes load-suffixes)
       (default-load-file-rep-suffixes load-file-rep-suffixes))
   (setq file-name-handler-alist nil
-        load-suffixes '(".elc" ".el")
+        load-suffixes '(".elc" ".el" ".so")
         load-file-rep-suffixes '(""))
   (add-hook 'emacs-startup-hook
             (lambda ()
