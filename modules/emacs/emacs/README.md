@@ -57,10 +57,20 @@ deliberately.
   surface, `s-t`/`s-n` new frame, `s-q`/`s-S-q` close buffer/frame,
   `s-w` jump windows, `s-l` lock, pamixer/brightnessctl media keys,
   `C-c e` EWM hydra (frames, windows, lock, outputs,
-  wallpaper picker), window rules, `ctrl:nocaps` xkb to match the OS.
-  The dashboard opens on the first compositor frame; switch wallpapers
-  with `M-x flutter-ewm-set-wallpaper`. Enable per-user + pick the
-  `ewm` session at login; Noctalia stays untouched.
+  wallpaper picker, exit), window rules, `ctrl:nocaps` xkb to match the
+  OS. The dashboard opens on the first compositor frame; switch
+  wallpapers with `M-x flutter-ewm-set-wallpaper`. Enable per-user +
+  pick the `ewm` session at login; Noctalia stays untouched.
+  - Mental model (three layers): a **frame** is a workspace (`s-1..9`
+    jump, `s-t` new, `s-S-q` close, `s-S-arrows` slide); an Emacs
+    **window** is a split inside it (`C-x 2/3`, `s-arrows` focus,
+    `s-w`/ace-window manages splits); a **surface buffer** is the app
+    itself (`s-q` or hydra `k` kills the client, `s-TAB` cycles apps).
+    Mirrors your sway muscle memory with Super instead of Alt
+    (`M-c`/`M-1..9` are Emacs keys, so Alt is off-limits): sway
+    `mod+Return/d/f/q` → `s-<return>/d/f/q`, sway `mod+1..9` workspaces
+    → `s-1..9` frames, sway `mod+Shift+space` float → `s-S-SPC`.
+    Exiting Emacs (`C-x C-c`, hydra `x`) exits the compositor.
 - Editing: expand-region, multiple-cursors, iedit, hungry-delete,
   smartparens, avy, vundo, drag-stuff, …
 - UI: doom-modeline, dashboard (F2), which-key, solaire-mode, hydras

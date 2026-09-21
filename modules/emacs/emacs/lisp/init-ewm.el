@@ -41,6 +41,7 @@
 
 ;;; Code:
 
+(declare-function ewm-start-module "ewm")
 (declare-function ewm-list-xdg-apps "ewm")
 (declare-function ewm-launch-app "ewm")
 (declare-function ewm-launch-xdg-command "ewm")
@@ -89,10 +90,23 @@ Symlinked to the repo's assets/wallpaper (see modules/user/*/home.nix)."
                      "\\.\\(png\\|jpe?g\\|webp\\|bmp\\)\\'")))
 
 (defun flutter-ewm--start-wallpaper (image)
-  "Show IMAGE behind frames with swaybg, replacing any old instance."
+  "Show IMAGE behind frames with swaybg, replacing any old instance.
+Output goes to *ewm-swaybg* so a dying swaybg leaves a trace."
   (when (executable-find "swaybg")
     (ignore-errors (call-process "pkill" nil nil nil "-x" "swaybg"))
-    (start-process "ewm-swaybg" nil "swaybg" "-i" image "-m" "fill")))
+    (start-process "ewm-swaybg" (get-buffer-create "*ewm-swaybg*")
+                   "swaybg" "-i" image "-m" "fill")))
+
+(defun flutter-ewm--maybe-start-wallpaper (&rest _)
+  "Start swaybg once the compositor is up.
+Runs after `ewm-start-module': any earlier there is no Wayland socket
+yet, so swaybg dies silently. Needs WAYLAND_DISPLAY in the environment."
+  (cond ((not (getenv "WAYLAND_DISPLAY"))
+         (display-warning 'init-ewm "WAYLAND_DISPLAY unset; wallpaper skipped"))
+        ((not (file-exists-p flutter-ewm-wallpaper))
+         (display-warning 'init-ewm (format "Wallpaper not found: %s"
+                                            flutter-ewm-wallpaper)))
+        (t (flutter-ewm--start-wallpaper flutter-ewm-wallpaper))))
 
 ;;;###autoload
 (defun flutter-ewm-set-wallpaper (image)
@@ -102,12 +116,14 @@ Restarts swaybg and saves the choice for future sessions."
    (list (completing-read "Wallpaper: " (flutter-ewm--wallpaper-files)
                           nil t nil nil flutter-ewm-wallpaper)))
   (setq flutter-ewm-wallpaper image)
-  (if (file-exists-p image)
-      (progn
-        (flutter-ewm--start-wallpaper image)
-        (customize-save-variable 'flutter-ewm-wallpaper image)
-        (message "Wallpaper: %s" (file-name-nondirectory image)))
-    (user-error "Wallpaper not found: %s" image)))
+  (cond ((not (getenv "WAYLAND_DISPLAY"))
+         (user-error "WAYLAND_DISPLAY unset; swaybg needs the running compositor"))
+        ((not (file-exists-p image))
+         (user-error "Wallpaper not found: %s" image))
+        (t
+         (flutter-ewm--start-wallpaper image)
+         (customize-save-variable 'flutter-ewm-wallpaper image)
+         (message "Wallpaper: %s" (file-name-nondirectory image)))))
 
 (defun flutter-ewm--xdg-app-names ()
   "Names of installed XDG applications, for `consult-buffer'."
@@ -226,6 +242,8 @@ One-shot: later frames (e.g. emacsclient) are left alone."
   (define-key ewm-mode-map (kbd "s-n") #'ewm-frame-new)
   (define-key ewm-mode-map (kbd "s-q") #'kill-current-buffer)
   (define-key ewm-mode-map (kbd "s-S-q") #'ewm-frame-close)
+  ;; ace-window manages Emacs splits, not Wayland clients (use s-q /
+  ;; hydra k to kill the client itself).
   (define-key ewm-mode-map (kbd "s-w") #'ace-window)
   (define-key ewm-mode-map (kbd "s-l") #'ewm-lock-session)
   (define-key ewm-mode-map (kbd "s-c") #'kill-ring-save)
@@ -237,14 +255,14 @@ One-shot: later frames (e.g. emacsclient) are left alone."
   (define-key ewm-mode-map (kbd "s-<up>") #'ewm-focus-up)
   (define-key ewm-mode-map (kbd "s-<down>") #'ewm-focus-down)
   ;; Frame-strip navigation: slide along this output, or jump to Nth frame.
+  ;; `ewm-frame-select' takes no argument — it reads the number from the
+  ;; key that invoked it — so bind it directly, not through a lambda.
   (define-key ewm-mode-map (kbd "s-S-<left>") #'ewm-frame-left)
   (define-key ewm-mode-map (kbd "s-S-<right>") #'ewm-frame-right)
   (define-key ewm-mode-map (kbd "C-s-<left>") #'ewm-frame-move-left)
   (define-key ewm-mode-map (kbd "C-s-<right>") #'ewm-frame-move-right)
   (dotimes (i 9)
-    (let ((n (1+ i)))
-      (define-key ewm-mode-map (kbd (format "s-%d" n))
-        (lambda () (interactive) (ewm-frame-select n)))))
+    (define-key ewm-mode-map (kbd (format "s-%d" (1+ i))) #'ewm-frame-select))
   ;; Media keys (intercepted above, so they work with a surface focused).
   ;; Print stays intercepted but unbound — pick a screenshot tool later.
   (define-key ewm-mode-map (kbd "<AudioRaiseVolume>") #'flutter-ewm-volume-up)
@@ -283,11 +301,11 @@ One-shot: later frames (e.g. emacsclient) are left alone."
   (add-to-list 'display-buffer-alist
                `(,(ewm-surface-match :app "zenity") display-buffer-same-window))
 
-  ;; Wallpaper behind the frames.
-  (if (file-exists-p flutter-ewm-wallpaper)
-      (flutter-ewm--start-wallpaper flutter-ewm-wallpaper)
-    (display-warning 'init-ewm (format "Wallpaper not found: %s"
-                                       flutter-ewm-wallpaper)))
+  ;; Wallpaper behind the frames. Deferred until the compositor starts
+  ;; (see `flutter-ewm--maybe-start-wallpaper'): at require time there is
+  ;; no Wayland socket yet.
+  (when (fboundp 'ewm-start-module)
+    (advice-add 'ewm-start-module :after #'flutter-ewm--maybe-start-wallpaper))
 
   ;; Compositor hydra (this config's hydra idiom). Bound here so nested
   ;; `emacs' never sees it.
@@ -308,11 +326,13 @@ One-shot: later frames (e.g. emacsclient) are left alone."
        "Window"
        (("f" ewm-toggle-fullscreen "fullscreen")
         ("SPC" ewm-floating-toggle "float")
-        ("TAB" ewm-next-surface-buffer "next surface"))
+        ("TAB" ewm-next-surface-buffer "next surface")
+        ("k" kill-current-buffer "kill client" :exit t))
        "Session"
        (("w" flutter-ewm-set-wallpaper "wallpaper" :exit t)
         ("l" ewm-lock-session "lock" :exit t)
-        ("o" ewm-list-outputs "outputs" :exit t))))
+        ("o" ewm-list-outputs "outputs" :exit t)
+        ("x" save-buffers-kill-emacs "exit EWM" :exit t))))
     (global-set-key (kbd "C-c e") #'flutter-ewm-hydra/body))
 
   ;; Daemon-deferred setup first, then the dashboard — both one-shot on
