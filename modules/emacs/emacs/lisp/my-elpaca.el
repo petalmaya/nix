@@ -133,23 +133,12 @@
 ;; Block here so everything below can safely assume packages exist.
 (elpaca-wait)
 
-;; Register the `:pretty-hydra' keyword for the rest of init.  If the
-;; load fails, fall back to an inert `:pretty-hydra' keyword so the
-;; dozen vendor modules using it still parse (their hydras are skipped
-;; instead of aborting init with "Unrecognized keyword: :pretty-hydra").
-;; The old `with-demoted-errors' hid the failure and left the keyword
-;; undefined, which produced exactly that cascade plus a later
-;; "Cannot open load file: hydra".
-(if (condition-case err
-        (progn (require 'pretty-hydra) t)
-      (error
-       (warn "pretty-hydra failed to load: %S; :pretty-hydra blocks ignored" err)
-       nil))
-    nil
-  (when (fboundp 'use-package-define-keyword)
-    (use-package-define-keyword :pretty-hydra
-      (lambda (name _keyword args rest state)
-        (use-package-process-keywords name rest state)))))
+;; Register the `:pretty-hydra' use-package keyword for the rest of init.
+;; Must succeed: a dozen vendor modules use `:pretty-hydra'. If this
+;; require fails, keep the failure LOUD (no fallback keyword) so the
+;; cause stays debuggable instead of surfacing later as
+;; "Wrong type argument: listp".
+(require 'pretty-hydra)
 
 ;; --- Built-in packages under Elpaca ----------------------------------
 ;; Centaur's config was written for package.el, which treats Emacs's

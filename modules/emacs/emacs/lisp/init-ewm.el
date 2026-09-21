@@ -72,8 +72,13 @@
                                :xkb-options "ctrl:nocaps")
                       (touchpad :natural-scroll t :tap t :dwt t)
                       (mouse :accel-profile "flat")))
-  ;; Auto by default. M-x ewm-list-outputs shows the names to pin here.
-  (ewm-output-config nil)
+  ;; Mirror mango (modules/mango/settings.conf): external HDMI-A-1 on
+  ;; the left at (0,0), internal eDP-1 to its right. Upstream wiki
+  ;; (Output page): keys may be connector names; :x/:y place outputs in
+  ;; global space; config persists across hot-plug. M-x ewm-list-outputs
+  ;; shows live names if connectors differ.
+  (ewm-output-config '(("HDMI-A-1" :width 1680 :height 1050 :x 0 :y 0)
+                       ("eDP-1" :x 1680 :y 0)))
   ;; --- Appearance wiki --------------------------------------------------
   (ewm-cursor-theme "capitaine-cursors")
   (ewm-cursor-size 24)
@@ -127,11 +132,11 @@
                  `(,(ewm-surface-match :app "zenity") display-buffer-same-window))))
 
 ;; Frame/float/session controls on C-c e, in this config's hydra idiom.
-;; pretty-hydra comes from Elpaca (not Nix), so no :ensure nil here —
-;; let Elpaca provide it.  Guard on both EWM and pretty-hydra so a
-;; half-installed tree skips the hydra instead of failing init with
-;; "Cannot open load file: hydra".
+;; pretty-hydra is queued explicitly in lisp/my-elpaca.el (explicit
+;; :repo, no menu fetch) — hence :ensure nil here. Queuing it again via
+;; use-package caused Elpaca's "Duplicate item ID queued: pretty-hydra".
 (use-package pretty-hydra
+  :ensure nil
   :if (and (flutter-ewm-available-p)
            (or (featurep 'pretty-hydra)
                (locate-library "pretty-hydra")))

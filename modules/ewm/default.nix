@@ -59,7 +59,22 @@ in
           ewmPkgs.emacs-pgtk.pkgs.withPackages (_: [ ewmFlakePkg ]);
       withSkia = cfg.withSkia;
       # Loads ~/.config/emacs as-is; no --init-directory override needed.
+      # Upstream Getting-Started/NixOS wiki uses a minimal init plus
+      # --init-directory for the compositor; we intentionally run the full
+      # config so consult/hydras work inside EWM. Cost: first boot after
+      # an Elpaca wipe downloads MELPA+ELPA and compiles (~3min in the
+      # field), which exceeds systemd's default start timeout for the
+      # Type=notify ewm.service and looks like "Emacs flashes then back
+      # to TTY". Pre-warm once with plain `emacs` before logging into
+      # `ewm`, and keep the timeout below generous.
     };
+
+    # Compositor init can take minutes on a cold Elpaca cache; don't let
+    # systemd kill ewm.service while Emacs is still starting. Upstream
+    # ships the unit via systemd.packages, so override as a drop-in
+    # (a plain redefinition here would shadow ExecStart).
+    systemd.user.services.ewm.overrideStrategy = "asDropin";
+    systemd.user.services.ewm.serviceConfig.TimeoutStartSec = lib.mkDefault "10min";
 
     # Clipboard plus the media/brightness keys the default bindings use.
     environment.systemPackages = with pkgs; [
