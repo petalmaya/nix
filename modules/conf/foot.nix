@@ -23,7 +23,7 @@ in
           include = generatedPath;
         };
         colors-dark = {
-          alpha = "0.8";
+          alpha = "0.7";
         };
       };
     };
