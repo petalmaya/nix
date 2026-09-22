@@ -8,6 +8,17 @@ var/
 # Native compilation cache
 eln-cache/
 
+# Build/runtime caches (never track: machine-local binaries, downloads)
+.cache/
+builds/
+
+# First-run state files (redirected to ~/.local/state/emacs, see init.el)
+recentf.eld
+places.eld
+tramp
+elfeed/
+eshell/alias
+
 # Generated / personal files
 custom.el
 custom-post.el
