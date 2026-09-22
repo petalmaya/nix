@@ -239,6 +239,7 @@ in
                     # JES include differs by path only: store dir vs live checkout.
                     $DRY_RUN_CMD sed -i "s|@jesKeybinds@|$HOME/nix/modules/shell/jes/sway/keybinds.conf|" "$HOME/.config/sway/variant.conf"
                   ''}
+                  : # no-op: bash rejects an empty then-branch when the JES sed above is compiled out
                 else
                   echo "WARNING: cannot write $HOME/.config/sway/variant.conf (dir owner: $(stat -c %U "$HOME/.config/sway"), you: $(whoami)); leaving the old one, sway keeps stale keybinds" >&2
                   echo "WARNING: fix with: sudo chown -R $(whoami) $HOME/.config/sway $HOME/nix  (then rebuild)" >&2
