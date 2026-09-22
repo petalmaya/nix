@@ -1,0 +1,7 @@
+# statix project config.
+# hosts/*/hardware-configuration.nix are generated (garden's is a
+# placeholder until install) and intentionally out of lint scope.
+# Policy: never touch them (see nixtop-cleanup.md).
+ignore = [
+  "hosts/*/hardware-configuration.nix",
+]

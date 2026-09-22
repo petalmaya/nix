@@ -35,26 +35,29 @@ in
 
   config = lib.mkIf (cfg.enable && active) {
     # shellPkg already wraps pkgs.quickshell, so don't list it separately.
-    home.packages = [
-      shellPkg
-      pkgs.jq
-    ];
+    home = {
+      packages = [
+        shellPkg
+        pkgs.jq
+      ];
+
+      file.".config/nixtop-shell" = lib.mkIf liveQuickshell {
+        source = config.lib.file.mkOutOfStoreSymlink livePath;
+      };
+
+      # Quickshell falls back to ~/.config/quickshell, so keep it as a compat
+      # symlink to the real config dir.
+      activation.ensureQuickshellCompat = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        $DRY_RUN_CMD mkdir -p "$HOME/.config/nixtop-shell" "$HOME/.cache/nixtop-shell"
+        $DRY_RUN_CMD [ -e "$HOME/.config/quickshell" ] || $DRY_RUN_CMD ln -s "$HOME/.config/nixtop-shell" "$HOME/.config/quickshell" 2>/dev/null || true
+        $DRY_RUN_CMD chmod +x "$HOME/.config/nixtop-shell/scripts/"* 2>/dev/null || true
+      '';
+    };
 
     xdg.configFile."nixtop-shell" = lib.mkIf (!liveQuickshell) {
       source = ./shell;
       recursive = true;
     };
-    home.file.".config/nixtop-shell" = lib.mkIf liveQuickshell {
-      source = config.lib.file.mkOutOfStoreSymlink livePath;
-    };
-
-    # Quickshell falls back to ~/.config/quickshell, so keep it as a compat
-    # symlink to the real config dir.
-    home.activation.ensureQuickshellCompat = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir -p "$HOME/.config/nixtop-shell" "$HOME/.cache/nixtop-shell"
-      $DRY_RUN_CMD [ -e "$HOME/.config/quickshell" ] || $DRY_RUN_CMD ln -s "$HOME/.config/nixtop-shell" "$HOME/.config/quickshell" 2>/dev/null || true
-      $DRY_RUN_CMD chmod +x "$HOME/.config/nixtop-shell/scripts/"* 2>/dev/null || true
-    '';
 
     assertions = [
       {

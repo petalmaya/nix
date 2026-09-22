@@ -92,7 +92,7 @@ in
           ])
         else
           ewmPkgs.emacs-pgtk.pkgs.withPackages (_: [ ewmFlakePkg ]);
-      withSkia = cfg.withSkia;
+      inherit (cfg) withSkia;
       # Loads ~/.config/emacs as-is; no --init-directory override needed.
       # Upstream Getting-Started/NixOS wiki uses a minimal init plus
       # --init-directory for the compositor; we intentionally run the full

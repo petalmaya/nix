@@ -11,5 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v30
       - run: nix flake check --no-build
+      # statix.toml excludes hosts/*/hardware-configuration.nix
+      # (generated/placeholder files — never touch).
       - run: nix run nixpkgs#statix -- check .
-      - run: nix run nixpkgs#deadnix -- -f .
+      - run: nix run nixpkgs#deadnix -- --fail --exclude 'hosts/*/hardware-configuration.nix' .

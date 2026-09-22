@@ -3,7 +3,6 @@
   pkgs,
   lib,
   unstable-pkgs,
-  inputs,
   ...
 }:
 {
@@ -12,8 +11,81 @@
     ../base.nix
   ];
 
-  home.username = "alice";
-  home.homeDirectory = "/home/alice";
+  home = {
+    username = "alice";
+    homeDirectory = "/home/alice";
+
+    file."Pictures/Wallpapers".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/assets/wallpaper";
+
+    # Flat package list, grouped by use.
+    packages = lib.filter (p: p != null) (
+      (with pkgs; [
+        # communication
+        links2
+        transmission_4-gtk
+        nicotine-plus
+        cinny-desktop
+        weechat
+        # creative
+        krita
+        gimp
+        blockbench
+        # desktop
+        mousepad
+        nautilus
+        mpvpaper
+        libnotify
+        brightnessctl
+        wl-clipboard
+        playerctl
+        adw-gtk3
+        capitaine-cursors
+        polkit_gnome
+        # gaming
+        wine
+        renpy
+        obs-studio
+        prismlauncher
+        openttd
+        openrct2
+        steam-run
+        # media
+        rmpc
+        cava
+        ffmpeg
+        ffmpegthumbnailer
+        feh
+        loupe
+        # tools
+        chafa
+        libsixel
+        ripgrep
+        btop
+        tree
+        bitwarden-cli
+        git
+        unzip
+        p7zip
+        wget
+        curl
+        age
+        sops
+        stack
+        # launchers / extras
+        fuzzel
+        keepassxc
+      ])
+      ++ [
+        unstable-pkgs.tutanota-desktop or null
+        unstable-pkgs.antigravity-ide or null
+        unstable-pkgs.tauon or null
+        unstable-pkgs.ani-cli or null
+        (unstable-pkgs.yt-dlp or pkgs.yt-dlp or null)
+        (unstable-pkgs.pokemmo-installer or pkgs.pokemmo-installer or null)
+      ]
+    );
+  };
 
   nixtop = {
     apps.chromium.enable = true;
@@ -27,97 +99,23 @@
   nixtop.shell = "noctalia";
   nixtop.noctalia.compositor = "mango";
 
-  home.file."Pictures/Wallpapers".source =
-    config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/assets/wallpaper";
-
-  # Flat package list, grouped by use.
-  home.packages = lib.filter (p: p != null) (
-    (with pkgs; [
-      # communication
-      links2
-      transmission_4-gtk
-      nicotine-plus
-      cinny-desktop
-      weechat
-      # creative
-      krita
-      gimp
-      blockbench
-      # desktop
-      mousepad
-      nautilus
-      mpvpaper
-      libnotify
-      brightnessctl
-      wl-clipboard
-      playerctl
-      adw-gtk3
-      capitaine-cursors
-      polkit_gnome
-      # gaming
-      wine
-      renpy
-      obs-studio
-      prismlauncher
-      openttd
-      openrct2
-      steam-run
-      # media
-      rmpc
-      cava
-      ffmpeg
-      ffmpegthumbnailer
-      feh
-      loupe
-      # tools
-      chafa
-      libsixel
-      ripgrep
-      btop
-      tree
-      bitwarden-cli
-      git
-      unzip
-      p7zip
-      wget
-      curl
-      age
-      sops
-      stack
-      # launchers / extras
-      fuzzel
-      keepassxc
-    ])
-    ++ [
-      (if unstable-pkgs ? tutanota-desktop then unstable-pkgs.tutanota-desktop else null)
-      (if unstable-pkgs ? antigravity-ide then unstable-pkgs.antigravity-ide else null)
-      (if unstable-pkgs ? tauon then unstable-pkgs.tauon else null)
-      (if unstable-pkgs ? ani-cli then unstable-pkgs.ani-cli else null)
-      (if unstable-pkgs ? yt-dlp then unstable-pkgs.yt-dlp else pkgs.yt-dlp or null)
-      (
-        if unstable-pkgs ? pokemmo-installer then
-          unstable-pkgs.pokemmo-installer
-        else
-          (if pkgs ? pokemmo-installer then pkgs.pokemmo-installer else null)
-      )
-    ]
-  );
-
   gtk.gtk4.theme = null;
-  programs.yazi.shellWrapperName = "y";
-  programs.zsh.dotDir = "${config.xdg.configHome}/zsh";
+  programs = {
+    yazi.shellWrapperName = "y";
+    zsh.dotDir = "${config.xdg.configHome}/zsh";
 
-  programs.mpv = {
-    enable = true;
-    package = pkgs.mpv.override {
-      scripts = with pkgs.mpvScripts; [
-        mpris
-        modernz
-      ];
-    };
-    config = {
-      osc = "no";
-      border = "no";
+    mpv = {
+      enable = true;
+      package = pkgs.mpv.override {
+        scripts = with pkgs.mpvScripts; [
+          mpris
+          modernz
+        ];
+      };
+      config = {
+        osc = "no";
+        border = "no";
+      };
     };
   };
 

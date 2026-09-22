@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   osConfig ? null,
   ...
 }:
@@ -74,7 +73,7 @@ in
       ];
     }
 
-    (lib.mkIf ((!liveMango)) {
+    (lib.mkIf (!liveMango) {
       # store-built mango config – one directory, not 8 symlinks (one symlink per live flag)
       xdg.configFile."mango".source = mangoConfig;
       xdg.configFile."mango".recursive = true;

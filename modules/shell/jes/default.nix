@@ -41,28 +41,32 @@ in
   };
 
   config = lib.mkIf (cfg.enable && active) {
-    home.packages = [
-      jesPkg
-      jesCli
-      pkgs.quickshell
-      pkgs.taplo
-      pkgs.jq
-      pkgs.nerd-fonts.mononoki
-    ];
+    home = {
+      packages = [
+        jesPkg
+        jesCli
+        pkgs.quickshell
+        pkgs.taplo
+        pkgs.jq
+        pkgs.nerd-fonts.mononoki
+      ];
 
-    home.file.".local/JES/quickshell".source = ./shell;
+      file.".local/JES/quickshell".source = ./shell;
 
-    xdg.configFile."JES/config.toml".source = ./config/config.toml;
-    xdg.configFile."JES/wallpaper.toml".source = ./config/wallpaper.toml;
-    xdg.configFile."JES/waypoints.json".source = ./config/waypoints.json;
-    xdg.configFile."JES/base16.json".source = ./config/base16.json;
+      activation.ensureJesDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        $DRY_RUN_CMD mkdir -p "$HOME/.cache/JES" "$HOME/.local/state" "$HOME/Screenshots"
+        $DRY_RUN_CMD chmod +x "$HOME/.local/JES/quickshell/scripts/"* 2>/dev/null || true
+        # Seed JES colors so the shell has something before the first matugen run.
+        $DRY_RUN_CMD [ -e "$HOME/.local/state/JES_colors.json" ] || $DRY_RUN_CMD echo '{"background1":"#3f4944","background2":"#3b443f","background3":"#3c4540","backgroundAlt1":"#262c29","backgroundAlt2":"#262c29","font":"#b3ccbe","fontDark":"#1f352b","accent":"#8cd5b3","accent2":"#486657"}' > "$HOME/.local/state/JES_colors.json"
+      '';
+    };
 
-    home.activation.ensureJesDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir -p "$HOME/.cache/JES" "$HOME/.local/state" "$HOME/Screenshots"
-      $DRY_RUN_CMD chmod +x "$HOME/.local/JES/quickshell/scripts/"* 2>/dev/null || true
-      # Seed JES colors so the shell has something before the first matugen run.
-      $DRY_RUN_CMD [ -e "$HOME/.local/state/JES_colors.json" ] || $DRY_RUN_CMD echo '{"background1":"#3f4944","background2":"#3b443f","background3":"#3c4540","backgroundAlt1":"#262c29","backgroundAlt2":"#262c29","font":"#b3ccbe","fontDark":"#1f352b","accent":"#8cd5b3","accent2":"#486657"}' > "$HOME/.local/state/JES_colors.json"
-    '';
+    xdg.configFile = {
+      "JES/config.toml".source = ./config/config.toml;
+      "JES/wallpaper.toml".source = ./config/wallpaper.toml;
+      "JES/waypoints.json".source = ./config/waypoints.json;
+      "JES/base16.json".source = ./config/base16.json;
+    };
 
     assertions = [
       {

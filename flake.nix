@@ -118,31 +118,26 @@
               home-manager.nixosModules.home-manager
               # Mango flake module (upstream) – provides programs.mango with addLoginEntry
               (
-                if inputs.mango ? nixosModules then
-                  (
-                    if inputs.mango.nixosModules ? mango then
-                      inputs.mango.nixosModules.mango
-                    else if inputs.mango.nixosModules ? default then
-                      inputs.mango.nixosModules.default
-                    else
-                      { }
-                  )
-                else
-                  { }
+                let
+                  m = inputs.mango.nixosModules or { };
+                in
+                m.mango or m.default or { }
               )
               inputs.silentSDDM.nixosModules.default
               {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.users = hmUsers;
-                home-manager.extraSpecialArgs = {
-                  inherit inputs unstable-pkgs self;
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  users = hmUsers;
+                  extraSpecialArgs = {
+                    inherit inputs unstable-pkgs self;
+                  };
+                  sharedModules =
+                    (import ./modules/default.nix).homeModules
+                    ++ [ inputs.nix-flatpak.homeManagerModules.nix-flatpak ]
+                    ++ extraHmModules;
+                  backupFileExtension = "hm-backup";
                 };
-                home-manager.sharedModules =
-                  (import ./modules/default.nix).homeModules
-                  ++ [ inputs.nix-flatpak.homeManagerModules.nix-flatpak ]
-                  ++ extraHmModules;
-                home-manager.backupFileExtension = "hm-backup";
               }
             ];
         };

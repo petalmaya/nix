@@ -2,7 +2,6 @@
   config,
   pkgs,
   lib,
-  inputs,
   ...
 }:
 {
@@ -16,10 +15,10 @@
     ./intel.nix
   ];
 
-  options = {
-    nixtop.desktop.enable = lib.mkEnableOption "Desktop environment and graphical applications";
+  options.nixtop = {
+    desktop.enable = lib.mkEnableOption "Desktop environment and graphical applications";
 
-    nixtop.shell = lib.mkOption {
+    shell = lib.mkOption {
       type = lib.types.enum [
         "noctalia"
         "quickshell"
@@ -29,7 +28,7 @@
       default = "none";
       description = "Host default for which shell owns the session. Users override via the HM-side nixtop.shell (modules/shell); NixOS-side consumers (greeter default) always follow this host value. 'none' = waybar-only (swayfx bar, no shell).";
     };
-    nixtop.sway.bar = lib.mkOption {
+    sway.bar = lib.mkOption {
       type = lib.types.enum [
         "waybar"
         "swaybar"
@@ -41,54 +40,65 @@
 
     # dev live-edit flags (one symlink per flag, all default off except liveEmacs;
     # see AGENTS.md for the symlink budget)
-    nixtop.dev.liveEmacs = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = "Symlink emacs config dir live into the repo.";
-    };
-    nixtop.dev.liveMango = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Symlink ~/.config/mango live into the repo.";
-    };
-    nixtop.dev.liveMatugen = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Symlink matugen templates live into the repo.";
-    };
-    nixtop.dev.liveQuickshell = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Symlink quickshell config live into the repo.";
-    };
-    nixtop.dev.liveSway = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Symlink sway config live into the repo (mirrors liveMango).";
-    };
-    nixtop.dev.liveMako = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Symlink mako config dir live into the repo (generated colors live in ~/.local/state, so this is safe).";
-    };
-    nixtop.dev.liveWaybar = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-      description = "Symlink waybar config live into the repo (config only; style.css stays matugen-owned).";
+    dev = {
+      liveEmacs = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Symlink emacs config dir live into the repo.";
+      };
+      liveMango = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Symlink ~/.config/mango live into the repo.";
+      };
+      liveMatugen = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Symlink matugen templates live into the repo.";
+      };
+      liveQuickshell = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Symlink quickshell config live into the repo.";
+      };
+      liveSway = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Symlink sway config live into the repo (mirrors liveMango).";
+      };
+      liveMako = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Symlink mako config dir live into the repo (generated colors live in ~/.local/state, so this is safe).";
+      };
+      liveWaybar = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Symlink waybar config live into the repo (config only; style.css stays matugen-owned).";
+      };
     };
   };
 
   config = lib.mkMerge [
     {
-      sops.defaultSopsFile = ../../secrets/secrets.yaml;
-      sops.age.keyFile = "/var/lib/sops-nix/keys.txt";
+      sops = {
+        defaultSopsFile = ../../secrets/secrets.yaml;
+        age.keyFile = "/var/lib/sops-nix/keys.txt";
+        secrets.alice_password.neededForUsers = true;
+        secrets.lewis_password.neededForUsers = true;
+      };
 
-      boot.loader.systemd-boot.enable = true;
-      boot.loader.efi.canTouchEfiVariables = true;
-      boot.binfmt.emulatedSystems = lib.filter (sys: sys != pkgs.stdenv.hostPlatform.system) [
-        "aarch64-linux"
-      ];
-      boot.binfmt.preferStaticEmulators = true;
+      boot = {
+        loader.systemd-boot.enable = true;
+        loader.efi.canTouchEfiVariables = true;
+        binfmt.emulatedSystems = lib.filter (sys: sys != pkgs.stdenv.hostPlatform.system) [
+          "aarch64-linux"
+        ];
+        binfmt.preferStaticEmulators = true;
+        kernel.sysctl = {
+          "vm.swappiness" = 10;
+        };
+      };
 
       networking.networkmanager.enable = true;
       networking.enableIPv6 = true;
@@ -118,41 +128,41 @@
         "python3.12-ecdsa-0.19.1"
       ];
 
-      users.mutableUsers = false;
+      users = {
+        mutableUsers = false;
 
-      sops.secrets.alice_password.neededForUsers = true;
-      users.users.alice = {
-        isNormalUser = true;
-        hashedPasswordFile = config.sops.secrets.alice_password.path;
-        extraGroups = [
-          "networkmanager"
-          "wheel"
-          "video"
-          "audio"
-          "input"
-        ];
-        shell = pkgs.zsh;
-        openssh.authorizedKeys.keys = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIaO01Z2u6T2zPwR/XOoR6Zv0EvgAsTCvCd1M4bm7Yph alice@wonderland"
-        ];
+        users.alice = {
+          isNormalUser = true;
+          hashedPasswordFile = config.sops.secrets.alice_password.path;
+          extraGroups = [
+            "networkmanager"
+            "wheel"
+            "video"
+            "audio"
+            "input"
+          ];
+          shell = pkgs.zsh;
+          openssh.authorizedKeys.keys = [
+            "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIaO01Z2u6T2zPwR/XOoR6Zv0EvgAsTCvCd1M4bm7Yph alice@wonderland"
+          ];
+        };
+
+        users.lewis = {
+          isNormalUser = true;
+          hashedPasswordFile = config.sops.secrets.lewis_password.path;
+          extraGroups = [
+            "networkmanager"
+            "wheel"
+            "video"
+            "audio"
+            "input"
+          ];
+          shell = pkgs.zsh;
+        };
       };
 
-      sops.secrets.lewis_password.neededForUsers = true;
-      users.users.lewis = {
-        isNormalUser = true;
-        hashedPasswordFile = config.sops.secrets.lewis_password.path;
-        extraGroups = [
-          "networkmanager"
-          "wheel"
-          "video"
-          "audio"
-          "input"
-        ];
-        shell = pkgs.zsh;
-      };
-
-      # rose is defined on garden with a placeholder password, so no
-      # rose secret is required here.
+      # rose is defined on garden with a sops secret (see
+      # hosts/garden/default.nix), so no rose secret is required here.
 
       systemd.oomd.enable = true;
       system.stateVersion = "26.05";
@@ -171,17 +181,20 @@
           priority = 0;
         }
       ];
-
-      boot.kernel.sysctl = {
-        "vm.swappiness" = 10;
-      };
     }
 
     (lib.mkIf config.nixtop.desktop.enable {
-      # Mango session via the upstream flake; addLoginEntry registers the .desktop.
-      programs.mango = {
-        enable = lib.mkDefault true;
-        addLoginEntry = lib.mkDefault true;
+      programs = {
+        # Mango session via the upstream flake; addLoginEntry registers the .desktop.
+        mango = {
+          enable = lib.mkDefault true;
+          addLoginEntry = lib.mkDefault true;
+        };
+        sway = {
+          enable = true;
+          package = pkgs.swayfx;
+        };
+        steam.enable = pkgs.stdenv.hostPlatform.isx86_64;
       };
 
       # The greetd greeter user needs a writable home plus an explicit group.
@@ -193,33 +206,53 @@
       };
       users.groups.greeter = { };
 
-      # SilentSDDM is the default greeter; override per-host if needed.
-      nixtop.greetd.greeter = lib.mkDefault "sddm";
-
-      nixtop.security.apparmor.enable = lib.mkDefault true;
-
-      # Sway is the default session for the SDDM chooser (alongside Mango)
-      services.displayManager.defaultSession = lib.mkDefault "sway";
-
-      nixtop.plymouth.enable = lib.mkDefault true;
-
-      security.polkit.enable = true;
-
-      security.rtkit.enable = true;
-      services.pipewire = {
-        enable = true;
-        alsa.enable = true;
-        alsa.support32Bit = pkgs.stdenv.hostPlatform.isx86_64;
-        pulse.enable = true;
+      nixtop = {
+        # SilentSDDM is the default greeter; override per-host if needed.
+        greetd.greeter = lib.mkDefault "sddm";
+        security.apparmor.enable = lib.mkDefault true;
+        plymouth.enable = lib.mkDefault true;
       };
 
-      hardware.graphics = {
-        enable = true;
-        enable32Bit = true;
-        extraPackages = with pkgs; [
-          vulkan-loader
-          vulkan-validation-layers
-        ];
+      services = {
+        # Sway is the default session for the SDDM chooser (alongside Mango)
+        displayManager.defaultSession = lib.mkDefault "sway";
+        pipewire = {
+          enable = true;
+          alsa.enable = true;
+          alsa.support32Bit = pkgs.stdenv.hostPlatform.isx86_64;
+          pulse.enable = true;
+        };
+        gvfs.enable = true;
+        udisks2.enable = true;
+        gnome.gnome-keyring.enable = true;
+        flatpak = {
+          enable = true;
+          remotes = lib.mkOptionDefault [
+            {
+              name = "flathub";
+              location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+            }
+          ];
+        };
+      };
+
+      security = {
+        polkit.enable = true;
+        rtkit.enable = true;
+        pam.services.login.enableGnomeKeyring = true;
+      };
+
+      hardware = {
+        graphics = {
+          enable = true;
+          enable32Bit = true;
+          extraPackages = with pkgs; [
+            vulkan-loader
+            vulkan-validation-layers
+          ];
+        };
+        steam-hardware.enable = true;
+        xpadneo.enable = true;
       };
 
       fonts.packages = with pkgs; [
@@ -250,33 +283,9 @@
         "/share/xsessions"
       ];
 
-      programs.sway = {
-        enable = true;
-        package = pkgs.swayfx;
-      };
-
-      programs.steam.enable = pkgs.stdenv.hostPlatform.isx86_64;
-      hardware.steam-hardware.enable = true;
-
-      hardware.xpadneo.enable = true;
       boot.extraModprobeConfig = ''
         options bluetooth disable_ertm=1
       '';
-
-      services.gvfs.enable = true;
-      services.udisks2.enable = true;
-      services.gnome.gnome-keyring.enable = true;
-      security.pam.services.login.enableGnomeKeyring = true;
-
-      services.flatpak = {
-        enable = true;
-        remotes = lib.mkOptionDefault [
-          {
-            name = "flathub";
-            location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
-          }
-        ];
-      };
     })
   ];
 }

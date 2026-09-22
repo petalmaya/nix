@@ -112,12 +112,12 @@ let
       source_color_index = 0;
     };
     templates = lib.mapAttrs (
-      name: t:
+      _name: t:
       {
         input_path = "${./templates}/${t.input_path}";
-        output_path = t.output_path;
+        inherit (t) output_path;
       }
-      // lib.optionalAttrs (t ? post_hook) { post_hook = t.post_hook; }
+      // lib.optionalAttrs (t ? post_hook) { inherit (t) post_hook; }
     ) enabledTemplates;
   };
 
@@ -125,50 +125,54 @@ let
   liveTemplatePath = "${config.home.homeDirectory}/nix/modules/matugen/templates";
 in
 {
-  options.nixtop.services.matugen.enable = lib.mkOption {
-    type = lib.types.bool;
-    default = true;
-    description = "Master switch for matugen colour generation.";
-  };
-  options.nixtop.services.matugen.repoPath = lib.mkOption {
-    type = lib.types.str;
-    default = "${config.home.homeDirectory}/nix";
-    description = "Repo checkout location (runtime template links point here).";
-  };
-  options.nixtop.services.matugen.templates = lib.genAttrs (builtins.attrNames templates) (
-    name:
-    lib.mkOption {
-      type = lib.types.submodule {
-        options.enable = lib.mkOption {
-          type = lib.types.bool;
-          default = true;
-          description = "Run the '${name}' matugen template.";
-        };
+  options.nixtop = {
+    services.matugen = {
+      enable = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Master switch for matugen colour generation.";
       };
-      default = { };
-      description = "Options for the '${name}' matugen template.";
-    }
-  );
+      repoPath = lib.mkOption {
+        type = lib.types.str;
+        default = "${config.home.homeDirectory}/nix";
+        description = "Repo checkout location (runtime template links point here).";
+      };
+      templates = lib.genAttrs (builtins.attrNames templates) (
+        name:
+        lib.mkOption {
+          type = lib.types.submodule {
+            options.enable = lib.mkOption {
+              type = lib.types.bool;
+              default = true;
+              description = "Run the '${name}' matugen template.";
+            };
+          };
+          default = { };
+          description = "Options for the '${name}' matugen template.";
+        }
+      );
+    };
 
-  # Reserved theming-owner options (owner follows nixtop.shell unless overridden per app).
-  options.nixtop.theme.owner = lib.mkOption {
-    type = lib.types.enum [
-      "auto"
-      "matugen"
-      "noctalia"
-    ];
-    default = "auto";
-    description = "Who owns app theming. auto follows nixtop.shell.";
-  };
-  options.nixtop.theme.apps = lib.mkOption {
-    type = lib.types.attrsOf (
-      lib.types.enum [
+    # Reserved theming-owner options (owner follows nixtop.shell unless overridden per app).
+    theme.owner = lib.mkOption {
+      type = lib.types.enum [
+        "auto"
         "matugen"
         "noctalia"
-      ]
-    );
-    default = { };
-    description = "Per-app override for theming owner.";
+      ];
+      default = "auto";
+      description = "Who owns app theming. auto follows nixtop.shell.";
+    };
+    theme.apps = lib.mkOption {
+      type = lib.types.attrsOf (
+        lib.types.enum [
+          "matugen"
+          "noctalia"
+        ]
+      );
+      default = { };
+      description = "Per-app override for theming owner.";
+    };
   };
 
   config = lib.mkIf cfg.enable (
@@ -182,74 +186,76 @@ in
           config.nixtop.dev.liveMatugen or false;
     in
     {
-      home.packages = with pkgs; [
-        matugen
-        jq
-      ];
+      home = {
+        packages = with pkgs; [
+          matugen
+          jq
+        ];
+
+        # Template sources: store paths by default, one live repo symlink with liveMatugen.
+        file =
+          (
+            lib.mkIf (!liveMatugen) {
+              ".config/matugen/templates".source = ./templates;
+              ".config/matugen/templates".recursive = true;
+            }
+            // lib.mkIf liveMatugen {
+              ".config/matugen/templates".source = config.lib.file.mkOutOfStoreSymlink liveTemplatePath;
+            }
+          )
+          // {
+            ".local/bin/nixtop-theme" = {
+              executable = true;
+              text = ''
+                    #!/usr/bin/env bash
+                    set -euo pipefail
+                    IMG="''${1:-}"
+                    if [ -z "$IMG" ]; then
+                      echo "usage: nixtop-theme <image>" >&2
+                      exit 1
+                    fi
+                matugen image "$IMG"
+                # Live-reload everything matugen just rewrote. Each nudge is
+                # best-effort: only the running compositor/shell picks it up.
+                if pgrep -x sway >/dev/null 2>&1; then
+                      swaymsg reload 2>/dev/null || true
+                    fi
+                    if pgrep -x waybar >/dev/null 2>&1; then
+                      pkill -SIGUSR2 waybar 2>/dev/null || true
+                    fi
+                    if pgrep -x mako >/dev/null 2>&1; then
+                      makoctl reload 2>/dev/null || true
+                    fi
+                if command -v noctalia >/dev/null 2>&1; then
+                  noctalia msg reload 2>/dev/null || true
+                fi
+                mmsg dispatch reload_config 2>/dev/null || true
+                    echo "themed from $IMG"
+              '';
+            };
+          };
+
+        # Seed theme output dirs/files so the first matugen run (and the shells
+        # watching its outputs) never hits a missing path.
+        activation.ensureThemeOutputDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          $DRY_RUN_CMD mkdir -p "$HOME/.config/noctalia/palettes"
+          $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
+          $DRY_RUN_CMD mkdir -p "$HOME/.config/nixtop-shell"
+          $DRY_RUN_CMD mkdir -p "$HOME/.config/bat/themes"
+          $DRY_RUN_CMD mkdir -p "$HOME/.config/foot/themes"
+          $DRY_RUN_CMD mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+          $DRY_RUN_CMD mkdir -p "$HOME/.config/yazi"
+          $DRY_RUN_CMD mkdir -p "$HOME/.config/emacs/themes"
+          $DRY_RUN_CMD mkdir -p "$HOME/.config/fastfetch"
+          $DRY_RUN_CMD [ -e "$HOME/.config/noctalia/palettes/nixtop.json" ] || $DRY_RUN_CMD touch "$HOME/.config/noctalia/palettes/nixtop.json"
+        '';
+      };
 
       # config.toml is generated at build time from the registry above.
       # There is intentionally no checked-in config file to drift out of sync.
       xdg.configFile."matugen/config.toml".source =
         (pkgs.formats.toml { }).generate "matugen-config.toml"
           matugenConfig;
-
-      # Template sources: store paths by default, one live repo symlink with liveMatugen.
-      home.file =
-        (
-          lib.mkIf (!liveMatugen) {
-            ".config/matugen/templates".source = ./templates;
-            ".config/matugen/templates".recursive = true;
-          }
-          // lib.mkIf liveMatugen {
-            ".config/matugen/templates".source = config.lib.file.mkOutOfStoreSymlink liveTemplatePath;
-          }
-        )
-        // {
-          ".local/bin/nixtop-theme" = {
-            executable = true;
-            text = ''
-                  #!/usr/bin/env bash
-                  set -euo pipefail
-                  IMG="''${1:-}"
-                  if [ -z "$IMG" ]; then
-                    echo "usage: nixtop-theme <image>" >&2
-                    exit 1
-                  fi
-              matugen image "$IMG"
-              # Live-reload everything matugen just rewrote. Each nudge is
-              # best-effort: only the running compositor/shell picks it up.
-              if pgrep -x sway >/dev/null 2>&1; then
-                    swaymsg reload 2>/dev/null || true
-                  fi
-                  if pgrep -x waybar >/dev/null 2>&1; then
-                    pkill -SIGUSR2 waybar 2>/dev/null || true
-                  fi
-                  if pgrep -x mako >/dev/null 2>&1; then
-                    makoctl reload 2>/dev/null || true
-                  fi
-              if command -v noctalia >/dev/null 2>&1; then
-                noctalia msg reload 2>/dev/null || true
-              fi
-              mmsg dispatch reload_config 2>/dev/null || true
-                  echo "themed from $IMG"
-            '';
-          };
-        };
-
-      # Seed theme output dirs/files so the first matugen run (and the shells
-      # watching its outputs) never hits a missing path.
-      home.activation.ensureThemeOutputDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/noctalia/palettes"
-        $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/nixtop-shell"
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/bat/themes"
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/foot/themes"
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/yazi"
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/emacs/themes"
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/fastfetch"
-        $DRY_RUN_CMD [ -e "$HOME/.config/noctalia/palettes/nixtop.json" ] || $DRY_RUN_CMD touch "$HOME/.config/noctalia/palettes/nixtop.json"
-      '';
 
       # First-run seed: matugen only runs on demand (`nixtop-theme <image>`),
       # so a fresh checkout would keep empty seeded outputs forever (notably

@@ -1,11 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
-}:
-{
+_: {
   # Per-user Flatpaks via nix-flatpak.
   services.flatpak = {
     enable = true;

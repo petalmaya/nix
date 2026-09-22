@@ -14,7 +14,7 @@ let
       (osConfig.nixtop.desktop.enable or false)
     else
       (lib.attrByPath [ "nixtop" "desktop" "enable" ] false config);
-  swayEnabled = (config.nixtop.sway.enable or false);
+  swayEnabled = config.nixtop.sway.enable or false;
   shouldEnable = desktopEnabled || swayEnabled;
 in
 {

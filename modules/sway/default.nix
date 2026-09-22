@@ -124,120 +124,126 @@ in
 
   config = lib.mkMerge [
     (lib.mkIf config.nixtop.sway.enable {
-      xdg.portal = {
-        enable = lib.mkDefault true;
-        xdgOpenUsePortal = true;
-        config.sway = {
-          default = [
-            "gtk"
-            "gnome"
+      xdg = {
+        portal = {
+          enable = lib.mkDefault true;
+          xdgOpenUsePortal = true;
+          config.sway = {
+            default = [
+              "gtk"
+              "gnome"
+            ];
+            "org.freedesktop.impl.portal.Access" = [ "gtk" ];
+            "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
+            "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
+            "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
+            "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
+            "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
+          };
+          extraPortals = lib.mkDefault [
+            pkgs.gnome-keyring
+            pkgs.xdg-desktop-portal-gtk
+            pkgs.xdg-desktop-portal-wlr
           ];
-          "org.freedesktop.impl.portal.Access" = [ "gtk" ];
-          "org.freedesktop.impl.portal.Notification" = [ "gtk" ];
-          "org.freedesktop.impl.portal.Secret" = [ "gnome-keyring" ];
-          "org.freedesktop.impl.portal.FileChooser" = [ "gtk" ];
-          "org.freedesktop.impl.portal.ScreenCast" = [ "wlr" ];
-          "org.freedesktop.impl.portal.Screenshot" = [ "wlr" ];
         };
-        extraPortals = lib.mkDefault [
-          pkgs.gnome-keyring
-          pkgs.xdg-desktop-portal-gtk
-          pkgs.xdg-desktop-portal-wlr
-        ];
+
+        # Companion configs – fuzzel, swaylock, mako, waybar.
+        # mako/config and waybar/config are static and HM-managed below (store or
+        # live); waybar/style.css is NOT here — matugen owns it (see the seed in
+        # ensureSwayThemeDir), because an HM store symlink is read-only and every
+        # matugen run would fail on it.
+        configFile."fuzzel/fuzzel.ini".source = fuzzelSrc + "/fuzzel.ini";
+        configFile."swaylock/config".source = swaylockSrc + "/config";
       };
 
-      home.packages =
-        with pkgs;
-        [
-          swaybg
-          jq
-          swaylock
-          swayidle
-          grim
-          slurp
-          wl-clipboard
-          fuzzel
-          foot
-          pamixer
-          brightnessctl
-          playerctl
-          libnotify
-          polkit_gnome
-        ]
-        ++ lib.optionals (shell == "none") [ mako ]
-        ++ lib.optionals useWaybar [ waybar ]
-        ++ [
-          # retained for fallback scripts; waybar now provides the bar, so ip/ping/pactl are optional
-          iproute2
-          iputils
-          gawk
-          coreutils
-          pulseaudio # provides pactl (pipewire-pulse compat)
-        ];
+      home = {
+        packages =
+          with pkgs;
+          [
+            swaybg
+            jq
+            swaylock
+            swayidle
+            grim
+            slurp
+            wl-clipboard
+            fuzzel
+            foot
+            pamixer
+            brightnessctl
+            playerctl
+            libnotify
+            polkit_gnome
+          ]
+          ++ lib.optionals (shell == "none") [ mako ]
+          ++ lib.optionals useWaybar [ waybar ]
+          ++ [
+            # retained for fallback scripts; waybar now provides the bar, so ip/ping/pactl are optional
+            iproute2
+            iputils
+            gawk
+            coreutils
+            pulseaudio # provides pactl (pipewire-pulse compat)
+          ];
 
-      # Companion configs – fuzzel, swaylock, mako, waybar.
-      # mako/config and waybar/config are static and HM-managed below (store or
-      # live); waybar/style.css is NOT here — matugen owns it (see the seed in
-      # ensureSwayThemeDir), because an HM store symlink is read-only and every
-      # matugen run would fail on it.
-      xdg.configFile."fuzzel/fuzzel.ini".source = fuzzelSrc + "/fuzzel.ini";
-      xdg.configFile."swaylock/config".source = swaylockSrc + "/config";
+        # polkit agent wrapper — used by sway/autostart.conf via `exec ~/.local/bin/start-polkit`
+        # This lives outside ~/.config/sway so it works both store-built and live-symlinked.
+        file.".local/bin/start-polkit" = {
+          executable = true;
+          text = ''
+            #!/bin/sh
+            exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 "$@"
+          '';
+        };
 
-      # polkit agent wrapper — used by sway/autostart.conf via `exec ~/.local/bin/start-polkit`
-      # This lives outside ~/.config/sway so it works both store-built and live-symlinked.
-      home.file.".local/bin/start-polkit" = {
-        executable = true;
-        text = ''
-          #!/bin/sh
-          exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 "$@"
-        '';
+        # Ensure scripts are executable even when live (mkOutOfStoreSymlink keeps perms)
+        activation = {
+          ensureSwayScriptsExecutable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+            $DRY_RUN_CMD chmod +x "$HOME/.config/sway/scripts/"* 2>/dev/null || true
+            # status.sh archived (waybar replaces it); keep executable if present for manual use
+            $DRY_RUN_CMD chmod +x "$HOME/.config/sway/status.sh" 2>/dev/null || true
+          '';
+
+          # Writable theme outputs matugen needs before its first run. style.css is
+          # matugen-owned (never HM-managed): seed a writable copy once, and drop
+          # the pre-fix store symlink so old checkouts heal.
+          ensureSwayThemeDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+            $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
+            $DRY_RUN_CMD mkdir -p "$HOME/.config/waybar"
+            $DRY_RUN_CMD mkdir -p "$HOME/.config/fuzzel/themes"
+            $DRY_RUN_CMD [ -e "$HOME/.local/state/nixtop/theme/sway" ] || $DRY_RUN_CMD touch "$HOME/.local/state/nixtop/theme/sway"
+            $DRY_RUN_CMD [ -e "$HOME/.local/state/nixtop/theme/mako" ] || $DRY_RUN_CMD touch "$HOME/.local/state/nixtop/theme/mako"
+            $DRY_RUN_CMD [ -e "$HOME/.config/fuzzel/themes/generated" ] || $DRY_RUN_CMD touch "$HOME/.config/fuzzel/themes/generated"
+            $DRY_RUN_CMD [ ! -L "$HOME/.config/waybar/style.css" ] || $DRY_RUN_CMD rm "$HOME/.config/waybar/style.css"
+            $DRY_RUN_CMD [ -e "$HOME/.config/waybar/style.css" ] || $DRY_RUN_CMD cp "${waybarConfig}/style.css" "$HOME/.config/waybar/style.css"
+            $DRY_RUN_CMD chmod u+w "$HOME/.config/waybar/style.css" 2>/dev/null || true
+          '';
+
+          # Live variant: with liveSway, ~/.config/sway is a symlink into the repo,
+          # so the store-built variant.conf is not used. Copy the same
+          # single-source file the store build reads
+          # (modules/sway/variants/<name>.conf); swaymsg reload picks it up.
+          # The rendered file is git-ignored (it is generated, per-shell).
+          #
+          # Never mkdir ~/.config/sway here: it is a symlink, and writing through
+          # a dangling one (no ~/nix checkout) aborts activation — while HM
+          # recreates the link every run, so deleting it cannot help either.
+          # Skip with a warning instead; the fix is cloning the repo to ~/nix.
+          ensureSwayLiveVariant = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+            if [ "${if liveSway then "1" else "0"}" = "1" ]; then
+              if [ -d "$HOME/.config/sway" ]; then
+                $DRY_RUN_CMD cp "${./variants}/${variantName}.conf" "$HOME/.config/sway/variant.conf"
+                ${lib.optionalString (shell == "jes") ''
+                  # JES include differs by path only: store dir vs live checkout.
+                  $DRY_RUN_CMD sed -i "s|@jesKeybinds@|$HOME/nix/modules/shell/jes/sway/keybinds.conf|" "$HOME/.config/sway/variant.conf"
+                ''}
+              else
+                echo "liveSway is on but $HOME/.config/sway is a dangling symlink: clone the repo to $HOME/nix (or disable nixtop.dev.liveSway); leaving variant.conf alone" >&2
+              fi
+            fi
+          '';
+        };
       };
-
-      # Ensure scripts are executable even when live (mkOutOfStoreSymlink keeps perms)
-      home.activation.ensureSwayScriptsExecutable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD chmod +x "$HOME/.config/sway/scripts/"* 2>/dev/null || true
-        # status.sh archived (waybar replaces it); keep executable if present for manual use
-        $DRY_RUN_CMD chmod +x "$HOME/.config/sway/status.sh" 2>/dev/null || true
-      '';
-
-      # Writable theme outputs matugen needs before its first run. style.css is
-      # matugen-owned (never HM-managed): seed a writable copy once, and drop
-      # the pre-fix store symlink so old checkouts heal.
-      home.activation.ensureSwayThemeDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/waybar"
-        $DRY_RUN_CMD mkdir -p "$HOME/.config/fuzzel/themes"
-        $DRY_RUN_CMD [ -e "$HOME/.local/state/nixtop/theme/sway" ] || $DRY_RUN_CMD touch "$HOME/.local/state/nixtop/theme/sway"
-        $DRY_RUN_CMD [ -e "$HOME/.local/state/nixtop/theme/mako" ] || $DRY_RUN_CMD touch "$HOME/.local/state/nixtop/theme/mako"
-        $DRY_RUN_CMD [ -e "$HOME/.config/fuzzel/themes/generated" ] || $DRY_RUN_CMD touch "$HOME/.config/fuzzel/themes/generated"
-        $DRY_RUN_CMD [ ! -L "$HOME/.config/waybar/style.css" ] || $DRY_RUN_CMD rm "$HOME/.config/waybar/style.css"
-        $DRY_RUN_CMD [ -e "$HOME/.config/waybar/style.css" ] || $DRY_RUN_CMD cp "${waybarConfig}/style.css" "$HOME/.config/waybar/style.css"
-        $DRY_RUN_CMD chmod u+w "$HOME/.config/waybar/style.css" 2>/dev/null || true
-      '';
-
-      # Live variant: with liveSway, ~/.config/sway is a symlink into the repo,
-      # so the store-built variant.conf is not used. Copy the same
-      # single-source file the store build reads
-      # (modules/sway/variants/<name>.conf); swaymsg reload picks it up.
-      # The rendered file is git-ignored (it is generated, per-shell).
-      #
-      # Never mkdir ~/.config/sway here: it is a symlink, and writing through
-      # a dangling one (no ~/nix checkout) aborts activation — while HM
-      # recreates the link every run, so deleting it cannot help either.
-      # Skip with a warning instead; the fix is cloning the repo to ~/nix.
-      home.activation.ensureSwayLiveVariant = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        if [ "${if liveSway then "1" else "0"}" = "1" ]; then
-          if [ -d "$HOME/.config/sway" ]; then
-            $DRY_RUN_CMD cp "${./variants}/${variantName}.conf" "$HOME/.config/sway/variant.conf"
-            ${lib.optionalString (shell == "jes") ''
-              # JES include differs by path only: store dir vs live checkout.
-              $DRY_RUN_CMD sed -i "s|@jesKeybinds@|$HOME/nix/modules/shell/jes/sway/keybinds.conf|" "$HOME/.config/sway/variant.conf"
-            ''}
-          else
-            echo "liveSway is on but $HOME/.config/sway is a dangling symlink: clone the repo to $HOME/nix (or disable nixtop.dev.liveSway); leaving variant.conf alone" >&2
-          fi
-        fi
-      '';
     })
 
     (lib.mkIf (config.nixtop.sway.enable && !liveSway) {
