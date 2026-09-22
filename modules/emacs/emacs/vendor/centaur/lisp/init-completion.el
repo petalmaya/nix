@@ -68,7 +68,11 @@
            ("DEL" . vertico-directory-delete-char)
            ("M-DEL" . vertico-directory-delete-word))
     :hook ((after-init . vertico-mode)
-           (rfn-eshadow-update-overlay . vertico-directory-tidy)))
+           (rfn-eshadow-update-overlay . vertico-directory-tidy))
+    :config
+    ;; Enable directly: the after-init hook alone misses daemon and
+    ;; Elpaca-deferred startups.
+    (vertico-mode 1))
 
   ;; Floating completion overlay. Off unless `flutter-completion-style'
   ;; is 'childframe (default is the minibuffer above).
@@ -91,7 +95,10 @@
 
   ;; Enrich existing commands with completion annotations
   (use-package marginalia
-    :hook (after-init . marginalia-mode))
+    :hook (after-init . marginalia-mode)
+    :config
+    ;; Same direct enable as vertico above.
+    (marginalia-mode 1))
 
   ;; Add icons to completion candidates
   (use-package nerd-icons-completion
