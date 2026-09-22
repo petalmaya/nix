@@ -39,6 +39,8 @@ in
         wl-clipboard
         brightnessctl
         swaybg
+        mako
+        libnotify
       ]
       ++ lib.optionals (ewmElisp != null) [
         # For etc/emacs-ewm.zsh below; the load-path comes from modules/emacs.

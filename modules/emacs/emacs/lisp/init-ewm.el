@@ -126,6 +126,14 @@ yet, so swaybg dies silently."
       (flutter-ewm--start-wallpaper flutter-ewm-wallpaper)
     (error (display-warning 'init-ewm (error-message-string err)))))
 
+(defvar flutter-ewm--notif-process nil)
+
+(defun flutter-ewm--maybe-start-notifications (&rest _)
+  (when (and (getenv "WAYLAND_DISPLAY") (executable-find "mako"))
+    (unless (process-live-p flutter-ewm--notif-process)
+      (setq flutter-ewm--notif-process
+            (start-process "ewm-mako" nil "mako")))))
+
 ;;;###autoload
 (defun flutter-ewm-set-wallpaper (image)
   "Pick a background from `flutter-ewm-wallpaper-directory' and apply it.
@@ -321,7 +329,8 @@ One-shot: later frames (e.g. emacsclient) are left alone."
   ;; (see `flutter-ewm--maybe-start-wallpaper'): at require time there is
   ;; no Wayland socket yet.
   (when (fboundp 'ewm-start-module)
-    (advice-add 'ewm-start-module :after #'flutter-ewm--maybe-start-wallpaper))
+    (advice-add 'ewm-start-module :after #'flutter-ewm--maybe-start-wallpaper)
+    (advice-add 'ewm-start-module :after #'flutter-ewm--maybe-start-notifications))
 
   ;; Compositor hydra (this config's hydra idiom). Bound here so nested
   ;; `emacs' never sees it.
