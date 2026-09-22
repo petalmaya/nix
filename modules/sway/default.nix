@@ -232,11 +232,17 @@ in
           ensureSwayLiveVariant = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             if [ "${if liveSway then "1" else "0"}" = "1" ]; then
               if [ -d "$HOME/.config/sway" ]; then
-                $DRY_RUN_CMD cp "${./variants}/${variantName}.conf" "$HOME/.config/sway/variant.conf"
-                ${lib.optionalString (shell == "jes") ''
-                  # JES include differs by path only: store dir vs live checkout.
-                  $DRY_RUN_CMD sed -i "s|@jesKeybinds@|$HOME/nix/modules/shell/jes/sway/keybinds.conf|" "$HOME/.config/sway/variant.conf"
-                ''}
+                # rm first: plain cp fails on a stale read-only variant.conf.
+                $DRY_RUN_CMD rm -f "$HOME/.config/sway/variant.conf" || true
+                if $DRY_RUN_CMD cp "${./variants}/${variantName}.conf" "$HOME/.config/sway/variant.conf"; then
+                  ${lib.optionalString (shell == "jes") ''
+                    # JES include differs by path only: store dir vs live checkout.
+                    $DRY_RUN_CMD sed -i "s|@jesKeybinds@|$HOME/nix/modules/shell/jes/sway/keybinds.conf|" "$HOME/.config/sway/variant.conf"
+                  ''}
+                else
+                  echo "WARNING: cannot write $HOME/.config/sway/variant.conf (dir owner: $(stat -c %U "$HOME/.config/sway"), you: $(whoami)); leaving the old one, sway keeps stale keybinds" >&2
+                  echo "WARNING: fix with: sudo chown -R $(whoami) $HOME/.config/sway $HOME/nix  (then rebuild)" >&2
+                fi
               else
                 echo "liveSway is on but $HOME/.config/sway is a dangling symlink: clone the repo to $HOME/nix (or disable nixtop.dev.liveSway); leaving variant.conf alone" >&2
               fi
