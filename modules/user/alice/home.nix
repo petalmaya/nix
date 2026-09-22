@@ -7,25 +7,20 @@
   ...
 }:
 {
-  imports = [ ./flatnix.nix ];
+  imports = [
+    ./flatnix.nix
+    ../base.nix
+  ];
 
   home.username = "alice";
   home.homeDirectory = "/home/alice";
 
   nixtop = {
-    terminal.zsh.enable = true;
-    terminal.tmux.enable = true;
-    terminal.foot.enable = true;
-
-    apps.fetch.enable = true;
-    apps.yazi.enable = true;
     apps.chromium.enable = true;
     apps.emacs.enable = true;
 
     # EWM overlay + tools. Pick "ewm" at login, or Noctalia as before.
     ewm.enable = true;
-
-    sway.enable = true;
   };
 
   # Noctalia shell is per-user: lewis on the same host keeps the host default.
@@ -126,14 +121,9 @@
     };
   };
 
-  home.stateVersion = "26.05";
-  programs.home-manager.enable = true;
-
   xdg.userDirs = {
-    enable = true;
     createDirectories = true;
     templates = "${config.home.homeDirectory}/Templates";
-    setSessionVariables = true;
   };
 
   xdg.mimeApps = {

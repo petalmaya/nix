@@ -1,19 +1,16 @@
 { config, pkgs, ... }:
 {
-  imports = [ ./flatnix.nix ];
+  imports = [
+    ./flatnix.nix
+    ../base.nix
+  ];
 
   home.username = "rose";
   home.homeDirectory = "/home/rose";
 
   nixtop = {
-    terminal.zsh.enable = true;
-    terminal.tmux.enable = true;
-    terminal.foot.enable = true;
-    apps.fetch.enable = true;
-    apps.yazi.enable = true;
     apps.chromium.enable = true;
     apps.emacs.enable = true;
-    sway.enable = true;
   };
 
   home.file."Pictures/Wallpapers".source =
@@ -21,13 +18,8 @@
 
   home.packages = [ pkgs.git ];
 
-  home.stateVersion = "26.05";
-  programs.home-manager.enable = true;
-
   xdg.userDirs = {
-    enable = true;
     createDirectories = true;
     templates = "${config.home.homeDirectory}/Templates";
-    setSessionVariables = true;
   };
 }

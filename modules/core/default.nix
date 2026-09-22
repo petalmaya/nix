@@ -12,6 +12,8 @@
     ./nix-ld.nix
     ./podman.nix
     ./greetd.nix
+    ./wifi.nix
+    ./intel.nix
   ];
 
   options = {
