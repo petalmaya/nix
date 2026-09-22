@@ -79,6 +79,23 @@
 (require 'init-custom)
 (require 'init-funcs)
 
+;; Runtime state lives outside the repo (XDG state dir), so live
+;; (symlinked ~/.config/emacs) and store builds agree and `git status`
+;; stays clean after customize-save + restart.  Files keep their old
+;; basenames; copy any you want to keep from the repo checkout once.
+(defvar flutter/state-directory
+  (expand-file-name "emacs" (or (getenv "XDG_STATE_HOME")
+                                (expand-file-name "~/.local/state")))
+  "Directory for Emacs runtime state (custom.el, recentf, places, ...).")
+(make-directory flutter/state-directory :parents)
+(setq custom-file (expand-file-name "custom.el" flutter/state-directory)
+      recentf-save-file (expand-file-name "recentf.eld" flutter/state-directory)
+      save-place-file (expand-file-name "places.eld" flutter/state-directory)
+      savehist-file (expand-file-name "history" flutter/state-directory)
+      eshell-aliases-file (expand-file-name "eshell-alias" flutter/state-directory)
+      eshell-history-file-name (expand-file-name "eshell-history" flutter/state-directory)
+      tramp-persistency-file-name (expand-file-name "tramp" flutter/state-directory))
+
 ;; Packages — Elpaca bootstrap (see lisp/my-elpaca.el).  Must run before
 ;; any use-package so `:ensure' resolves through Elpaca.
 (require 'my-elpaca)
