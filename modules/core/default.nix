@@ -31,11 +31,10 @@
     sway.bar = lib.mkOption {
       type = lib.types.enum [
         "waybar"
-        "swaybar"
         "none"
       ];
       default = "waybar";
-      description = "Which bar to run under swayfx. waybar is primary; swaybar is archived status.sh; none disables bar entirely.";
+      description = "Which bar to run under swayfx. waybar is primary; none disables bar entirely.";
     };
 
     # dev live-edit flags (one symlink per flag, all default off except liveEmacs;

@@ -176,15 +176,7 @@ in
             polkit_gnome
           ]
           ++ lib.optionals (shell == "none") [ mako ]
-          ++ lib.optionals useWaybar [ waybar ]
-          ++ [
-            # retained for fallback scripts; waybar now provides the bar, so ip/ping/pactl are optional
-            iproute2
-            iputils
-            gawk
-            coreutils
-            pulseaudio # provides pactl (pipewire-pulse compat)
-          ];
+          ++ lib.optionals useWaybar [ waybar ];
 
         # polkit agent wrapper — used by sway/autostart.conf via `exec ~/.local/bin/start-polkit`
         # This lives outside ~/.config/sway so it works both store-built and live-symlinked.
@@ -200,8 +192,6 @@ in
         activation = {
           ensureSwayScriptsExecutable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             $DRY_RUN_CMD chmod +x "$HOME/.config/sway/scripts/"* 2>/dev/null || true
-            # status.sh archived (waybar replaces it); keep executable if present for manual use
-            $DRY_RUN_CMD chmod +x "$HOME/.config/sway/status.sh" 2>/dev/null || true
           '';
 
           # Writable theme outputs matugen needs before its first run. style.css is

@@ -1,8 +1,7 @@
 {
   config,
   lib,
-  inputs,
-  self ? inputs.self or null,
+  self,
   ...
 }:
 let
@@ -10,7 +9,7 @@ let
   # derive flake URI from the current flake if user didn't override
   # `self` is the flake itself; string interpolation yields its outPath (store copy)
   # For a mutable checkout (e.g. /home/alice/nix) override via nixtop.maintenance.autoUpgrade.flake
-  defaultFlake = if self != null then "${self}#${config.networking.hostName}" else null;
+  defaultFlake = "${self}#${config.networking.hostName}";
 in
 {
   options.nixtop.maintenance = {

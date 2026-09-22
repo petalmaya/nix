@@ -1,10 +1,13 @@
 {
   config,
   pkgs,
-  lib,
   unstable-pkgs,
   ...
 }:
+let
+  # Newer versions than our 26.05 pin (antigravity-ide is unstable-only).
+  unstable = unstable-pkgs;
+in
 {
   imports = [
     ./flatnix.nix
@@ -19,7 +22,7 @@
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix/assets/wallpaper";
 
     # Flat package list, grouped by use.
-    packages = lib.filter (p: p != null) (
+    packages =
       (with pkgs; [
         # communication
         links2
@@ -72,19 +75,18 @@
         age
         sops
         stack
+        yt-dlp
+        pokemmo-installer
         # launchers / extras
         fuzzel
         keepassxc
       ])
-      ++ [
-        unstable-pkgs.tutanota-desktop or null
-        unstable-pkgs.antigravity-ide or null
-        unstable-pkgs.tauon or null
-        unstable-pkgs.ani-cli or null
-        (unstable-pkgs.yt-dlp or pkgs.yt-dlp or null)
-        (unstable-pkgs.pokemmo-installer or pkgs.pokemmo-installer or null)
-      ]
-    );
+      ++ (with unstable; [
+        tutanota-desktop
+        antigravity-ide
+        tauon
+        ani-cli
+      ]);
   };
 
   nixtop = {

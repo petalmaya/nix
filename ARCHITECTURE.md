@@ -34,7 +34,7 @@ A file does nothing because it exists – it must be imported via `modules/defau
 
 ### `flake.nix`
 
-Pins external inputs (`nixpkgs` 26.05, `nixpkgs-unstable`, `home-manager`, `nix-flatpak`, `disko`, `sops-nix`, `noctalia-shell`, `emacs-overlay`, `firefox-addons`, `nixpak`, `mango`), creates the three `nixosConfigurations`, passes `inputs`/`unstable-pkgs`/`self`, imports each host's `hardware-configuration.nix` + `default.nix` + `disko.nix`, imports `modules/default.nix`, and configures Home Manager (`useGlobalPkgs`, `users = hmUsers`, `sharedModules`).
+Pins external inputs (`nixpkgs` 26.05, `nixpkgs-unstable`, `home-manager`, `nix-flatpak`, `disko`, `sops-nix`, `noctalia-shell`, `emacs-overlay`, `firefox-addons`, `mango`), creates the three `nixosConfigurations`, passes `inputs`/`unstable-pkgs`/`self`, imports each host's `hardware-configuration.nix` + `default.nix` + `disko.nix`, imports `modules/default.nix`, and configures Home Manager (`useGlobalPkgs`, `users = hmUsers`, `sharedModules`).
 
 `garden` is a real host with a default btrfs `disko.nix` and `zswap` (not `zram`); its `hardware-configuration.nix` is a placeholder until the laptop is installed – `nix build .#garden` is expected to fail until then.
 

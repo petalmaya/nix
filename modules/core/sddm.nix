@@ -33,9 +33,6 @@ in
           scale = 1.0;
         };
       };
-      # extra backgrounds / profile icons can be set per-host if desired:
-      # backgrounds = { ... };
-      # settings = { "LoginScreen.background" = "..."; };
     };
 
     # SDDM itself is enabled by programs.silentSDDM (sets

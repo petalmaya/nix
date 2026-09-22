@@ -34,19 +34,22 @@ let
   # skipped. Same filename + DesktopNames=ewm keeps SDDM last-session
   # memory. passthru.providedSessions is required by the sessionPackages
   # option type.
-  ewmLaunchSession = pkgs.runCommand "ewm-launch-session" {
-    passthru.providedSessions = [ "ewm" ];
-  } ''
-    mkdir -p $out/share/wayland-sessions
-    cat > $out/share/wayland-sessions/ewm.desktop <<EOF
-    [Desktop Entry]
-    Name=ewm
-    Comment=Emacs Wayland Manager (direct launch)
-    Exec=ewm-launch
-    Type=Application
-    DesktopNames=ewm
-    EOF
-  '';
+  ewmLaunchSession =
+    pkgs.runCommand "ewm-launch-session"
+      {
+        passthru.providedSessions = [ "ewm" ];
+      }
+      ''
+        mkdir -p $out/share/wayland-sessions
+        cat > $out/share/wayland-sessions/ewm.desktop <<EOF
+        [Desktop Entry]
+        Name=ewm
+        Comment=Emacs Wayland Manager (direct launch)
+        Exec=ewm-launch
+        Type=Application
+        DesktopNames=ewm
+        EOF
+      '';
 in
 {
   imports = [ inputs.ewm.nixosModules.default ];
@@ -73,8 +76,7 @@ in
 
   config = lib.mkIf cfg.enable {
     # Upstream session entry shadowed: Exec=ewm-launch (see ewmLaunchSession
-    # above). Keep the TimeoutStartSec drop-in below for the TTY path until
-    # Phase 6 pre-warms the Elpaca cache.
+    # above). The TimeoutStartSec drop-in below stays for cold Elpaca caches.
     services.displayManager.sessionPackages = lib.mkBefore [ ewmLaunchSession ];
 
     # Upstream nix/service.nix provides launcher, ewm.desktop, systemd

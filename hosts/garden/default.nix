@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   networking.hostName = "garden";
   networking.extraHosts = "127.0.0.1 garden";

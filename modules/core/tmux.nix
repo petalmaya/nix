@@ -13,7 +13,7 @@
       plugins = [
         (pkgs.tmuxPlugins.mkTmuxPlugin {
           pluginName = "tmux-everforest";
-          version = "unstable";
+          version = "master";
           src = pkgs.fetchFromGitHub {
             owner = "TanglingTreats";
             repo = "tmux-everforest";

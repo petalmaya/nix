@@ -112,7 +112,7 @@ let
       source_color_index = 0;
     };
     templates = lib.mapAttrs (
-      _name: t:
+      _: t:
       {
         input_path = "${./templates}/${t.input_path}";
         inherit (t) output_path;

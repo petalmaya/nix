@@ -10,6 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v30
+      # The repo formatter (nixfmt over every *.nix) must leave a clean
+      # tree; `nix fmt` mutates, so fail if it changed anything.
+      - run: nix fmt
+      - run: git diff --exit-code
       - run: nix flake check --no-build
       # statix.toml excludes hosts/*/hardware-configuration.nix
       # (generated/placeholder files — never touch).
