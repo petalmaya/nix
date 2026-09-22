@@ -19,12 +19,14 @@ let
   };
 in
 {
-  options.nixtop.apps.firefox-esr.enable = lib.mkEnableOption "Firefox ESR browser configuration";
+  options.nixtop.apps.firefox.enable = lib.mkEnableOption "Firefox browser configuration";
 
-  config = lib.mkIf config.nixtop.apps.firefox-esr.enable {
+  config = lib.mkIf config.nixtop.apps.firefox.enable {
     programs.firefox = {
       enable = true;
-      package = pkgs.firefox-esr;
+      # Rapid release (not ESR): auto-rebuilds track upstream, so we get
+      # new privacy/security features without waiting for the ESR cycle.
+      package = pkgs.firefox;
       # XDG config path (nixpkgs 26.05).
       configPath = "${config.xdg.configHome}/mozilla/firefox";
       nativeMessagingHosts = [ pywalfox-manifest ];

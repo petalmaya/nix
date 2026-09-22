@@ -1,7 +1,7 @@
 { ... }:
 {
   imports = [
-    ./firefox-esr.nix
+    ./firefox.nix
     ./floorp.nix
     ./chromium.nix
   ];

@@ -90,7 +90,7 @@ Shell HM modules live under `modules/shell/` (`noctalia/`, `quickshell/`,
 | Prefix | Meaning |
 |---|---|
 | `nixtop.terminal.*` | zsh, tmux, foot (foot lives in `conf/` but keeps `nixtop.terminal.foot`) |
-| `nixtop.apps.*` | `fetch`, `yazi`, `firefox-esr`, `floorp`, `emacs` |
+| `nixtop.apps.*` | `fetch`, `yazi`, `firefox`, `floorp`, `emacs` |
 | `nixtop.services.*` | `matugen` (plus future services) |
 | `nixtop.shell` | `"noctalia"` \| `"quickshell"` \| `"jes"` \| `"none"` – the single switch for shell/Mango variant/theming default (EWM is separate, next row) |
 | `nixtop.ewm.enable` | Extra `ewm` login session (NixOS) + Emacs overlay (HM). Independent of `nixtop.shell` |

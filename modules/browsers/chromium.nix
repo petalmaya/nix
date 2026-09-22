@@ -11,20 +11,23 @@
     programs.chromium = {
       enable = true;
       package = pkgs.chromium;
-      # uBlock Origin, Dark Reader, Bitwarden, SponsorBlock
+      # Full uBlock Origin is MV2-only and dead on Chromium 139+; uBOL is
+      # gorhill's official MV3 build. The rest are MV3-compatible.
       extensions = [
-        { id = "cjpalhdlnbpafiamejdnhcphjbkeiagm"; } # uBlock Origin
+        { id = "ddkjiahejlhfcafbddmgiahcphecmpfh"; } # uBlock Origin Lite
         { id = "eimadpbcbfnmbkopoojfekhnkhdbieeh"; } # Dark Reader
         { id = "nngceckbapebfimnlniiiahkandclblb"; } # Bitwarden
         { id = "mnjggcdmjocbbbhaepdhchncahnbgone"; } # SponsorBlock
       ];
-      # Chromium policies set via extraOpts are locked; use commandLineArgs
-      # for flags that should stay user-changeable.
+      # Wrapper flag only, no Chromium rebuild. hint=auto picks Wayland
+      # under sway/mango and still falls back to X11/XWayland.
       commandLineArgs = [
-        "--enable-features=UseOzonePlatform"
-        "--ozone-platform=wayland"
+        "--ozone-platform-hint=auto"
       ];
     };
+
+    # Hardening policies live in ./chromium-policies.nix (NixOS side; HM's
+    # programs.chromium has no policy options).
 
     # Make chromium the default handler for web MIME types.
     xdg.mimeApps.defaultApplications = lib.mkDefault {

@@ -226,7 +226,7 @@ Singleton {
     JsonAdapter {
       id: jsonData
 
-      property list<string> pinnedApps: ["foot", "firefox-esr", "org.gnome.Nautilus"]
+      property list<string> pinnedApps: ["foot", "firefox", "org.gnome.Nautilus"]
     }
   }
 }
