@@ -17,12 +17,11 @@ in
     };
     greeter = lib.mkOption {
       type = lib.types.enum [
-        "noctalia"
         "quickshell"
         "sddm"
       ];
       default = config.nixtop.shell;
-      description = "Which greeter to run. Mutually exclusive; one of noctalia, quickshell (nixtop-shell), or sddm (SilentSDDM).";
+      description = "Which greeter to run. Mutually exclusive; one of quickshell (nixtop-shell) or sddm (SilentSDDM).";
     };
   };
 
@@ -30,8 +29,8 @@ in
     (lib.mkIf (cfg.enable && cfg.greeter != "sddm") {
       assertions = [
         {
-          assertion = cfg.greeter == "noctalia" || cfg.greeter == "quickshell";
-          message = "nixtop.greetd.greeter must be 'noctalia', 'quickshell' or 'sddm' (sddm is handled by SilentSDDM)";
+          assertion = cfg.greeter == "quickshell";
+          message = "nixtop.greetd.greeter must be 'quickshell' or 'sddm' (sddm is handled by SilentSDDM)";
         }
       ];
 
@@ -41,7 +40,7 @@ in
       };
 
       # The actual default_session.command is set by the selected greeter module
-      # (modules/shell/noctalia/greeter.nix or modules/shell/quickshell/greeter.nix).
+      # (modules/shell/quickshell/greeter.nix).
       # We only assert that exactly one greeter is active and that services.greetd
       # is not left without a command – the greeter modules themselves are
       # responsible for filling settings.default_session when their selector matches.

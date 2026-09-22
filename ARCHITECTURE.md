@@ -34,7 +34,7 @@ A file does nothing because it exists – it must be imported via `modules/defau
 
 ### `flake.nix`
 
-Pins external inputs (`nixpkgs` 26.05, `nixpkgs-unstable`, `home-manager`, `nix-flatpak`, `disko`, `sops-nix`, `noctalia-shell`/`noctalia-greeter`, `nixmacs`/`emacs-overlay`, `firefox-addons`, `nixpak`, `mango`), creates the three `nixosConfigurations`, passes `inputs`/`unstable-pkgs`/`self`, imports each host's `hardware-configuration.nix` + `default.nix` + `disko.nix`, imports `modules/default.nix`, and configures Home Manager (`useGlobalPkgs`, `users = hmUsers`, `sharedModules`).
+Pins external inputs (`nixpkgs` 26.05, `nixpkgs-unstable`, `home-manager`, `nix-flatpak`, `disko`, `sops-nix`, `noctalia-shell`, `emacs-overlay`, `firefox-addons`, `nixpak`, `mango`), creates the three `nixosConfigurations`, passes `inputs`/`unstable-pkgs`/`self`, imports each host's `hardware-configuration.nix` + `default.nix` + `disko.nix`, imports `modules/default.nix`, and configures Home Manager (`useGlobalPkgs`, `users = hmUsers`, `sharedModules`).
 
 `garden` is a real host with a default btrfs `disko.nix` and `zswap` (not `zram`); its `hardware-configuration.nix` is a placeholder until the laptop is installed – `nix build .#garden` is expected to fail until then.
 
@@ -76,7 +76,7 @@ Host → user matrix: `wonderland` = alice+lewis, `rabbit` = lewis, `garden` = r
 
 ```nix
 {
-  nixosModules = [ ./core ./core/apparmor.nix ./core/sddm.nix ./core/maintenance.nix ./ewm ./shell/noctalia/greeter.nix ./shell/quickshell/greeter.nix ];
+  nixosModules = [ ./core ./core/apparmor.nix ./core/sddm.nix ./core/maintenance.nix ./ewm ./shell/quickshell/greeter.nix ];
   homeModules  = [ ./core/zsh.nix ./core/tmux.nix ./browsers ./conf ./emacs ./ewm/home.nix ./mango ./matugen ./sway ./shell ];
 }
 ```
@@ -90,7 +90,7 @@ Shell HM modules live under `modules/shell/` (`noctalia/`, `quickshell/`,
 | Prefix | Meaning |
 |---|---|
 | `nixtop.terminal.*` | zsh, tmux, foot (foot lives in `conf/` but keeps `nixtop.terminal.foot`) |
-| `nixtop.apps.*` | `fetch`, `yazi`, `firefox`, `floorp`, `emacs` |
+| `nixtop.apps.*` | `fetch`, `yazi`, `firefox`, `chromium`, `emacs` |
 | `nixtop.services.*` | `matugen` (plus future services) |
 | `nixtop.shell` | `"noctalia"` \| `"quickshell"` \| `"jes"` \| `"none"` – the single switch for shell/Mango variant/theming default (EWM is separate, next row) |
 | `nixtop.ewm.enable` | Extra `ewm` login session (NixOS) + Emacs overlay (HM). Independent of `nixtop.shell` |
@@ -102,7 +102,7 @@ Shell HM modules live under `modules/shell/` (`noctalia/`, `quickshell/`,
 - **Mango**: `modules/mango/{config,settings,layout,rules,animations}.conf` (shared) + `variants/{noctalia,quickshell}/{appearance,keybinds,autostart}.conf` (shell-coupled). `default.nix` merges `shared + variants/${nixtop.shell}` into `~/.config/mango` as one directory (or one out-of-store symlink when `liveMango`). Generated colours go to `~/.local/state/nixtop/theme/mango.conf` (included from `config.conf`), not inside the repo checkout.
 - **matugen**: `modules/matugen/default.nix` + templates (`noctalia` palette bridge, `jes`, `mango`, `sway`, `waybar`, `fuzzel`, `mako`, `quickshell`, `foot`, `gtk3/4`, `bat`, `starship`, `fastfetch`, `yazi`, `emacs`, `papirus-icons`). Registry is one Nix attrset → `config.toml` generated at build time. `nixtop-theme <image>` runs `matugen image <image>` + nudges Noctalia (`noctalia msg reload`) + Mango (`mmsg dispatch reload_config`).
 - **Out-of-store symlink budget**: default no symlinks; one symlink per live flag; generated files in `~/.local/state` / dedicated runtime dir, never inside a symlinked dir. A path matugen writes must never also be HM-managed (a store symlink is read-only and the whole run fails): `waybar/style.css` is seeded once as a writable copy and then matugen-owned; `mako`/`foot`/`fuzzel` static configs `include=` a generated file that lives outside the managed dir.
-- **Noctalia** (`modules/shell/noctalia/`): `default.nix` (HM, follows `nixtop.shell`), `greeter.nix` (NixOS, `programs.noctalia-greeter`). Palette bridge: matugen writes `~/.config/noctalia/palettes/nixtop.json`, Noctalia reads `source = "custom"`, `custom_palette = "nixtop"`. Owns mango colors + starship via `theme.templates.user.{mango,starship}`.
+- **Noctalia** (`modules/shell/noctalia/`): `default.nix` (HM, follows `nixtop.shell`). Palette bridge: matugen writes `~/.config/noctalia/palettes/nixtop.json`, Noctalia reads `source = "custom"`, `custom_palette = "nixtop"`. Owns mango colors + starship via `theme.templates.user.{mango,starship}`.
 - **Quickshell** (`modules/shell/quickshell/`): own `nixtop-shell` config at `shell/` (`~/.config/nixtop-shell`, env `NIXTOP_SHELL_*`, bin `nixtop-shell`/`nixtop-shell-greeter`). `package.nix` (symlinkJoin + makeWrapper) builds the wrapper + Go IPC daemons (`ipc/`), `greeter.nix` supplies the `nixtop.greetd.greeter == "quickshell"` command.
 - **JES** (`modules/shell/jes/`): vendored Just Enough Shell fork (see `UPSTREAM`). QML at `shell/` installs to `~/.local/JES/quickshell`, static config at `config/` to `~/.config/JES`, colors via the matugen `jes` template. `package.nix` wraps `qs` as `jes-qs`; `sway/keybinds.conf` is included by the sway variant.
 

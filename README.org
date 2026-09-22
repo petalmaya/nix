@@ -8,7 +8,7 @@ This is the reworked configuration (v2) – flat module tree by concern.
 - =hosts/<host>/{default.nix,disko.nix,hardware-configuration.nix}= is host policy.
 - =modules/default.nix= exports =nixosModules= and =homeModules=; edit there to add/remove a module.
 - =modules/core= is the system baseline (bootloader, networking, sops, zram/zswap, pipewire, fonts, greetd selector, sddm/apparmor/maintenance, cachix/plymouth/nix-ld/podman, zsh/tmux).
-- =modules/browsers= is per-browser config (chromium, firefox, floorp), enabled per user.
+- =modules/browsers= is per-browser config (chromium, firefox), enabled per user.
 - =modules/user/<name>/{home.nix,flatnix.nix}= are per-user profiles (alice+lewis on wonderland, lewis on rabbit, rose on garden).
 - =modules/mango= is MangoWC config: shared base (=config,settings,layout,rules,animations=) + per-shell variants (=appearance,keybinds,autostart=) selected by =nixtop.shell=.
 - =modules/matugen= owns colour generation from wallpaper at runtime; it writes a Noctalia palette bridge (=~/.config/noctalia/palettes/nixtop.json=), JES colors (=~/.local/state/JES_colors.json=), and app configs. See =modules/matugen/templates=.
@@ -68,7 +68,7 @@ flake.nix
 ├── modules/
 │   ├── default.nix          # nixosModules / homeModules lists
 │   ├── core/                # NixOS baseline + greetd/sddm selector + cachix/plymouth/nix-ld/podman/apparmor/maintenance + zsh/tmux (HM)
-│   ├── browsers/            # chromium, firefox, floorp
+│   ├── browsers/            # chromium, firefox
 │   ├── conf/                # foot, fetch, yazi, gtk
 │   ├── emacs/               # vendored emacs tree (GPL) + live-editable config
 │   ├── mango/               # shared + variants/noctalia|quickshell

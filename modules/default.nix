@@ -6,7 +6,6 @@
     ./core/maintenance.nix
     ./browsers/chromium-policies.nix
     ./ewm
-    ./shell/noctalia/greeter.nix
     ./shell/quickshell/greeter.nix
   ];
 

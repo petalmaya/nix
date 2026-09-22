@@ -12,8 +12,8 @@
   # Extra EWM session at login; Alice's HM toggle adds the overlay.
   # Noctalia stays the default.
   nixtop.ewm.enable = true;
-  # SDDM stays off while the noctalia greeter is set (see modules/core/sddm.nix).
-  nixtop.greetd.greeter = "noctalia";
+  # SDDM is the standard greeter (see modules/core/sddm.nix).
+  nixtop.greetd.greeter = "sddm";
   # Live symlinks for dev (style.css stays matugen-owned, see modules/sway/default.nix).
   nixtop.dev.liveSway = true;
   nixtop.dev.liveMako = true;

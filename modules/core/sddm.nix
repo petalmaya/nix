@@ -18,6 +18,22 @@ in
       # built-in preset – see SilentSDDM configs/ folder
       # "default" is minimal; "rei" / "ken" etc are also available
       theme = lib.mkDefault "default";
+      # Single background for all outputs. SilentSDDM has no per-output
+      # background option – SDDM mirrors the same QML on every monitor, so
+      # "login only on main" was a noctalia-greeter trait, not SDDM.
+      # background-fill-mode=fill scales/crops one image to any output.
+      backgrounds = {
+        nixtop = ../../assets/wallpaper/misty_forest_stairs.png;
+      };
+      settings = {
+        General = {
+          background-fill-mode = "fill";
+        };
+        LoginScreen = {
+          background = "misty_forest_stairs.png";
+          scale = 1.0;
+        };
+      };
       # extra backgrounds / profile icons can be set per-host if desired:
       # backgrounds = { ... };
       # settings = { "LoginScreen.background" = "..."; };

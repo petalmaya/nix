@@ -34,10 +34,6 @@
     };
 
     noctalia-shell.url = "github:noctalia-dev/noctalia-shell";
-    noctalia-greeter = {
-      url = "github:noctalia-dev/noctalia-greeter";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     emacs-overlay = {
       url = "github:nix-community/emacs-overlay";
@@ -134,7 +130,6 @@
                 else
                   { }
               )
-              inputs.noctalia-greeter.nixosModules.default
               inputs.silentSDDM.nixosModules.default
               {
                 home-manager.useGlobalPkgs = true;
