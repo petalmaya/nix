@@ -59,7 +59,10 @@
     (add-to-list 'orderless-matching-styles 'orderless-regexp-pinyin))
 
   ;; Vertical minibuffer list for M-x, buffers, files, ...
+  ;; Eager: Elpaca installs async, so after-init alone misses
+  ;; daemon/EWM startups and M-x falls back to plain completion.
   (use-package vertico
+    :demand t
     :custom
     (vertico-count 15)
     (vertico-cycle t)
@@ -68,10 +71,11 @@
            ("DEL" . vertico-directory-delete-char)
            ("M-DEL" . vertico-directory-delete-word))
     :hook ((after-init . vertico-mode)
+           (server-after-make-frame . vertico-mode)
            (rfn-eshadow-update-overlay . vertico-directory-tidy))
     :config
-    ;; Enable directly: the after-init hook alone misses daemon and
-    ;; Elpaca-deferred startups.
+    ;; Ships with vertico but not autoloaded; the bindings above need it.
+    (require 'vertico-directory nil t)
     (vertico-mode 1))
 
   ;; Floating completion overlay. Off unless `flutter-completion-style'
@@ -93,9 +97,11 @@
                 '((left-fringe  . 8)
                   (right-fringe . 8))))
 
-  ;; Enrich existing commands with completion annotations
+  ;; Completion annotations. Eager like vertico above.
   (use-package marginalia
-    :hook (after-init . marginalia-mode)
+    :demand t
+    :hook ((after-init . marginalia-mode)
+           (server-after-make-frame . marginalia-mode))
     :config
     ;; Same direct enable as vertico above.
     (marginalia-mode 1))
@@ -191,6 +197,9 @@
             xref-show-definitions-function #'consult-xref))
 
     :config
+    ;; Upstream vertico+corfu recommendation; corfu-move-to-minibuffer needs it.
+    (setq completion-in-region-function #'consult-completion-in-region)
+
     ;; Optionally configure preview. The default value
     ;; is 'any, such that any key triggers the preview.
     ;; (setq consult-preview-key 'any)
@@ -355,11 +364,16 @@ targets."
                     :around #'embark-hide-which-key-indicator))))
 
   (use-package embark-consult
+    :after (embark consult)
+    :demand t
+    :hook (embark-collect-mode . consult-preview-at-point-mode)
     :bind (:map minibuffer-mode-map
            ("C-c C-o" . embark-export)))
 
-  ;; Auto completion
+  ;; In-buffer completion. Eager like vertico: daemon/EWM frames
+  ;; made after init would otherwise start without it.
   (use-package corfu
+    :demand t
     :autoload (corfu-quit consult-completion-in-region)
     :functions (persistent-scratch-save corfu-move-to-minibuffer)
     :custom
@@ -379,9 +393,12 @@ targets."
     (corfu-border ((t (:inherit region :background unspecified))))
     :bind ("M-/" . completion-at-point)
     :hook ((after-init . global-corfu-mode)
+           (server-after-make-frame . global-corfu-mode)
            (global-corfu-mode . corfu-popupinfo-mode)
            (global-corfu-mode . corfu-history-mode))
     :config
+    ;; Same eager reason as vertico.
+    (global-corfu-mode 1)
     ;;Quit completion before saving
     (add-hook 'before-save-hook #'corfu-quit)
     (advice-add #'persistent-scratch-save :before #'corfu-quit)

@@ -80,6 +80,14 @@ in
     # Upstream nix/service.nix provides launcher, ewm.desktop, systemd
     # units, portals. Pinned to the flake's outputs — the defaults would
     # rebuild against our 26.05 pkgs and fail.
+    #
+    # Portals come from upstream (ewm-portals.conf: gnome;gtk via
+    # configPackages + extraPortals). The HM mango portal block only
+    # applies to the mango desktop, so nothing to add here.
+    #
+    # Xwayland (wiki/XWayland) is on-demand: EWM spawns
+    # xwayland-satellite itself when an X11 client connects, and
+    # silently skips it when the binary is missing — hence systemPackages.
     programs.ewm = {
       enable = true;
       package = ewmFlakePkg;
@@ -113,10 +121,12 @@ in
 
     # Clipboard plus the media/brightness keys the default bindings use.
     # pamixer matches the repo's sway audio convention (upstream uses wpctl).
+    # xwayland-satellite is EWM's on-demand X11 bridge (see above).
     environment.systemPackages = with pkgs; [
       wl-clipboard
       brightnessctl
       pamixer
+      xwayland-satellite
     ];
 
     # Must be session env: EWM reads it before any elisp runs.

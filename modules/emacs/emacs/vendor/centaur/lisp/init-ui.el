@@ -98,12 +98,19 @@
   :config (add-to-list 'solaire-mode-remap-alist
                        '(ghostel-default . solaire-default-face)))
 
-;; Mode-line
+;; Mode-line (status bar at the bottom of each frame).
+;; Eager: early-init nils `mode-line-format' to skip the unstyled flash,
+;; and only enabling here restores it. The old `:hook after-init' never
+;; called `doom-modeline-mode', so the bar stayed missing.
 (use-package doom-modeline
+  :demand t
   :custom
   (doom-modeline-icon flutter-icon)
   (doom-modeline-minor-modes t)
-  :hook after-init
+  :hook ((after-init . doom-modeline-mode)
+         (server-after-make-frame . doom-modeline-mode))
+  :config
+  (doom-modeline-mode 1)
   :bind (:map doom-modeline-mode-map
          ("C-<f6>" . doom-modeline-hydra/body))
   :pretty-hydra
@@ -259,9 +266,14 @@
              embark-collect-mode pdf-annot-list-mode)
             . turn-on-hide-mode-line-mode))))
 
-;; A minor-mode menu for mode-line
+;; Minor-mode menu for the mode-line. Same broken `:hook after-init'
+;; shorthand as doom-modeline had, same eager fix.
 (use-package minions
-  :hook after-init)
+  :demand t
+  :hook ((after-init . minions-mode)
+         (server-after-make-frame . minions-mode))
+  :config
+  (minions-mode 1))
 
 ;; Icons
 (use-package nerd-icons
