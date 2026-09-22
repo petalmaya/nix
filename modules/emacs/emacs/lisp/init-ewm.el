@@ -89,24 +89,42 @@ Symlinked to the repo's assets/wallpaper (see modules/user/*/home.nix)."
     (directory-files flutter-ewm-wallpaper-directory t
                      "\\.\\(png\\|jpe?g\\|webp\\|bmp\\)\\'")))
 
+(defvar flutter-ewm--wallpaper-process nil
+  "swaybg process showing the compositor wallpaper.")
+
+(defun flutter-ewm--wallpaper-sentinel (_process event)
+  "Note abnormal swaybg exits; details stay in *ewm-swaybg*."
+  (when (string-match-p "abnormal" event)
+    (message "swaybg failed (%s); see *ewm-swaybg*" (string-trim event))))
+
 (defun flutter-ewm--start-wallpaper (image)
   "Show IMAGE behind frames with swaybg, replacing any old instance.
 Output goes to *ewm-swaybg* so a dying swaybg leaves a trace."
-  (when (executable-find "swaybg")
-    (ignore-errors (call-process "pkill" nil nil nil "-x" "swaybg"))
-    (start-process "ewm-swaybg" (get-buffer-create "*ewm-swaybg*")
-                   "swaybg" "-i" image "-m" "fill")))
+  (let ((file (expand-file-name image)))
+    (cond ((not (getenv "WAYLAND_DISPLAY"))
+           (user-error "WAYLAND_DISPLAY unset; swaybg needs the running compositor"))
+          ((not (file-readable-p file))
+           (user-error "Wallpaper not found: %s" file))
+          ((null (executable-find "swaybg"))
+           (user-error "swaybg not found in PATH"))
+          (t
+           (when (process-live-p flutter-ewm--wallpaper-process)
+             (kill-process flutter-ewm--wallpaper-process))
+           (ignore-errors (call-process "pkill" nil nil nil "-x" "swaybg"))
+           (setq flutter-ewm--wallpaper-process
+                 (start-process "ewm-swaybg" (get-buffer-create "*ewm-swaybg*")
+                                "swaybg" "-i" file "-m" "fill"))
+           (set-process-sentinel flutter-ewm--wallpaper-process
+                                 #'flutter-ewm--wallpaper-sentinel)
+           flutter-ewm--wallpaper-process))))
 
 (defun flutter-ewm--maybe-start-wallpaper (&rest _)
   "Start swaybg once the compositor is up.
 Runs after `ewm-start-module': any earlier there is no Wayland socket
-yet, so swaybg dies silently. Needs WAYLAND_DISPLAY in the environment."
-  (cond ((not (getenv "WAYLAND_DISPLAY"))
-         (display-warning 'init-ewm "WAYLAND_DISPLAY unset; wallpaper skipped"))
-        ((not (file-exists-p flutter-ewm-wallpaper))
-         (display-warning 'init-ewm (format "Wallpaper not found: %s"
-                                            flutter-ewm-wallpaper)))
-        (t (flutter-ewm--start-wallpaper flutter-ewm-wallpaper))))
+yet, so swaybg dies silently."
+  (condition-case err
+      (flutter-ewm--start-wallpaper flutter-ewm-wallpaper)
+    (error (display-warning 'init-ewm (error-message-string err)))))
 
 ;;;###autoload
 (defun flutter-ewm-set-wallpaper (image)
@@ -115,15 +133,10 @@ Restarts swaybg and saves the choice for future sessions."
   (interactive
    (list (completing-read "Wallpaper: " (flutter-ewm--wallpaper-files)
                           nil t nil nil flutter-ewm-wallpaper)))
-  (setq flutter-ewm-wallpaper image)
-  (cond ((not (getenv "WAYLAND_DISPLAY"))
-         (user-error "WAYLAND_DISPLAY unset; swaybg needs the running compositor"))
-        ((not (file-exists-p image))
-         (user-error "Wallpaper not found: %s" image))
-        (t
-         (flutter-ewm--start-wallpaper image)
-         (customize-save-variable 'flutter-ewm-wallpaper image)
-         (message "Wallpaper: %s" (file-name-nondirectory image)))))
+  (when (flutter-ewm--start-wallpaper image)
+    (setq flutter-ewm-wallpaper image)
+    (customize-save-variable 'flutter-ewm-wallpaper image)
+    (message "Wallpaper: %s" (file-name-nondirectory image))))
 
 (defun flutter-ewm--xdg-app-names ()
   "Names of installed XDG applications, for `consult-buffer'."
@@ -226,8 +239,11 @@ One-shot: later frames (e.g. emacsclient) are left alone."
         ewm-animations-enabled t
         ewm-idle nil)
 
-  ;; Pointer follows focus across surfaces (upstream default is off).
+  ;; Pointer motion focuses surfaces (upstream default is off).
   (setq ewm-focus-follows-mouse t)
+  ;; Keyboard focus never warps the pointer (upstream default warps to
+  ;; the focused window, throwing it across outputs on frame changes).
+  (setq ewm-mouse-follows-focus nil)
 
   ;; Daily compositor keys (upstream defaults, plus s-n/s-q/s-w/s-<return>
   ;; daily-driver extras). Plain Emacs/nested sessions never see these.
