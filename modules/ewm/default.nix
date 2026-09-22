@@ -17,6 +17,36 @@ let
   # modules/emacs/default.nix).
   ewmFlakePkg = inputs.ewm.packages.${system}.default;
   ewmPkgs = inputs.ewm.inputs.nixpkgs.legacyPackages.${system};
+
+  # Greeter login via ewm-launch, not ewm-session. Upstream's ewm.desktop
+  # runs ewm-session (login-shell re-exec + systemctl --user round-trip
+  # into ewm.service), which fails from a display manager; ewm-launch is
+  # plain `emacs --fg-daemon --eval "(require 'ewm)" --eval
+  # "(ewm-start-module)" (see inputs.ewm nix/service.nix) and works from
+  # TTY. It needs nothing beyond normal DM session env: SDDM provides
+  # XDG_RUNTIME_DIR/XDG_SESSION_TYPE, WAYLAND_DISPLAY is bound by the
+  # compositor itself, and EMACSLOADPATH (for ewm-core.so) comes from the
+  # wrapped emacs package below.
+  #
+  # Shadowing, not replacing: sessionData.desktops links sessionPackages
+  # with lndir in list order (first file wins, no buildEnv involved), so
+  # mkBefore puts ours first and upstream's duplicate ewm.desktop is
+  # skipped. Same filename + DesktopNames=ewm keeps SDDM last-session
+  # memory. passthru.providedSessions is required by the sessionPackages
+  # option type.
+  ewmLaunchSession = pkgs.runCommand "ewm-launch-session" {
+    passthru.providedSessions = [ "ewm" ];
+  } ''
+    mkdir -p $out/share/wayland-sessions
+    cat > $out/share/wayland-sessions/ewm.desktop <<EOF
+    [Desktop Entry]
+    Name=ewm
+    Comment=Emacs Wayland Manager (direct launch)
+    Exec=ewm-launch
+    Type=Application
+    DesktopNames=ewm
+    EOF
+  '';
 in
 {
   imports = [ inputs.ewm.nixosModules.default ];
@@ -42,6 +72,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # Upstream session entry shadowed: Exec=ewm-launch (see ewmLaunchSession
+    # above). Keep the TimeoutStartSec drop-in below for the TTY path until
+    # Phase 6 pre-warms the Elpaca cache.
+    services.displayManager.sessionPackages = lib.mkBefore [ ewmLaunchSession ];
+
     # Upstream nix/service.nix provides launcher, ewm.desktop, systemd
     # units, portals. Pinned to the flake's outputs — the defaults would
     # rebuild against our 26.05 pkgs and fail.

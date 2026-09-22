@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 {
   networking.hostName = "garden";
   networking.extraHosts = "127.0.0.1 garden";
@@ -15,11 +15,12 @@
 
   hardware.enableAllFirmware = true;
 
-  # rose is the only user on garden.
-  # Placeholder password until the laptop is provisioned with a sops secret.
+  # rose is the only user on garden. Password hash comes from sops
+  # (secrets/secrets.yaml: rose_password); never commit plaintext.
+  sops.secrets.rose_password.neededForUsers = true;
   users.users.rose = {
     isNormalUser = true;
-    initialPassword = "rose";
+    hashedPasswordFile = config.sops.secrets.rose_password.path;
     extraGroups = [
       "networkmanager"
       "wheel"

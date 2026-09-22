@@ -338,26 +338,6 @@
         "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst"
       }
     },
-    "noctalia-greeter": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1789264777,
-        "narHash": "sha256-MfLKF9Pg3NVM/U/psYz+KsfeyUUausLXL8BVXf0Knoo=",
-        "owner": "noctalia-dev",
-        "repo": "noctalia-greeter",
-        "rev": "8be38dd84b7e8d197c94d800dc93b78c783b80d3",
-        "type": "github"
-      },
-      "original": {
-        "owner": "noctalia-dev",
-        "repo": "noctalia-greeter",
-        "type": "github"
-      }
-    },
     "noctalia-shell": {
       "inputs": {
         "nixpkgs": "nixpkgs_3"
@@ -388,7 +368,6 @@
         "nixpak": "nixpak",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "noctalia-greeter": "noctalia-greeter",
         "noctalia-shell": "noctalia-shell",
         "silentSDDM": "silentSDDM",
         "sops-nix": "sops-nix"
