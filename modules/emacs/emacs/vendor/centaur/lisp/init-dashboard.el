@@ -107,6 +107,11 @@
               "Update" "Update Flutter Emacs (U)"
               (lambda (&rest _) (flutter-update)))
              (,(if (icons-displayable-p)
+                   (nerd-icons-mdicon "nf-md-keyboard" :height 1.2)
+                 "?")
+              "Cheatsheet" "Open key cheatsheet (or M-x flutter-cheatsheet)"
+              (lambda (&rest _) (flutter-cheatsheet)))
+             (,(if (icons-displayable-p)
                    (nerd-icons-mdicon "nf-md-help" :height 1.2)
                  "?")
               "" "Ask for help (?/h)"

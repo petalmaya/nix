@@ -133,6 +133,42 @@
      "Presence"
      (("d" elcord-mode "discord presence" :toggle t)))))
 
+;; --- Cheatsheet -----------------------------------------------------------
+;; M-x flutter-cheatsheet (also on the dashboard navigator): the daily
+;; keys in one buffer.  Pure command — safe to load anywhere.
+(defun flutter-cheatsheet ()
+  "Open the Flutter Emacs key cheatsheet."
+  (interactive)
+  (with-current-buffer (get-buffer-create "*flutter-cheatsheet*")
+    (let ((inhibit-read-only t))
+      (erase-buffer)
+      (insert "Flutter Emacs cheatsheet\n"
+              "========================\n\n"
+              "Terminal\n"
+              "  C-c t    ghostel (terminal here)\n"
+              "  C-`      popterm toggle (project scope)\n"
+              "  F9       popterm window toggle\n"
+              "  project m / M  ghostel here / elsewhere\n\n"
+              "Hydras\n"
+              "  F6       toggles hydra (theme, completion style, ...)\n"
+              "  C-c m    media hydra (empv, elfeed, ement, elcord)\n"
+              "  C-c w    windows hydra (splits, orientation)\n"
+              "  C-c e    EWM hydra (compositor only)\n\n"
+              "EWM compositor (Super keys, compositor only)\n"
+              "  s-d / s-<return>  launcher / terminal\n"
+              "  s-q / s-S-q       close buffer / frame\n"
+              "  s-f / s-TAB       fullscreen / cycle apps\n"
+              "  s-1..9            jump to frame (workspace)\n\n"
+              "Search / jump\n"
+              "  M-g g    go to line (consult)\n"
+              "  M-g i    imenu (consult)\n"
+              "  M-g m/k  mark / global mark (consult)\n"
+              "  C-c r    ripgrep project (consult)\n"
+              "  C-x C-r  recent files (recentf)\n\n"
+              "Full list: modules/emacs/emacs/README.md § Cheatsheet.\n"))
+    (special-mode)
+    (pop-to-buffer "*flutter-cheatsheet*")))
+
 (provide 'init-extras)
 
 ;;; init-extras.el ends here

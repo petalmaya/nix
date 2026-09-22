@@ -21,8 +21,10 @@ An Emacs configuration that lives in a Nix flake. It is a **fork of
 ├── custom-example.el       template copied to custom.el on first run
 ├── custom.el               customize settings (generated, gitignored)
 ├── custom-post.el(.org)    your personal overrides (optional, gitignored)
-├── eshell/alias            eshell aliases
-└── elfeed/                 your elfeed database (tracked)
+├── eshell/alias            eshell aliases (state; gitignored, lives in
+│                           ~/.local/state/emacs after first run)
+└── elfeed/                 elfeed database (state; gitignored, lives in
+                            ~/.local/state/emacs after first run)
 ```
 
 ## Package management
@@ -86,6 +88,31 @@ deliberately.
   clients, empv (mpv), ement (Matrix), elcord (Discord presence)
 - Extras: org-roam, pomidor, wgrep, ztree, ibuffer, dired-hacks,
   Chinese calendar/dict/pinyin (kept from upstream), proxy toggles
+
+## Cheatsheet
+
+Also available inside Emacs via `M-x flutter-cheatsheet` (or the
+dashboard's Cheatsheet button).
+
+| Keys | What |
+|---|---|
+| `C-c t` | ghostel (terminal here) |
+| `C-`` ` | popterm toggle (project scope) |
+| `F9` | popterm window toggle |
+| `project m` / `M` | ghostel here / elsewhere |
+| `F6` | toggles hydra (theme, completion style, …) |
+| `C-c m` | media hydra (empv, elfeed, ement, elcord) |
+| `C-c w` | windows hydra (splits, orientation) |
+| `C-c e` | EWM hydra (compositor only) |
+| `s-d` / `s-<return>` | EWM launcher / terminal |
+| `s-q` / `s-S-q` | EWM close buffer / frame |
+| `s-f` / `s-TAB` | EWM fullscreen / cycle apps |
+| `s-1..9` | EWM jump to frame (workspace) |
+| `M-g g` | go to line (consult) |
+| `M-g i` | imenu (consult) |
+| `M-g m` / `k` | mark / global mark (consult) |
+| `C-c r` | ripgrep project (consult) |
+| `C-x C-r` | recent files (recentf) |
 
 ## Notes
 
