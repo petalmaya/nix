@@ -52,49 +52,31 @@ let
   # config, so read it directly — no osConfig round-trip needed.
   noctaliaCompositor = config.nixtop.noctalia.compositor or "sway";
 
-  # Variant handling: sway's autostart/variant adapt to nixtop.shell + nixtop.sway.bar
-  variantConf = pkgs.writeText "sway-variant.conf" (
+  # Variant handling: sway's autostart/variant adapt to nixtop.shell + nixtop.sway.bar.
+  # Single source: modules/sway/variants/<name>.conf. The store build reads
+  # the file; the live activation (ensureSwayLiveVariant below) copies the
+  # same file, so store-built and live variant.conf agree. Only the JES
+  # include path differs (store dir vs live checkout) and is substituted
+  # per path via @jesKeybinds@.
+  variantName =
     if shell == "noctalia" && noctaliaCompositor == "sway" then
-      ''
-        # Noctalia on swayfx: autostart the shell here with its IPC binds.
-        exec noctalia
-        set $ipc noctalia msg
-        bindsym $mod+space exec $ipc panel-toggle launcher
-        bindsym $mod+s exec $ipc panel-toggle control-center
-        bindsym $mod+comma exec $ipc settings-toggle
-        bindsym --locked XF86AudioRaiseVolume exec $ipc volume-up
-        bindsym --locked XF86AudioLowerVolume exec $ipc volume-down
-        bindsym --locked XF86AudioMute exec $ipc volume-mute
-        bindsym --locked XF86MonBrightnessUp exec $ipc brightness-up
-        bindsym --locked XF86MonBrightnessDown exec $ipc brightness-down
-      ''
+      "noctalia-sway"
     else if shell == "noctalia" then
-      ''
-        # Noctalia on mango: the mango session autostarts it
-        # (modules/mango/variants/noctalia/autostart.conf), so sway stays empty.
-      ''
+      "noctalia-mango"
     else if shell == "quickshell" then
-      ''
-        # Quickshell variant — swayfx + nixtop-shell (Go IPC daemon, sway-native)
-        exec nixtop-shell
-        # quickshell IPC binds (launcher/notch)
-        bindsym $mod+space exec qs ipc call launcher toggle
-        bindsym $mod+Shift+space exec qs ipc call notch hello
-        bindsym $mod+n exec qs ipc call notch toggle
-        bindsym $mod+m exec qs ipc call notch media
-        bindsym $mod+w exec qs ipc call notch workspaces
-      ''
+      "quickshell"
     else if shell == "jes" then
-      ''
-        # JES variant — swayfx + Just Enough Shell (modules/shell/jes)
-        exec jes-cli start-daemon
-        include ~/.config/sway/jes-keybinds.conf
-      ''
+      "jes"
     else
-      ''
-        # Waybar variant (default, shell == none) — no extra autostart; waybar is in autostart.conf
-      ''
-  );
+      "waybar";
+  variantSrc =
+    if shell == "jes" then
+      pkgs.replaceVars ./variants/jes.conf {
+        jesKeybinds = "~/.config/sway/jes-keybinds.conf";
+      }
+    else
+      ./variants/${variantName}.conf;
+  variantConf = pkgs.writeText "sway-variant.conf" (builtins.readFile variantSrc);
 
   autostartVariant =
     if shell == "noctalia" || shell == "quickshell" || shell == "jes" then
@@ -234,8 +216,10 @@ in
       '';
 
       # Live variant: with liveSway, ~/.config/sway is a symlink into the repo,
-      # so the store-built variant.conf is not used. This refreshes the live
-      # variant file to match nixtop.shell (swaymsg reload picks it up).
+      # so the store-built variant.conf is not used. Copy the same
+      # single-source file the store build reads
+      # (modules/sway/variants/<name>.conf); swaymsg reload picks it up.
+      # The rendered file is git-ignored (it is generated, per-shell).
       #
       # Never mkdir ~/.config/sway here: it is a symlink, and writing through
       # a dangling one (no ~/nix checkout) aborts activation — while HM
@@ -244,40 +228,11 @@ in
       home.activation.ensureSwayLiveVariant = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         if [ "${if liveSway then "1" else "0"}" = "1" ]; then
           if [ -d "$HOME/.config/sway" ]; then
-            if [ "${shell}" = "noctalia" ] && [ "${noctaliaCompositor}" = "sway" ]; then
-              $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
-        exec noctalia
-        set $ipc noctalia msg
-        bindsym $mod+space exec $ipc panel-toggle launcher
-        bindsym $mod+s exec $ipc panel-toggle control-center
-        bindsym $mod+comma exec $ipc settings-toggle
-        VARIANT
-            elif [ "${shell}" = "noctalia" ]; then
-              # noctalia targets mango: mango autostart owns it, sway variant stays empty
-              $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
-        # noctalia on mango (see modules/mango/variants/noctalia/)
-        VARIANT
-            elif [ "${shell}" = "quickshell" ]; then
-              $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
-        # Quickshell variant — swayfx + nixtop-shell (Go IPC daemon, sway-native)
-        exec nixtop-shell
-        bindsym $mod+space exec qs ipc call launcher toggle
-        bindsym $mod+Shift+space exec qs ipc call notch hello
-        bindsym $mod+n exec qs ipc call notch toggle
-        bindsym $mod+m exec qs ipc call notch media
-        bindsym $mod+w exec qs ipc call notch workspaces
-        VARIANT
-            elif [ "${shell}" = "jes" ]; then
-              # live checkout: ~/.config/sway IS the repo dir, so include jes keybinds by repo path
-              $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
-        exec jes-cli start-daemon
-        include ~/nix/modules/shell/jes/sway/keybinds.conf
-        VARIANT
-            else
-              $DRY_RUN_CMD cat > "$HOME/.config/sway/variant.conf" <<'VARIANT'
-        # waybar-only (shell == none)
-        VARIANT
-            fi
+            $DRY_RUN_CMD cp "${./variants}/${variantName}.conf" "$HOME/.config/sway/variant.conf"
+            ${lib.optionalString (shell == "jes") ''
+              # JES include differs by path only: store dir vs live checkout.
+              $DRY_RUN_CMD sed -i "s|@jesKeybinds@|$HOME/nix/modules/shell/jes/sway/keybinds.conf|" "$HOME/.config/sway/variant.conf"
+            ''}
           else
             echo "liveSway is on but $HOME/.config/sway is a dangling symlink: clone the repo to $HOME/nix (or disable nixtop.dev.liveSway); leaving variant.conf alone" >&2
           fi

@@ -10,11 +10,12 @@ let
 
   # Matugen template registry. To add one: drop the source under ./templates/
   # and register its input path, output path, and optional reload hook.
+  # Hooks log to the journal (systemd-cat) and never fail the run (|| true).
   templates = {
     noctalia = {
       input_path = "noctalia/palette.json";
       output_path = "~/.config/noctalia/palettes/nixtop.json";
-      post_hook = "noctalia msg reload 2>/dev/null || true";
+      post_hook = "noctalia msg reload 2>&1 | systemd-cat -t matugen-noctalia || true";
     };
     jes = {
       # JES watches ~/.local/state/JES_colors.json live (shell.qml FileView)
@@ -24,12 +25,12 @@ let
     mango = {
       input_path = "mango/mango.conf";
       output_path = "~/.local/state/nixtop/theme/mango.conf";
-      post_hook = "mmsg dispatch reload_config 2>/dev/null || true";
+      post_hook = "mmsg dispatch reload_config 2>&1 | systemd-cat -t matugen-mango || true";
     };
     sway = {
       input_path = "sway/sway";
       output_path = "~/.local/state/nixtop/theme/sway";
-      post_hook = "bash ~/.config/matugen/templates/sway/apply.sh 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/sway/apply.sh 2>&1 | systemd-cat -t matugen-sway || true";
     };
     waybar = {
       input_path = "waybar/style.css";
@@ -37,19 +38,19 @@ let
       # symlink here is read-only and every run would fail). Seeded once from
       # modules/sway/waybar/style.css by the sway module's activation.
       output_path = "~/.config/waybar/style.css";
-      post_hook = "bash ~/.config/matugen/templates/waybar/apply.sh 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/waybar/apply.sh 2>&1 | systemd-cat -t matugen-waybar || true";
     };
     fuzzel = {
       input_path = "fuzzel/fuzzel.conf";
       output_path = "~/.config/fuzzel/themes/generated";
-      post_hook = "bash ~/.config/matugen/templates/fuzzel/apply.sh 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/fuzzel/apply.sh 2>&1 | systemd-cat -t matugen-fuzzel || true";
     };
     mako = {
       input_path = "mako/config";
       # Colors only; merged over the static config via mako's `include=`
       # (see modules/sway/mako/config), so this stays writable state.
       output_path = "~/.local/state/nixtop/theme/mako";
-      post_hook = "bash ~/.config/matugen/templates/mako/apply.sh 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/mako/apply.sh 2>&1 | systemd-cat -t matugen-mako || true";
     };
     quickshell = {
       input_path = "quickshell/quickshell.json";
@@ -58,22 +59,22 @@ let
     foot = {
       input_path = "foot/foot";
       output_path = "~/.config/foot/themes/generated";
-      post_hook = "bash ~/.config/matugen/templates/foot/apply.sh 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/foot/apply.sh 2>&1 | systemd-cat -t matugen-foot || true";
     };
     gtk3 = {
       input_path = "gtk/gtk3.css";
       output_path = "~/.config/gtk-3.0/pinaceae.css";
-      post_hook = "bash ~/.config/matugen/templates/gtk/apply.sh dark 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/gtk/apply.sh dark 2>&1 | systemd-cat -t matugen-gtk || true";
     };
     gtk4 = {
       input_path = "gtk/gtk4.css";
       output_path = "~/.config/gtk-4.0/pinaceae.css";
-      post_hook = "bash ~/.config/matugen/templates/gtk/apply.sh dark 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/gtk/apply.sh dark 2>&1 | systemd-cat -t matugen-gtk || true";
     };
     bat = {
       input_path = "bat/bat.tmTheme";
       output_path = "~/.config/bat/themes/pinaceae.tmTheme";
-      post_hook = "bash ~/.config/matugen/templates/bat/apply.sh 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/bat/apply.sh 2>&1 | systemd-cat -t matugen-bat || true";
     };
     starship = {
       input_path = "starship/starship.toml";
@@ -90,14 +91,14 @@ let
     emacs = {
       input_path = "emacs/emacs.el";
       output_path = "~/.config/emacs/themes/pinaceae-theme.el";
-      post_hook = "bash ~/.config/matugen/templates/emacs/apply.sh 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/emacs/apply.sh 2>&1 | systemd-cat -t matugen-emacs || true";
     };
     "papirus-icons" = {
       input_path = "papirus-icons/colors";
       # State, not templates: matugen cannot write into its own read-only
       # template source, so this output lives in ~/.local/state.
       output_path = "~/.local/state/nixtop/theme/papirus-colors";
-      post_hook = "bash ~/.config/matugen/templates/papirus-icons/apply.sh 2>/dev/null || true";
+      post_hook = "bash ~/.config/matugen/templates/papirus-icons/apply.sh 2>&1 | systemd-cat -t matugen-papirus || true";
     };
   };
 
@@ -253,28 +254,30 @@ in
       # First-run seed: matugen only runs on demand (`nixtop-theme <image>`),
       # so a fresh checkout would keep empty seeded outputs forever (notably
       # Noctalia's nixtop.json palette, which starves every downstream theme).
-      # Run matugen once against the first wallpaper while the palette bridge
-      # is still empty. Never fails the switch: best-effort, logs to stderr.
-      home.activation.ensureMatugenSeed =
-        lib.hm.dag.entryAfter
-          [
-            "writeBoundary"
-            "ensureThemeOutputDirs"
-          ]
-          ''
+      # A oneshot user service runs matugen once against the first wallpaper
+      # while the palette bridge is still empty. Never fails: best-effort,
+      # output goes to the journal (`journalctl --user -u matugen-seed`).
+      systemd.user.services.matugen-seed = {
+        Unit = {
+          Description = "Seed matugen themes on first run (empty nixtop.json palette)";
+          ConditionPathExists = "%h/Pictures/Wallpapers";
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStart = pkgs.writeShellScript "matugen-seed" ''
             if [ ! -s "$HOME/.config/noctalia/palettes/nixtop.json" ]; then
-              WALLPAPER=""
-              if [ -d "$HOME/Pictures/Wallpapers" ]; then
-                WALLPAPER=$(find "$HOME/Pictures/Wallpapers" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) 2>/dev/null | sort | head -n 1)
-              fi
+              WALLPAPER=$(find "$HOME/Pictures/Wallpapers" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) 2>/dev/null | sort | head -n 1)
               if [ -n "$WALLPAPER" ]; then
-                echo "matugen seed: generating themes from $WALLPAPER (run nixtop-theme <image> to re-theme)" >&2
-                $DRY_RUN_CMD ${pkgs.matugen}/bin/matugen image "$WALLPAPER" 2>&1 | head -n 20 >&2 || echo "matugen seed failed (non-fatal); run nixtop-theme <image> manually" >&2 || true
+                echo "matugen seed: generating themes from $WALLPAPER (run nixtop-theme <image> to re-theme)"
+                ${pkgs.matugen}/bin/matugen image "$WALLPAPER" || echo "matugen seed failed (non-fatal); run nixtop-theme <image> manually"
               else
-                echo "matugen seed: no wallpaper in ~/Pictures/Wallpapers; run nixtop-theme <image> once to generate themes" >&2
+                echo "matugen seed: no wallpaper in ~/Pictures/Wallpapers; run nixtop-theme <image> once to generate themes"
               fi
             fi
           '';
+        };
+        Install.WantedBy = [ "default.target" ];
+      };
 
       # papirus-folders recolors the icon theme in place, which needs a writable
       # copy — a store path won't do. Seed one from nixpkgs on first activation.

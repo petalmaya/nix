@@ -9,5 +9,8 @@ result-*
 .quickshell/
 .qs/
 
+# sway live-generated file (rendered from modules/sway/variants/ on activation)
+modules/sway/sway/variant.conf
+
 # Nix build outputs
 flake.lock.backup
