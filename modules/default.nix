@@ -2,6 +2,7 @@
   nixosModules = [
     ./core
     ./core/apparmor.nix
+    ./core/hardening.nix
     ./core/sddm.nix
     ./core/maintenance.nix
     ./browsers/chromium-policies.nix

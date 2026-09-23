@@ -21,7 +21,7 @@ A file does nothing because it exists – it must be imported via `modules/defau
 | Which user is on a machine | `flake.nix`, the `hmUsers` argument to `mkHost` |
 | Machine-specific settings | `hosts/<machine>/default.nix` |
 | Disk layout | `hosts/<machine>/disko.nix` |
-| Shared OS policy | `modules/core/default.nix` |
+| Shared OS policy | `modules/core/default.nix` + `modules/core/hardening.nix` |
 | Which custom system modules exist | `modules/default.nix` (`nixosModules`) |
 | Which custom HM modules exist | `modules/default.nix` (`homeModules`) |
 | What Alice / Lewis / Rose gets | `modules/user/<name>/home.nix` |
@@ -56,6 +56,7 @@ Old shared policy lived in `hosts/common/default.nix`. In v2 it is `modules/core
 |---|---|
 | `core/cachix.nix` | Imports every cache file in `core/cachix/` (`nix-community`, `noctalia`) |
 | `core/default.nix` | System baseline + `nixtop.shell` / `nixtop.desktop.enable` / dev flags |
+| `core/hardening.nix` | Everyday hardening (`nixtop.security.hardening.enable`, default on): firewall, LAN-only SSH, sudo/PAM, sysctl, /tmp, coredumps, bolt, DNS, Nix pins |
 | `core/greetd.nix` | `nixtop.greetd.{enable,greeter}` selector, asserts exactly one greeter |
 | `core/plymouth.nix` | Plymouth `blahaj` splash |
 | `core/nix-ld.nix` | `nix-ld` libraries for non-Nix binaries |
@@ -76,7 +77,7 @@ Host → user matrix: `wonderland` = alice+lewis, `rabbit` = lewis, `garden` = r
 
 ```nix
 {
-  nixosModules = [ ./core ./core/apparmor.nix ./core/sddm.nix ./core/maintenance.nix ./ewm ./shell/quickshell/greeter.nix ];
+  nixosModules = [ ./core ./core/apparmor.nix ./core/hardening.nix ./core/sddm.nix ./core/maintenance.nix ./ewm ./shell/quickshell/greeter.nix ];
   homeModules  = [ ./core/zsh.nix ./core/tmux.nix ./browsers ./conf ./emacs ./ewm/home.nix ./mango ./matugen ./sway ./shell ];
 }
 ```
