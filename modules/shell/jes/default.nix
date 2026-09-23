@@ -10,12 +10,8 @@ let
 
   jesPkg = pkgs.callPackage ./package.nix { };
 
-  # Upstream drops jes-cli in ~/.local/bin, which is not on sway's exec PATH.
-  # Package it so it resolves via ~/.nix-profile/bin. Two upstream
-  # assumptions are rewritten at package time (vendored file stays pristine):
-  # bare `qs` becomes the jes-qs wrapper (carries the QML import paths), and
-  # the shell dir moves from `-c` to `-p` — in quickshell 0.3 `-c` takes a
-  # config *name*, not a path.
+  # Upstream assumes ~/.local/bin and bare `qs`; rewritten at package time.
+  # In quickshell 0.3 `-c` takes a config name, not a path, so the shell dir moves to `-p`.
   jesCli = pkgs.writeShellScriptBin "jes-cli" (
     builtins.replaceStrings
       [
@@ -56,7 +52,6 @@ in
       activation.ensureJesDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         $DRY_RUN_CMD mkdir -p "$HOME/.cache/JES" "$HOME/.local/state" "$HOME/Screenshots"
         $DRY_RUN_CMD chmod +x "$HOME/.local/JES/quickshell/scripts/"* 2>/dev/null || true
-        # Seed JES colors so the shell has something before the first matugen run.
         $DRY_RUN_CMD [ -e "$HOME/.local/state/JES_colors.json" ] || $DRY_RUN_CMD echo '{"background1":"#3f4944","background2":"#3b443f","background3":"#3c4540","backgroundAlt1":"#262c29","backgroundAlt2":"#262c29","font":"#b3ccbe","fontDark":"#1f352b","accent":"#8cd5b3","accent2":"#486657"}' > "$HOME/.local/state/JES_colors.json"
       '';
     };

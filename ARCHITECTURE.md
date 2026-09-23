@@ -69,7 +69,7 @@ Mango session registration is via the upstream flake `github:mangowm/mango` (`pr
 
 ### `modules/user/<name>/home.nix`
 
-Thin profiles: `home.username`, `home.homeDirectory`, `nixtop.*.enable` switches, `home.packages` for one-offs, `~/Pictures/Wallpapers` symlink (alice+rose → `assets/wallpaper`), `home.stateVersion`, `programs.home-manager.enable`. `flatnix.nix` (alice, rose) is imported there.
+Thin profiles over `modules/user/base.nix`: `home.username`, `home.homeDirectory`, `nixtop.wallpapers.enable` (alice+rose), `nixtop.*.enable` switches, `home.packages` for one-offs (`with pkgs; [ ... unstable.xxx ]`). Shared defaults (zsh/tmux/foot, fetch/yazi, chromium, sway, git, `xdg.userDirs`) live in `base.nix`. `flatnix.nix` (alice, rose) is imported there.
 
 Host → user matrix: `wonderland` = alice+lewis, `rabbit` = lewis, `garden` = rose.
 

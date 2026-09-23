@@ -7,8 +7,6 @@
 }:
 let
   cfg = config.nixtop.apps.emacs;
-  # With EWM on, interactive Emacs is the session package (Emacs 31.1
-  # + ewm.el); otherwise plain 26.05 pgtk.
   ewmSysOn = if osConfig != null then osConfig.nixtop.ewm.enable or false else false;
   ewmOn = config.nixtop.ewm.enable or false;
   emacsPkg = if ewmOn && ewmSysOn then osConfig.programs.ewm.emacsPackage else pkgs.emacs-pgtk;
@@ -59,7 +57,7 @@ in
     {
       home.packages = [ emacsPkg ] ++ externalTools;
 
-      # Live-editable directory (one symlink per live flag, see AGENTS.md). Flag defaults on.
+      # Live-editable directory; flag defaults on.
       xdg.configFile."emacs" =
         if liveEmacs then
           {

@@ -6,9 +6,7 @@
   ...
 }:
 let
-  # Enable GTK/Papirus theming whenever the desktop or sway is active.
-  # osConfig is available when this HM module is evaluated via NixOS's home-manager;
-  # fall back to local config when evaluated standalone.
+  # osConfig is only set under NixOS home-manager; fall back to local config standalone.
   desktopEnabled =
     if osConfig != null then
       (osConfig.nixtop.desktop.enable or false)
@@ -36,12 +34,10 @@ in
         name = "Papirus-Dark";
         package = pkgs.papirus-icon-theme;
       };
-      # HM would otherwise set gtk4 theme to Adwaita; we keep it null so
-      # matugen's gtk4 pinaceae.css (modules/matugen) owns GTK4 theming.
+      # Null so matugen's gtk4 pinaceae.css owns GTK4 theming.
       gtk4.theme = null;
     };
 
-    # Ensure the icon theme and cursor are available even without matugen
     home.packages = with pkgs; [
       papirus-icon-theme
       adw-gtk3
@@ -57,7 +53,6 @@ in
       gtk.enable = lib.mkDefault true;
     };
 
-    # gsettings/dconf is required for GTK to pick up the icon theme live
     dconf.enable = lib.mkDefault true;
     dconf.settings."org/gnome/desktop/interface" = {
       gtk-theme = lib.mkDefault "adw-gtk3-dark";
@@ -65,7 +60,6 @@ in
       color-scheme = lib.mkDefault "prefer-dark";
     };
 
-    # Help Nautilus/GTK apps find the theme without logging out
     xdg.configFile."gtk-3.0/settings.ini".force = lib.mkForce false;
   };
 }

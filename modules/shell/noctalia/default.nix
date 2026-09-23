@@ -38,8 +38,7 @@ in
         theme = {
           source = "custom";
           custom_palette = "nixtop";
-          # Noctalia renders mango colors + starship itself on every theme
-          # change; matugen must not also write those two outputs.
+          # Noctalia renders these itself; matugen must not also write them.
           templates.user.mango = {
             input_path = "$XDG_CONFIG_HOME/noctalia/templates/mango.conf";
             output_path = "$XDG_STATE_HOME/nixtop/theme/mango.conf";

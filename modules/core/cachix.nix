@@ -1,4 +1,3 @@
-# cachix use <name> drops a file in ./cachix/ and it just works
 { lib, ... }:
 
 let

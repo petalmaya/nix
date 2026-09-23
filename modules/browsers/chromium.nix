@@ -17,16 +17,11 @@
         { id = "nngceckbapebfimnlniiiahkandclblb"; } # Bitwarden
         { id = "mnjggcdmjocbbbhaepdhchncahnbgone"; } # SponsorBlock
       ];
-      # Allows fallback to x11
       commandLineArgs = [
         "--ozone-platform-hint=auto"
       ];
     };
 
-    # Hardening policies live in ./chromium-policies.nix (NixOS side; HM's
-    # programs.chromium has no policy options).
-
-    # Make chromium the default handler for web MIME types.
     xdg.mimeApps.defaultApplications = lib.mkDefault {
       "text/html" = [ "chromium-browser.desktop" ];
       "x-scheme-handler/http" = [ "chromium-browser.desktop" ];

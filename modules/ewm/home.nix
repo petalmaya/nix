@@ -1,7 +1,4 @@
 # EWM tools (Home Manager side). Per-user, independent of nixtop.shell.
-# The compositor elisp (lisp/init-ewm.el) is dormant until `ewm' loads,
-# so nested `emacs' stays a plain editor; this module only adds
-# packages plus the zsh hook.
 {
   config,
   lib,
@@ -12,7 +9,7 @@
 }:
 let
   cfg = config.nixtop.ewm;
-  # ewm.el + libewm_core.so + shell hooks, from EWM's own nixpkgs set.
+  # From EWM's own nixpkgs set.
   ewmElisp = inputs.ewm.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
@@ -26,22 +23,16 @@ in
       }
     ];
 
-    home.packages =
-      with pkgs;
-      [
-        wl-clipboard
-        brightnessctl
-        swaybg
-        mako
-        libnotify
-      ]
-      ++ [
-        # For etc/emacs-ewm.zsh below; the load-path comes from modules/emacs.
-        ewmElisp
-      ];
+    home.packages = with pkgs; [
+      wl-clipboard
+      brightnessctl
+      swaybg
+      mako
+      libnotify
+      ewmElisp
+    ];
 
-    # Reports $PWD to the surface buffer via emacsclient. Gated on
-    # $WAYLAND_DISPLAY, so safe to source unconditionally.
+    # Gated on $WAYLAND_DISPLAY, safe to source unconditionally.
     programs.zsh.initContent = lib.mkAfter ''
       if [ -f "${ewmElisp}/etc/emacs-ewm.zsh" ]; then
         source "${ewmElisp}/etc/emacs-ewm.zsh"

@@ -55,8 +55,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # No nixpkgs follows: EWM needs newer deps than our 26.05 pin, so it
-    # builds against its own locked unstable (see modules/ewm/).
+    # EWM builds against its own locked unstable, so no nixpkgs follows.
     ewm.url = "https://codeberg.org/ezemtsov/ewm/archive/master.tar.gz";
   };
 
@@ -70,7 +69,6 @@
       ...
     }@inputs:
     let
-      # Helper to build a host.  hmUsers is an attrset of user -> home.nix import
       mkHost =
         sys: hostname: hmUsers:
         let
@@ -78,9 +76,6 @@
             system = sys;
             config.allowUnfree = true;
           };
-          # mango HM module if the flake exposes one, otherwise null
-          # noctalia HM is imported defensively inside modules/shell/noctalia/default.nix,
-          # so we don't add it here
           mangoHM =
             if inputs.mango ? homeManagerModules then
               inputs.mango.homeManagerModules.default
@@ -89,7 +84,6 @@
             else
               null;
           extraHmModules = builtins.filter (x: x != null) [ mangoHM ];
-          # hardware file may not exist for garden until install time
           hwPath = ./hosts/${hostname}/hardware-configuration.nix;
           hwImports = if builtins.pathExists hwPath then [ hwPath ] else [ ];
         in
@@ -111,7 +105,6 @@
               inputs.disko.nixosModules.disko
               sops-nix.nixosModules.sops
               home-manager.nixosModules.home-manager
-              # Mango flake module (upstream) – provides programs.mango with addLoginEntry
               (
                 let
                   m = inputs.mango.nixosModules or { };
@@ -151,10 +144,8 @@
         };
       };
 
-      # Bare `nix fmt` formats the whole tree; explicit paths still pass
-      # straight through to nixfmt. A bare nixfmt invocation would format
-      # stdin instead, so the wrapper supplies the file list when no args
-      # are given.
+      # Bare `nix fmt` formats the whole tree; the wrapper supplies the file
+      # list because bare nixfmt would format stdin instead.
       formatter.x86_64-linux =
         let
           pkgs = nixpkgs.legacyPackages.x86_64-linux;

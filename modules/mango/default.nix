@@ -6,12 +6,9 @@
   ...
 }:
 let
-  # Per-user shell (modules/shell): host default, overridable per user.
   shell = config.nixtop.shell;
   mangoSrc = ./.;
-  # Noctalia and quickshell have mango variants; every other shell
-  # (none/jes) falls back to the noctalia variant so the standalone mango
-  # session keeps working.
+  # Noctalia and quickshell variants exist; other shells fall back to noctalia.
   variantDir = if shell == "quickshell" then ./variants/quickshell else ./variants/noctalia;
   liveMango =
     if osConfig != null then
@@ -74,25 +71,19 @@ in
     }
 
     (lib.mkIf (!liveMango) {
-      # store-built mango config – one directory, not 8 symlinks (one symlink per live flag)
       xdg.configFile."mango".source = mangoConfig;
       xdg.configFile."mango".recursive = true;
     })
 
     (lib.mkIf liveMango {
-      # live-editable whole directory (dev only)
       xdg.configFile."mango".source = config.lib.file.mkOutOfStoreSymlink livePath;
-      # variant files still need to be the selected shell's version – liveMango
-      # points at the shared directory, so the variant switch doesn't work live.
-      # Documented trade-off: with liveMango on, you edit the variant file
-      # directly or flip the shell and rebuild.
+      # Live mode points at the shared dir, so the variant switch needs a rebuild.
       home.activation.warnLiveMangoVariant = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         echo "liveMango on: Mango variant is ${shell} (edit modules/mango/variants/${shell}/ directly)" >&2
       '';
     })
 
-    # When liveMango is off, also generate the theme file at runtime path (managed by matugen)
-    # The file at ~/.local/state/nixtop/theme/mango.conf is written by the matugen bridge – ensure the dir exists
+    # Matugen writes the theme file at this runtime path.
     {
       home.activation.ensureMangoThemeDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"

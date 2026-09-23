@@ -6,9 +6,7 @@
 }:
 let
   cfg = config.nixtop.maintenance;
-  # derive flake URI from the current flake if user didn't override
-  # `self` is the flake itself; string interpolation yields its outPath (store copy)
-  # For a mutable checkout (e.g. /home/alice/nix) override via nixtop.maintenance.autoUpgrade.flake
+  # Null flake URI derives from self + hostname; override for a mutable checkout.
   defaultFlake = "${self}#${config.networking.hostName}";
 in
 {
@@ -21,7 +19,6 @@ in
       };
       dates = lib.mkOption {
         type = lib.types.str;
-        # systemd calendar: every 4 days at 04:00 (days 01,05,09,13,17,21,25,29) + monotonic 4d
         default = "*-*-01/4 04:00:00";
         description = "Systemd calendar for autoUpgrade (see systemd.time(7)). Default is every 4 days at 04:00.";
       };
@@ -65,22 +62,16 @@ in
       system.autoUpgrade = {
         enable = true;
         dates = cfg.autoUpgrade.dates;
-        # Flake URI: if user sets cfg.autoUpgrade.flake use it, else derive from self + hostname
-        # override with e.g. "/home/alice/nix#wonderland" if your checkout lives elsewhere
         flake = lib.mkDefault (
           if cfg.autoUpgrade.flake != null then cfg.autoUpgrade.flake else defaultFlake
         );
-        # When using flakes, --update-input nixpkgs is often wanted; keep flags minimal by default
         flags = lib.mkDefault [ ];
         allowReboot = cfg.autoUpgrade.allowReboot;
-        # every-4-days upgrades should persist across power-offs
         persistent = lib.mkDefault true;
         randomizedDelaySec = lib.mkDefault "30min";
         operation = lib.mkDefault "switch";
       };
-      # Enforce true 4-day interval via monotonic timer in addition to the calendar.
-      # OnCalendar covers the wall-clock schedule (01,05,09,… at 04:00) while
-      # OnUnitActiveSec guarantees a 96 h gap even across short/long months or downtime.
+      # True 4-day interval needs the monotonic timer alongside the calendar.
       systemd.timers.nixos-upgrade.timerConfig.OnUnitActiveSec = lib.mkDefault "4d";
       systemd.timers.nixos-upgrade.timerConfig.OnBootSec = lib.mkDefault "15min";
     })
@@ -100,7 +91,6 @@ in
           persistent = lib.mkDefault true;
           randomizedDelaySec = lib.mkDefault "30min";
         };
-        # also enable auto-optimise on every build (cheap)
         settings.auto-optimise-store = lib.mkDefault true;
       };
     })

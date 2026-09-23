@@ -5,8 +5,7 @@
   ...
 }:
 let
-  # generated colors file lives at a runtime path, not inside the repo checkout.
-  # Either matugen or noctalia writes it; foot's declarative config just includes it.
+  # Runtime path; matugen or noctalia writes it, foot only includes it.
   generatedPath = "${config.xdg.configHome}/foot/themes/generated";
 in
 {
@@ -28,7 +27,7 @@ in
       };
     };
 
-    # ensure the include doesn't error before the first theme generation
+    # Seeded empty so the include never fails before first theme generation.
     home.activation.ensureFootGenerated = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir -p "$(dirname "${generatedPath}")"
       $DRY_RUN_CMD [ -e "${generatedPath}" ] || $DRY_RUN_CMD touch "${generatedPath}"

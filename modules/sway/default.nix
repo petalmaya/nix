@@ -12,8 +12,7 @@ let
   swaylockSrc = ./swaylock;
   waybarSrc = ./waybar;
 
-  # HM modules read NixOS options via the osConfig module argument;
-  # config.osConfig does not exist.
+  # osConfig carries NixOS options; config.osConfig does not exist.
   liveSway =
     if osConfig != null then
       osConfig.nixtop.dev.liveSway or false
@@ -21,10 +20,7 @@ let
       config.nixtop.dev.liveSway or false;
   livePath = "${config.home.homeDirectory}/nix/modules/sway/sway";
 
-  # mako/waybar live flags mirror liveSway. mako symlinks the whole dir (its
-  # generated colors live in ~/.local/state, included from the static config);
-  # waybar symlinks only `config` — style.css is matugen-owned, so symlinking
-  # the dir would redirect generated output back into the repo.
+  # Waybar symlinks only `config`; style.css is matugen-owned and must stay writable.
   liveMako =
     if osConfig != null then
       osConfig.nixtop.dev.liveMako or false
@@ -44,20 +40,15 @@ let
       osConfig.nixtop.sway.bar or "waybar"
     else
       config.nixtop.sway.bar or "waybar";
-  # Per-user shell (modules/shell): host default, overridable per user.
+  # Per-user shell; host default, overridable per user.
   shell = config.nixtop.shell;
   useWaybar = swayBar == "waybar" && shell == "none";
 
-  # Noctalia targets swayfx or mango (nixtop.noctalia.compositor). Same HM
-  # config, so read it directly — no osConfig round-trip needed.
+  # Noctalia targets swayfx or mango; same HM config either way.
   noctaliaCompositor = config.nixtop.noctalia.compositor or "sway";
 
-  # Variant handling: sway's autostart/variant adapt to nixtop.shell + nixtop.sway.bar.
-  # Single source: modules/sway/variants/<name>.conf. The store build reads
-  # the file; the live activation (ensureSwayLiveVariant below) copies the
-  # same file, so store-built and live variant.conf agree. Only the JES
-  # include path differs (store dir vs live checkout) and is substituted
-  # per path via @jesKeybinds@.
+  # Single source: modules/sway/variants/<name>.conf. Only the JES
+  # include path differs (store vs live) and is substituted per path.
   variantName =
     if shell == "noctalia" && noctaliaCompositor == "sway" then
       "noctalia-sway"
@@ -81,15 +72,14 @@ let
   autostartVariant =
     if shell == "noctalia" || shell == "quickshell" || shell == "jes" then
       ''
-        # Autostart — shell variant owns the bar AND notifications, so waybar AND mako are NOT autostarted here.
-        # swayidle + polkit are still needed for all shells.
+        # Shell variant owns bar and notifications; swayidle + polkit still needed.
         exec_always --no-startup-id swayidle -w timeout 300 "$lock" timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' before-sleep "$lock"
         exec ~/.local/bin/start-polkit
       ''
     else
       builtins.readFile ./sway/autostart.conf;
 
-  # JES keybinds file — copied as jes-keybinds.conf, included from variant.conf
+  # JES keybinds are included from variant.conf.
   jesKeybinds = ../shell/jes/sway/keybinds.conf;
 
   swayConfig = pkgs.runCommand "sway-config" { } ''
@@ -147,11 +137,7 @@ in
           ];
         };
 
-        # Companion configs – fuzzel, swaylock, mako, waybar.
-        # mako/config and waybar/config are static and HM-managed below (store or
-        # live); waybar/style.css is NOT here — matugen owns it (see the seed in
-        # ensureSwayThemeDir), because an HM store symlink is read-only and every
-        # matugen run would fail on it.
+        # Companion configs; waybar/style.css is matugen-owned, never HM-managed.
         configFile."fuzzel/fuzzel.ini".source = fuzzelSrc + "/fuzzel.ini";
         configFile."swaylock/config".source = swaylockSrc + "/config";
       };
@@ -178,8 +164,7 @@ in
           ++ lib.optionals (shell == "none") [ mako ]
           ++ lib.optionals useWaybar [ waybar ];
 
-        # polkit agent wrapper — used by sway/autostart.conf via `exec ~/.local/bin/start-polkit`
-        # This lives outside ~/.config/sway so it works both store-built and live-symlinked.
+        # Used by sway/autostart.conf; outside ~/.config/sway so it works store-built and live.
         file.".local/bin/start-polkit" = {
           executable = true;
           text = ''
@@ -194,9 +179,7 @@ in
             $DRY_RUN_CMD chmod +x "$HOME/.config/sway/scripts/"* 2>/dev/null || true
           '';
 
-          # Writable theme outputs matugen needs before its first run. style.css is
-          # matugen-owned (never HM-managed): seed a writable copy once, and drop
-          # the pre-fix store symlink so old checkouts heal.
+          # Matugen-owned outputs must exist and stay writable.
           ensureSwayThemeDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
             $DRY_RUN_CMD mkdir -p "$HOME/.config/waybar"
@@ -209,20 +192,11 @@ in
             $DRY_RUN_CMD chmod u+w "$HOME/.config/waybar/style.css" 2>/dev/null || true
           '';
 
-          # Live variant: with liveSway, ~/.config/sway is a symlink into the repo,
-          # so the store-built variant.conf is not used. Copy the same
-          # single-source file the store build reads
-          # (modules/sway/variants/<name>.conf); swaymsg reload picks it up.
-          # The rendered file is git-ignored (it is generated, per-shell).
-          #
-          # Never mkdir ~/.config/sway here: it is a symlink, and writing through
-          # a dangling one (no ~/nix checkout) aborts activation — while HM
-          # recreates the link every run, so deleting it cannot help either.
-          # Skip with a warning instead; the fix is cloning the repo to ~/nix.
+          # Live variant copies the same single-source file the store build reads.
+          # Skip when the symlink dangles; the fix is cloning the repo to ~/nix.
           ensureSwayLiveVariant = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             if [ "${if liveSway then "1" else "0"}" = "1" ]; then
               if [ -d "$HOME/.config/sway" ]; then
-                # rm first: plain cp fails on a stale read-only variant.conf.
                 $DRY_RUN_CMD rm -f "$HOME/.config/sway/variant.conf" || true
                 if $DRY_RUN_CMD cp "${./variants}/${variantName}.conf" "$HOME/.config/sway/variant.conf"; then
                   ${lib.optionalString (shell == "jes") ''
@@ -253,8 +227,7 @@ in
       xdg.configFile."sway".recursive = true;
     })
 
-    # mako static config — one directory (store or live); colors arrive via
-    # `include=~/.local/state/nixtop/theme/mako`, never written here.
+    # Mako colors arrive via include from runtime state, never written here.
     (lib.mkIf (config.nixtop.sway.enable && !liveMako) {
       xdg.configFile."mako".source = makoSrc;
       xdg.configFile."mako".recursive = true;
@@ -265,16 +238,13 @@ in
       xdg.configFile."mako".recursive = true;
     })
 
-    # waybar config is always present so the bar works even when its package
-    # is not installed; the package itself stays conditional on useWaybar.
+    # Waybar config is always present; the package itself stays conditional.
     (lib.mkIf (config.nixtop.sway.enable && !liveWaybar) {
       xdg.configFile."waybar/config".source = waybarConfig + "/config";
     })
 
     (lib.mkIf (config.nixtop.sway.enable && liveWaybar) {
-      # Deliberate per-file exception (not whole-dir): style.css in the same
-      # dir is matugen-owned, so a dir symlink would redirect generated output
-      # into the repo. After editing, `pkill -SIGUSR2 waybar` applies it live.
+      # Per-file exception: a dir symlink would redirect matugen-owned style.css into the repo.
       xdg.configFile."waybar/config".source = config.lib.file.mkOutOfStoreSymlink liveWaybarPath;
     })
   ];

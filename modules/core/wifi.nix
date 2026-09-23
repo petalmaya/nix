@@ -12,7 +12,6 @@ in
   };
 
   config = {
-    # Wi-Fi PSK from sops, written as a NetworkManager keyfile on activation.
     sops.secrets.wifi_password = { };
     system.activationScripts.wifiKeyfile = {
       deps = [ "setupSecrets" ];

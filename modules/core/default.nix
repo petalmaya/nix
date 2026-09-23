@@ -37,8 +37,7 @@
       description = "Which bar to run under swayfx. waybar is primary; none disables bar entirely.";
     };
 
-    # dev live-edit flags (one symlink per flag, all default off except liveEmacs;
-    # see AGENTS.md for the symlink budget)
+    # One symlink per live flag; all off except liveEmacs.
     dev = {
       liveEmacs = lib.mkOption {
         type = lib.types.bool;
@@ -103,8 +102,7 @@
       networking.enableIPv6 = true;
       time.timeZone = "America/Edmonton";
 
-      # Caps Lock is Ctrl: console + X11 here, each compositor carries
-      # its own (sway, mango, EWM).
+      # Caps Lock as Ctrl here; compositors set their own.
       services.xserver.xkb.options = "ctrl:nocaps";
       console.useXkbConfig = true;
 
@@ -160,13 +158,12 @@
         };
       };
 
-      # rose is defined on garden with a sops secret (see
-      # hosts/garden/default.nix), so no rose secret is required here.
+      # Garden defines rose; no rose secret needed here.
 
       systemd.oomd.enable = true;
       system.stateVersion = "26.05";
 
-      # swap defaults – host overrides for garden (zswap) vs wonderland/rabbit (zram)
+      # Hosts override swap policy (garden zswap, others zram).
       zramSwap = {
         enable = lib.mkDefault true;
         algorithm = "zstd";
@@ -184,7 +181,6 @@
 
     (lib.mkIf config.nixtop.desktop.enable {
       programs = {
-        # Mango session via the upstream flake; addLoginEntry registers the .desktop.
         mango = {
           enable = lib.mkDefault true;
           addLoginEntry = lib.mkDefault true;
@@ -196,7 +192,6 @@
         steam.enable = pkgs.stdenv.hostPlatform.isx86_64;
       };
 
-      # The greetd greeter user needs a writable home plus an explicit group.
       users.users.greeter = {
         isSystemUser = true;
         group = "greeter";
@@ -206,14 +201,12 @@
       users.groups.greeter = { };
 
       nixtop = {
-        # SilentSDDM is the default greeter; override per-host if needed.
         greetd.greeter = lib.mkDefault "sddm";
         security.apparmor.enable = lib.mkDefault true;
         plymouth.enable = lib.mkDefault true;
       };
 
       services = {
-        # Sway is the default session for the SDDM chooser (alongside Mango)
         displayManager.defaultSession = lib.mkDefault "sway";
         pipewire = {
           enable = true;
@@ -275,8 +268,7 @@
         icons.enable = true;
       };
 
-      # Greeter/SDDM choosers scan these dirs, but sessionPackages alone
-      # doesn't link them into the system path.
+      # sessionPackages alone is not linked into the system path.
       environment.pathsToLink = [
         "/share/wayland-sessions"
         "/share/xsessions"

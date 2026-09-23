@@ -9,9 +9,7 @@ let
   matugenOwnsStarship =
     (config.nixtop.services.matugen.enable or false)
     && (config.nixtop.services.matugen.templates.starship.enable or false);
-  # Noctalia renders starship.toml itself (theme.templates.user.starship), so
-  # the static fallback must stay out of the way there too — an HM store
-  # symlink is read-only and Noctalia's write would fail.
+  # Noctalia renders starship itself, so the static fallback must stay out of the way.
   noctaliaOwnsStarship =
     (config.nixtop.shell or "none") == "noctalia" && (config.nixtop.noctalia.enable or false);
   hostName = if osConfig != null then osConfig.networking.hostName or "wonderland" else "wonderland";
@@ -28,7 +26,6 @@ in
 
       zsh = {
         enable = true;
-        # updated behavior for 26.05 – XDG config dir instead of home
         dotDir = "${config.xdg.configHome}/zsh";
         enableCompletion = true;
         autosuggestion.enable = true;

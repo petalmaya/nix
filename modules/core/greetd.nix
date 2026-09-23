@@ -36,16 +36,9 @@ in
         enable = true;
         settings.terminal.vt = 1;
       };
-
-      # The actual default_session.command is set by the selected greeter module
-      # (modules/shell/quickshell/greeter.nix).
-      # We only assert that exactly one greeter is active and that services.greetd
-      # is not left without a command – the greeter modules themselves are
-      # responsible for filling settings.default_session when their selector matches.
     })
 
     (lib.mkIf (cfg.enable && cfg.greeter == "sddm") {
-      # SDDM owns the display-manager; greetd must be off to avoid vt conflict
       services.greetd.enable = lib.mkForce false;
     })
   ];

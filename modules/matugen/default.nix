@@ -8,9 +8,8 @@
 let
   cfg = config.nixtop.services.matugen;
 
-  # Matugen template registry. To add one: drop the source under ./templates/
-  # and register its input path, output path, and optional reload hook.
-  # Hooks log to the journal (systemd-cat) and never fail the run (|| true).
+  # Template registry: input path, output path, optional reload hook.
+  # Hooks log to the journal and never fail the run.
   templates = {
     noctalia = {
       input_path = "noctalia/palette.json";
@@ -18,7 +17,6 @@ let
       post_hook = "noctalia msg reload 2>&1 | systemd-cat -t matugen-noctalia || true";
     };
     jes = {
-      # JES watches ~/.local/state/JES_colors.json live (shell.qml FileView)
       input_path = "jes/colors.json";
       output_path = "~/.local/state/JES_colors.json";
     };
@@ -34,9 +32,7 @@ let
     };
     waybar = {
       input_path = "waybar/style.css";
-      # matugen-owned writable file (HM must NOT manage this path: a store
-      # symlink here is read-only and every run would fail). Seeded once from
-      # modules/sway/waybar/style.css by the sway module's activation.
+      # HM must not manage this path; seeded writable by the sway module.
       output_path = "~/.config/waybar/style.css";
       post_hook = "bash ~/.config/matugen/templates/waybar/apply.sh 2>&1 | systemd-cat -t matugen-waybar || true";
     };
@@ -47,8 +43,7 @@ let
     };
     mako = {
       input_path = "mako/config";
-      # Colors only; merged over the static config via mako's `include=`
-      # (see modules/sway/mako/config), so this stays writable state.
+      # Colors only; merged over the static config via mako include.
       output_path = "~/.local/state/nixtop/theme/mako";
       post_hook = "bash ~/.config/matugen/templates/mako/apply.sh 2>&1 | systemd-cat -t matugen-mako || true";
     };
@@ -95,15 +90,12 @@ let
     };
     "papirus-icons" = {
       input_path = "papirus-icons/colors";
-      # State, not templates: matugen cannot write into its own read-only
-      # template source, so this output lives in ~/.local/state.
       output_path = "~/.local/state/nixtop/theme/papirus-colors";
       post_hook = "bash ~/.config/matugen/templates/papirus-icons/apply.sh 2>&1 | systemd-cat -t matugen-papirus || true";
     };
   };
 
-  # Noctalia takes over mango + starship via its own user templates (it
-  # disables those two registry entries); matugen owns the rest.
+  # Noctalia renders mango + starship itself; matugen owns the rest.
   enabledTemplates = lib.filterAttrs (name: _: cfg.templates.${name}.enable or true) templates;
 
   matugenConfig = {
@@ -153,7 +145,7 @@ in
       );
     };
 
-    # Reserved theming-owner options (owner follows nixtop.shell unless overridden per app).
+    # Theming owner follows nixtop.shell unless overridden per app.
     theme.owner = lib.mkOption {
       type = lib.types.enum [
         "auto"
@@ -177,8 +169,6 @@ in
 
   config = lib.mkIf cfg.enable (
     let
-      # HM modules read NixOS options via the osConfig module argument;
-      # config.osConfig does not exist.
       liveMatugen =
         if osConfig != null then
           osConfig.nixtop.dev.liveMatugen or false
@@ -215,8 +205,6 @@ in
                       exit 1
                     fi
                 matugen image "$IMG"
-                # Live-reload everything matugen just rewrote. Each nudge is
-                # best-effort: only the running compositor/shell picks it up.
                 if pgrep -x sway >/dev/null 2>&1; then
                       swaymsg reload 2>/dev/null || true
                     fi
@@ -235,8 +223,7 @@ in
             };
           };
 
-        # Seed theme output dirs/files so the first matugen run (and the shells
-        # watching its outputs) never hits a missing path.
+        # Seed outputs so the first run never hits a missing path.
         activation.ensureThemeOutputDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           $DRY_RUN_CMD mkdir -p "$HOME/.config/noctalia/palettes"
           $DRY_RUN_CMD mkdir -p "$HOME/.local/state/nixtop/theme"
@@ -251,18 +238,13 @@ in
         '';
       };
 
-      # config.toml is generated at build time from the registry above.
-      # There is intentionally no checked-in config file to drift out of sync.
+      # Generated at build time from the registry; no checked-in config to drift.
       xdg.configFile."matugen/config.toml".source =
         (pkgs.formats.toml { }).generate "matugen-config.toml"
           matugenConfig;
 
-      # First-run seed: matugen only runs on demand (`nixtop-theme <image>`),
-      # so a fresh checkout would keep empty seeded outputs forever (notably
-      # Noctalia's nixtop.json palette, which starves every downstream theme).
-      # A oneshot user service runs matugen once against the first wallpaper
-      # while the palette bridge is still empty. Never fails: best-effort,
-      # output goes to the journal (`journalctl --user -u matugen-seed`).
+      # Oneshot seed: matugen runs on demand, so generate once from the first
+      # wallpaper while the palette is still empty. Best-effort.
       systemd.user.services.matugen-seed = {
         Unit = {
           Description = "Seed matugen themes on first run (empty nixtop.json palette)";
@@ -285,8 +267,7 @@ in
         Install.WantedBy = [ "default.target" ];
       };
 
-      # papirus-folders recolors the icon theme in place, which needs a writable
-      # copy — a store path won't do. Seed one from nixpkgs on first activation.
+      # Papirus needs a writable copy; the store path is read-only.
       home.activation.ensurePapirusIconsWritable = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           $DRY_RUN_CMD mkdir -p "$HOME/.local/share/icons"
           if [ ! -d "$HOME/.local/share/icons/Papirus" ]; then
@@ -294,7 +275,7 @@ in
             $DRY_RUN_CMD chmod -R u+w "$HOME/.local/share/icons/Papirus"
             $DRY_RUN_CMD chmod +x "$HOME/.local/share/icons/Papirus" 2>/dev/null || true
           fi
-        # Template hook scripts lose their exec bit through the store/live paths.
+        # Hooks lose their exec bit through store/live paths.
         $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/papirus-icons/papirus-folders" 2>/dev/null || true
         $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/papirus-icons/apply.sh" 2>/dev/null || true
         $DRY_RUN_CMD chmod +x "$HOME/.config/matugen/templates/sway/apply.sh" 2>/dev/null || true

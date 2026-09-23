@@ -10,10 +10,8 @@
     ./jes
   ];
 
-  # Per-user shell selection. Defaults to the host's nixtop.shell (NixOS
-  # option, read via osConfig); a user's home.nix may override it for that
-  # user only. Every shell module below follows this value, and the mango /
-  # sway variants adapt to it. "none" is waybar-only (no shell).
+  # Per-user shell selection. Defaults to the host value; a user may override.
+  # Every shell module follows this value. "none" is waybar-only.
   options.nixtop.shell = lib.mkOption {
     type = lib.types.enum [
       "noctalia"
