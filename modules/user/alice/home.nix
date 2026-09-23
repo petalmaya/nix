@@ -102,7 +102,7 @@ in
   programs = {
     yazi.shellWrapperName = "y";
     zsh.dotDir = "${config.xdg.configHome}/zsh";
- 
+
     mpv = {
       enable = true;
       package = pkgs.mpv.override {

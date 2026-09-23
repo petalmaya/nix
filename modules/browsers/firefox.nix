@@ -24,7 +24,7 @@ in
   config = lib.mkIf config.nixtop.apps.firefox.enable {
     programs.firefox = {
       enable = true;
-      # Rapid release 
+      # Rapid release
       package = pkgs.firefox;
       # XDG config path (nixpkgs 26.05).
       configPath = "${config.xdg.configHome}/mozilla/firefox";
