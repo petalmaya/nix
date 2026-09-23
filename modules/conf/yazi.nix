@@ -5,7 +5,6 @@
   config = lib.mkIf config.nixtop.apps.yazi.enable {
     programs.yazi = {
       enable = true;
-      # shellWrapperName "y" (nixpkgs 26.05).
       shellWrapperName = "y";
     };
   };

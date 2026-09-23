@@ -24,8 +24,7 @@ in
   config = lib.mkIf config.nixtop.apps.firefox.enable {
     programs.firefox = {
       enable = true;
-      # Rapid release (not ESR): auto-rebuilds track upstream, so we get
-      # new privacy/security features without waiting for the ESR cycle.
+      # Rapid release 
       package = pkgs.firefox;
       # XDG config path (nixpkgs 26.05).
       configPath = "${config.xdg.configHome}/mozilla/firefox";

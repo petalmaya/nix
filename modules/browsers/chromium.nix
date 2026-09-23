@@ -11,16 +11,13 @@
     programs.chromium = {
       enable = true;
       package = pkgs.chromium;
-      # Full uBlock Origin is MV2-only and dead on Chromium 139+; uBOL is
-      # gorhill's official MV3 build. The rest are MV3-compatible.
       extensions = [
         { id = "ddkjiahejlhfcafbddmgiahcphecmpfh"; } # uBlock Origin Lite
         { id = "eimadpbcbfnmbkopoojfekhnkhdbieeh"; } # Dark Reader
         { id = "nngceckbapebfimnlniiiahkandclblb"; } # Bitwarden
         { id = "mnjggcdmjocbbbhaepdhchncahnbgone"; } # SponsorBlock
       ];
-      # Wrapper flag only, no Chromium rebuild. hint=auto picks Wayland
-      # under sway/mango and still falls back to X11/XWayland.
+      # Allows fallback to x11
       commandLineArgs = [
         "--ozone-platform-hint=auto"
       ];

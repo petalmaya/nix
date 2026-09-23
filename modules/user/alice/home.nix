@@ -5,7 +5,6 @@
   ...
 }:
 let
-  # Newer versions than our 26.05 pin (antigravity-ide is unstable-only).
   unstable = unstable-pkgs;
 in
 {
@@ -51,7 +50,6 @@ in
         obs-studio
         prismlauncher
         openttd
-        openrct2
         steam-run
         # media
         rmpc
@@ -92,20 +90,19 @@ in
   nixtop = {
     apps.chromium.enable = true;
     apps.emacs.enable = true;
-
-    # EWM overlay + tools. Pick "ewm" at login, or Noctalia as before.
+    # EWM overlay + tools.
     ewm.enable = true;
   };
 
-  # Noctalia shell is per-user: lewis on the same host keeps the host default.
-  nixtop.shell = "noctalia";
-  nixtop.noctalia.compositor = "mango";
+  # Shells
+  nixtop.shell = "noctalia"; # or jes or quickshell or none
+  nixtop.noctalia.compositor = "mango"; # Or sway
 
   gtk.gtk4.theme = null;
   programs = {
     yazi.shellWrapperName = "y";
     zsh.dotDir = "${config.xdg.configHome}/zsh";
-
+ 
     mpv = {
       enable = true;
       package = pkgs.mpv.override {
