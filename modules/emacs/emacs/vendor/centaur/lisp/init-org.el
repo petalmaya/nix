@@ -167,7 +167,7 @@ prepended to the element after the #+HEADER: tag."
                '("\\.\\(x?html?\\|pdf\\)\\'"
                  .
                  (lambda (file _link)
-                   (flutter-browse-url-of-file (browse-url-file-url file)))))
+                   (flutter-browse-url-of-file file))))
 
   ;; Add md/gfm backends
   (add-to-list 'org-export-backends 'md)

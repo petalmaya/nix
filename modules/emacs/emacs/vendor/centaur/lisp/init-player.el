@@ -64,7 +64,7 @@
     :init
     (defun restart-mpd ()
       (interactive)
-      (call-process "pkill" nil nil nil "mpd")
+      (call-process "pkill" nil nil nil "-x" "mpd")
       (call-process "mpd")))
 
   ;; MPD Interface

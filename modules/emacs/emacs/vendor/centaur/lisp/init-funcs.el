@@ -73,15 +73,15 @@
 Same as `replace-string' `C-q' `C-m' `RET' `RET'."
   (interactive)
   (save-excursion
-    (when (region-active-p)
-      (narrow-to-region (region-beginning) (region-end)))
-    (goto-char (point-min))
-    (let ((count 0))
-      (while (search-forward "\r" nil t)
-        (replace-match "" nil t)
-        (setq count (1+ count)))
-      (message "Removed %d " count))
-    (widen)))
+    (save-restriction
+      (when (region-active-p)
+        (narrow-to-region (region-beginning) (region-end)))
+      (goto-char (point-min))
+      (let ((count 0))
+        (while (search-forward "\r" nil t)
+          (replace-match "" nil t)
+          (setq count (1+ count)))
+        (message "Removed %d carriage return characters." count)))))
 
 ;; File and buffer
 (defun delete-this-file ()
@@ -110,11 +110,14 @@ Same as `replace-string' `C-q' `C-m' `RET' `RET'."
 (defun browse-this-file ()
   "Open the current file as a URL using `browse-url'."
   (interactive)
+  (require 'browse-url)
   (let ((file-name (buffer-file-name)))
-    (if (and (fboundp 'tramp-tramp-file-p)
-             (tramp-tramp-file-p file-name))
-        (error "Cannot open tramp file")
-      (browse-url (concat "file://" file-name)))))
+    (unless file-name
+      (user-error "Current buffer is not visiting a file"))
+    (when (and (fboundp 'tramp-tramp-file-p)
+               (tramp-tramp-file-p file-name))
+      (error "Cannot open tramp file"))
+    (browse-url (browse-url-file-url file-name))))
 
 (defun create-scratch-buffer ()
   "Create a scratch buffer."
@@ -152,7 +155,7 @@ Same as `replace-string' `C-q' `C-m' `RET' `RET'."
        (featurep 'xwidget-internal)))
 
 (defun flutter-webkit-browse-url (url &optional pop-buffer new-session)
-  "Browse URL with xwidget-webkit' and switch or pop to the buffer.
+  "Browse URL with `xwidget-webkit' and switch or pop to the buffer.
 
 POP-BUFFER specifies whether to pop to the buffer.
 NEW-SESSION specifies whether to create a new xwidget-webkit session.
@@ -171,18 +174,24 @@ Interactively, URL defaults to the string looking like a url around point."
 (defun flutter-browse-url (url)
   "Open URL using a configurable method.
 See `browse-url' for more details."
-  (interactive)
+  (interactive (progn
+                 (require 'browse-url)
+                 (browse-url-interactive-arg "URL: ")))
   (if (xwidget-workable-p)
       (flutter-webkit-browse-url url t)
     (browse-url url)))
 
-(defun flutter-browse-url-of-file (file)
+(defun flutter-browse-url-of-file (&optional file)
   "Use a web browser to display FILE.
 Display the current buffer's file if FILE is nil or if called
 interactively.  Turn the filename into a URL with function
 `browse-url-file-url'.  Pass the URL to a browser using the
 `browse-url' function then run `browse-url-of-file-hook'."
   (interactive)
+  (require 'browse-url)
+  (setq file (or file (buffer-file-name)))
+  (unless file
+    (user-error "Current buffer is not visiting a file"))
   (if (xwidget-workable-p)
       (flutter-webkit-browse-url (browse-url-file-url file) t)
     (browse-url-of-file file)))
@@ -510,22 +519,24 @@ theme (themes/pinaceae-theme.el), so they are ignored."
 Kills other windows first, then splits left/right."
   (interactive)
   (let* ((next-window (next-window))
-         (other-buffer (and next-window (window-buffer next-window))))
+         (other-buffer (and next-window (window-buffer next-window)))
+         (new-window nil))
     (delete-other-windows)
-    (split-window-horizontally)
+    (setq new-window (split-window-horizontally))
     (when other-buffer
-      (set-window-buffer next-window other-buffer))))
+      (set-window-buffer new-window other-buffer))))
 
 (defun split-window-vertically-instead ()
   "Split stacked, keeping the other window's buffer.
 Kills other windows first, then splits top/bottom."
   (interactive)
   (let* ((next-window (next-window))
-         (other-buffer (and next-window (window-buffer next-window))))
+         (other-buffer (and next-window (window-buffer next-window)))
+         (new-window nil))
     (delete-other-windows)
-    (split-window-vertically)
+    (setq new-window (split-window-vertically))
     (when other-buffer
-      (set-window-buffer next-window other-buffer))))
+      (set-window-buffer new-window other-buffer))))
 
 (defun flutter-split-window-toggle ()
   "Toggle a two-window frame between side-by-side and stacked."
@@ -558,17 +569,17 @@ Kills other windows first, then splits top/bottom."
           (top    . ,(frame-parameter nil 'top))
           (width  . ,(frame-parameter nil 'width))
           (height . ,(frame-parameter nil 'height))
-          (fullscreen))))
+          (fullscreen . ,(frame-parameter nil 'fullscreen)))))
 
 (defun flutter-frame--fullscreen-p ()
-  "Return Non-nil if the frame is fullscreen."
-  (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth)))
+  "Return non-nil if the frame is fullscreen or maximized."
+  (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth maximized)))
 
 (defun flutter-frame-maximize ()
   "Maximize the frame."
   (interactive)
-  (flutter-frame--save-geometry)
   (unless (eq (frame-parameter nil 'fullscreen) 'maximized)
+    (flutter-frame--save-geometry)
     (set-frame-parameter nil 'fullscreen 'maximized)))
 
 (defun flutter-frame-restore ()

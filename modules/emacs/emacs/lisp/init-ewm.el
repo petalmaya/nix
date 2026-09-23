@@ -26,26 +26,17 @@
 
 ;;; Commentary:
 ;;
-;; Compositor-only config for the `ewm' login session (Nix:
-;; modules/ewm/).  Everything side-effecting runs inside
-;; `flutter-ewm--setup', after `ewm' loads — so a nested `emacs' stays a
-;; plain editor: no EWM keys, no wallpaper handling, no app sources.
-;;
-;; Daily keys (compositor only): s-d launcher, s-<return> terminal, s-f
-;; fullscreen, s-S-SPC float, s-TAB/s-S-TAB cycle surfaces, s-t/s-n new
-;; frame, s-q close buffer, s-S-q close frame, s-w jump windows, s-l
-;; lock, s-c/s-v copy/paste, s-arrows focus (crosses outputs), s-S-arrows
-;; and s-1..9 move along the frame strip, C-s-arrows reorder frames,
-;; media keys, C-c e compositor hydra.
-;; F2 opens the dashboard.
+;; EWM is configured only after `ewm' loads, keeping nested Emacs sessions plain.
+;; Screen locking uses EWM's idle protocol with foreground swaylock.
 
 ;;; Code:
+
+(require 'subr-x)
 
 (declare-function ewm-start-module "ewm")
 (declare-function ewm-list-xdg-apps "ewm")
 (declare-function ewm-launch-app "ewm")
 (declare-function ewm-launch-xdg-command "ewm")
-(declare-function ewm-lock-session "ewm")
 (declare-function ewm-toggle-fullscreen "ewm")
 (declare-function ewm-next-surface-buffer "ewm")
 (declare-function ewm-prev-surface-buffer "ewm")
@@ -79,7 +70,7 @@
 (defcustom flutter-ewm-wallpaper-directory
   (expand-file-name "Pictures/Wallpapers" (getenv "HOME"))
   "Directory offered by `flutter-ewm-set-wallpaper'.
-Symlinked to the repo's assets/wallpaper (see modules/user/*/home.nix)."
+Managed by `nixtop.wallpapers.enable' in modules/user/base.nix."
   :type 'directory
   :group 'flutter-ewm)
 
@@ -90,16 +81,17 @@ Symlinked to the repo's assets/wallpaper (see modules/user/*/home.nix)."
                      "\\.\\(png\\|jpe?g\\|webp\\|bmp\\)\\'")))
 
 (defvar flutter-ewm--wallpaper-process nil
-  "swaybg process showing the compositor wallpaper.")
+  "swaybg process started by this EWM session.")
 
-(defun flutter-ewm--wallpaper-sentinel (_process event)
-  "Note abnormal swaybg exits; details stay in *ewm-swaybg*."
-  (when (string-match-p "abnormal" event)
-    (message "swaybg failed (%s); see *ewm-swaybg*" (string-trim event))))
+(defun flutter-ewm--wallpaper-sentinel (process event)
+  "Clear the wallpaper process and report abnormal exits."
+  (when (eq process flutter-ewm--wallpaper-process)
+    (setq flutter-ewm--wallpaper-process nil)
+    (when (string-match-p "abnormal" event)
+      (message "swaybg failed (%s); see *ewm-swaybg*" (string-trim event)))))
 
 (defun flutter-ewm--start-wallpaper (image)
-  "Show IMAGE behind frames with swaybg, replacing any old instance.
-Output goes to *ewm-swaybg* so a dying swaybg leaves a trace."
+  "Show IMAGE behind frames with swaybg, replacing this session's instance."
   (let ((file (expand-file-name image)))
     (cond ((not (getenv "WAYLAND_DISPLAY"))
            (user-error "WAYLAND_DISPLAY unset; swaybg needs the running compositor"))
@@ -110,7 +102,6 @@ Output goes to *ewm-swaybg* so a dying swaybg leaves a trace."
           (t
            (when (process-live-p flutter-ewm--wallpaper-process)
              (kill-process flutter-ewm--wallpaper-process))
-           (ignore-errors (call-process "pkill" nil nil nil "-x" "swaybg"))
            (setq flutter-ewm--wallpaper-process
                  (start-process "ewm-swaybg" (get-buffer-create "*ewm-swaybg*")
                                 "swaybg" "-i" file "-m" "fill"))
@@ -119,20 +110,93 @@ Output goes to *ewm-swaybg* so a dying swaybg leaves a trace."
            flutter-ewm--wallpaper-process))))
 
 (defun flutter-ewm--maybe-start-wallpaper (&rest _)
-  "Start swaybg once the compositor is up.
-Runs after `ewm-start-module': any earlier there is no Wayland socket
-yet, so swaybg dies silently."
+  "Start swaybg after the compositor creates its Wayland socket."
   (condition-case err
       (flutter-ewm--start-wallpaper flutter-ewm-wallpaper)
     (error (display-warning 'init-ewm (error-message-string err)))))
 
-(defvar flutter-ewm--notif-process nil)
+(defvar flutter-ewm--notif-process nil
+  "mako process started by this EWM session.")
+
+(defun flutter-ewm--notif-sentinel (process event)
+  "Clear the notification process and report abnormal exits."
+  (when (eq process flutter-ewm--notif-process)
+    (setq flutter-ewm--notif-process nil)
+    (when (string-match-p "abnormal" event)
+      (message "mako failed (%s); see *ewm-mako*" (string-trim event)))))
 
 (defun flutter-ewm--maybe-start-notifications (&rest _)
+  "Start mako after the compositor creates its Wayland socket."
   (when (and (getenv "WAYLAND_DISPLAY") (executable-find "mako"))
     (unless (process-live-p flutter-ewm--notif-process)
       (setq flutter-ewm--notif-process
-            (start-process "ewm-mako" nil "mako")))))
+            (start-process "ewm-mako" (get-buffer-create "*ewm-mako*") "mako"))
+      (set-process-sentinel flutter-ewm--notif-process
+                            #'flutter-ewm--notif-sentinel))))
+
+(defconst flutter-ewm-lock-command "swaylock -f"
+  "Command used for manual and idle EWM screen locking.")
+
+(defcustom flutter-ewm-output-config
+  '(("HDMI-A-1" :width 1680 :height 1050 :x 0 :y 0)
+    ("eDP-1" :x 1680 :y 0))
+  "Output layout; check names with `M-x ewm-list-outputs'."
+  :type 'sexp
+  :group 'flutter-ewm)
+
+(defcustom flutter-ewm-input-config
+  '((keyboard :repeat-delay 200 :repeat-rate 45
+              :xkb-layouts "us"
+              :xkb-options "ctrl:nocaps")
+    (touchpad :natural-scroll t :tap t :dwt t)
+    (mouse :accel-profile "flat"))
+  "Per-seat input config; Wayland shares one keymap across keyboards."
+  :type 'sexp
+  :group 'flutter-ewm)
+
+(defcustom flutter-ewm-idle-timeout 300
+  "Seconds of idleness before locking; nil disables idle locking."
+  :type '(choice (const :tag "Disabled" nil) integer)
+  :group 'flutter-ewm)
+
+(defvar flutter-ewm--lock-process nil
+  "Foreground swaylock process started by `flutter-ewm-lock-session'.")
+
+(defun flutter-ewm--lock-sentinel (process event)
+  "Clear the lock process and report abnormal exits."
+  (when (eq process flutter-ewm--lock-process)
+    (setq flutter-ewm--lock-process nil)
+    (when (string-match-p "abnormal" event)
+      (message "swaylock failed (%s); see *ewm-swaylock*" (string-trim event)))))
+
+(defun flutter-ewm-lock-session ()
+  "Lock the EWM session with foreground swaylock."
+  (interactive)
+  (cond ((process-live-p flutter-ewm--lock-process)
+         (message "Screen is already locked"))
+        ((null (executable-find "swaylock"))
+         (user-error "swaylock not found in PATH"))
+        (t
+         (setq flutter-ewm--lock-process
+               (start-process "ewm-swaylock" (get-buffer-create "*ewm-swaylock*")
+                              "swaylock" "-f"))
+         (set-process-sentinel flutter-ewm--lock-process
+                               #'flutter-ewm--lock-sentinel)
+         flutter-ewm--lock-process)))
+
+(defun flutter-ewm--stop-process (process)
+  "Stop PROCESS when it is still running."
+  (when (and process (process-live-p process))
+    (kill-process process)))
+
+(defun flutter-ewm--cleanup-children ()
+  "Stop helper processes started by this EWM session."
+  ;; Leave swaylock running; killing it would unlock the screen on exit.
+  (dolist (process (list flutter-ewm--wallpaper-process
+                         flutter-ewm--notif-process))
+    (flutter-ewm--stop-process process))
+  (setq flutter-ewm--wallpaper-process nil
+        flutter-ewm--notif-process nil))
 
 ;;;###autoload
 (defun flutter-ewm-set-wallpaper (image)
@@ -150,8 +214,7 @@ Restarts swaybg and saves the choice for future sessions."
   "Names of installed XDG applications, for `consult-buffer'."
   (mapcar #'car (ewm-list-xdg-apps)))
 
-;; XDG desktop apps inside consult-buffer (narrow with `a SPC').
-;; Inert data until `flutter-ewm--setup' adds it to the sources.
+;; Keep XDG app data inert until EWM setup adds it to consult-buffer.
 (defvar consult-source-xdg-apps
   '(:name "Apps"
     :narrow ?a
@@ -163,9 +226,7 @@ Restarts swaybg and saves the choice for future sessions."
 (defvar flutter-ewm--dashboard-shown nil
   "Non-nil once the compositor has shown the dashboard on its first frame.")
 
-;; Media keys run repo-standard CLI tools (this repo uses pamixer, like
-;; sway; upstream uses wpctl). Bound in `ewm-mode-map' below, which the
-;; compositor intercepts automatically.
+;; Use the repository's pamixer and brightnessctl tools for media keys.
 (defun flutter-ewm--run-audio (args)
   "Run pamixer with ARGS, warning when it is missing."
   (if (executable-find "pamixer")
@@ -227,34 +288,18 @@ One-shot: later frames (e.g. emacsclient) are left alone."
 
 (defun flutter-ewm--setup ()
   "Configure EWM once the compositor module loads."
-  ;; Keyboard/mouse. Same xkb as the OS (NixOS + sway + mango); EWM
-  ;; keeps its own per-seat state, so the layout repeats here.
-  (setq ewm-input-config '((keyboard :repeat-delay 200 :repeat-rate 45
-                                     :xkb-layouts "us"
-                                     :xkb-options "ctrl:nocaps")
-                           (touchpad :natural-scroll t :tap t :dwt t)
-                           (mouse :accel-profile "flat")))
-  ;; Outputs. Mirrors mango (modules/mango/settings.conf): external
-  ;; HDMI-A-1 left at (0,0), internal eDP-1 right of it.
-  ;; M-x ewm-list-outputs shows live names when connectors differ.
-  (setq ewm-output-config '(("HDMI-A-1" :width 1680 :height 1050 :x 0 :y 0)
-                            ("eDP-1" :x 1680 :y 0)))
-  ;; Look. Cursor matches the session env (modules/ewm/default.nix);
-  ;; blanking and locking stay with swayidle + swaylock.
-  (setq ewm-cursor-theme "capitaine-cursors"
-        ewm-cursor-size 24
-        ewm-unfocused-alpha 1.0
+  (setq ewm-input-config flutter-ewm-input-config)
+  (setq ewm-output-config flutter-ewm-output-config)
+  ;; Cursor settings come from the session environment owned by modules/ewm/default.nix.
+  (setq ewm-unfocused-alpha 1.0
         ewm-animations-enabled t
-        ewm-idle nil)
+        ewm-idle (and flutter-ewm-idle-timeout
+                      (cons flutter-ewm-idle-timeout flutter-ewm-lock-command)))
 
-  ;; Pointer motion focuses surfaces (upstream default is off).
   (setq ewm-focus-follows-mouse t)
-  ;; Keyboard focus never warps the pointer (upstream default warps to
-  ;; the focused window, throwing it across outputs on frame changes).
+  ;; Do not warp the pointer when keyboard focus changes.
   (setq ewm-mouse-follows-focus nil)
 
-  ;; Daily compositor keys (upstream defaults, plus s-n/s-q/s-w/s-<return>
-  ;; daily-driver extras). Plain Emacs/nested sessions never see these.
   (define-key ewm-mode-map (kbd "s-d") #'consult-buffer)
   (define-key ewm-mode-map (kbd "s-<return>") #'ghostel)
   (define-key ewm-mode-map (kbd "s-f") #'ewm-toggle-fullscreen)
@@ -266,29 +311,25 @@ One-shot: later frames (e.g. emacsclient) are left alone."
   (define-key ewm-mode-map (kbd "s-n") #'ewm-frame-new)
   (define-key ewm-mode-map (kbd "s-q") #'kill-current-buffer)
   (define-key ewm-mode-map (kbd "s-S-q") #'ewm-frame-close)
-  ;; ace-window manages Emacs splits, not Wayland clients (use s-q /
-  ;; hydra k to kill the client itself).
+  ;; ace-window manages Emacs splits; s-q and hydra k close Wayland clients.
   (define-key ewm-mode-map (kbd "s-w") #'ace-window)
-  (define-key ewm-mode-map (kbd "s-l") #'ewm-lock-session)
+  (define-key ewm-mode-map (kbd "s-l") #'flutter-ewm-lock-session)
   (define-key ewm-mode-map (kbd "s-c") #'kill-ring-save)
   (define-key ewm-mode-map (kbd "s-v") #'yank)
-  ;; Window focus that crosses outputs at the frame edge (shadows the
-  ;; global windmove s-arrows inside the compositor only).
+  (define-key ewm-mode-map (kbd "s-a") #'mark-whole-buffer)
+  ;; Shadow windmove's global s-arrow bindings at compositor frame edges.
   (define-key ewm-mode-map (kbd "s-<left>") #'ewm-focus-left)
   (define-key ewm-mode-map (kbd "s-<right>") #'ewm-focus-right)
   (define-key ewm-mode-map (kbd "s-<up>") #'ewm-focus-up)
   (define-key ewm-mode-map (kbd "s-<down>") #'ewm-focus-down)
-  ;; Frame-strip navigation: slide along this output, or jump to Nth frame.
-  ;; `ewm-frame-select' takes no argument — it reads the number from the
-  ;; key that invoked it — so bind it directly, not through a lambda.
+  ;; `ewm-frame-select' reads its number from the invoking key, so bind it directly.
   (define-key ewm-mode-map (kbd "s-S-<left>") #'ewm-frame-left)
   (define-key ewm-mode-map (kbd "s-S-<right>") #'ewm-frame-right)
   (define-key ewm-mode-map (kbd "C-s-<left>") #'ewm-frame-move-left)
   (define-key ewm-mode-map (kbd "C-s-<right>") #'ewm-frame-move-right)
   (dotimes (i 9)
     (define-key ewm-mode-map (kbd (format "s-%d" (1+ i))) #'ewm-frame-select))
-  ;; Media keys (intercepted above, so they work with a surface focused).
-  ;; Print stays intercepted but unbound — pick a screenshot tool later.
+  ;; EWM intercepts media keys even when a Wayland surface has focus.
   (define-key ewm-mode-map (kbd "<AudioRaiseVolume>") #'flutter-ewm-volume-up)
   (define-key ewm-mode-map (kbd "<AudioLowerVolume>") #'flutter-ewm-volume-down)
   (define-key ewm-mode-map (kbd "<AudioMute>") #'flutter-ewm-volume-mute)
@@ -296,8 +337,7 @@ One-shot: later frames (e.g. emacsclient) are left alone."
   (define-key ewm-mode-map (kbd "<MonBrightnessUp>") #'flutter-ewm-brightness-up)
   (define-key ewm-mode-map (kbd "<MonBrightnessDown>") #'flutter-ewm-brightness-down)
 
-  ;; Extra C-c prefix so hydras (media, windows, ghostel) work with a
-  ;; surface focused. Client copy/paste still works via s-c/s-v below.
+  ;; Intercept hydra prefixes and fullscreen media keys for focused surfaces.
   (setq ewm-intercept-prefixes
         '("C-x" "C-u" "C-h" "M-x" "C-c"
           ("s-f" :fullscreen)
@@ -308,32 +348,28 @@ One-shot: later frames (e.g. emacsclient) are left alone."
           ("<AudioMute>" :fullscreen)
           ("<AudioMicMute>" :fullscreen)
           ("<Print>" :fullscreen)))
-  ;; Familiar copy/paste/select-all inside clients.
   (setq ewm-surface-emulate-keys
         '((?\s-c . "ctrl")
           (?\s-v . "ctrl")
           (?\s-a . "ctrl")))
 
-  ;; Desktop apps inside consult-buffer.
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-sources 'consult-source-xdg-apps t))
 
-  ;; Firefox Picture-in-Picture floats; zenity-style dialogs stay tiled.
+  ;; Keep Firefox Picture-in-Picture floating; keep zenity dialogs tiled.
   (add-to-list 'display-buffer-alist
                `(,(ewm-surface-match :app "firefox" :title "^Picture-in-Picture$")
                  ewm-display-buffer-floating))
   (add-to-list 'display-buffer-alist
                `(,(ewm-surface-match :app "zenity") display-buffer-same-window))
 
-  ;; Wallpaper behind the frames. Deferred until the compositor starts
-  ;; (see `flutter-ewm--maybe-start-wallpaper'): at require time there is
-  ;; no Wayland socket yet.
+  ;; Defer wallpaper and notification helpers until the Wayland socket exists.
   (when (fboundp 'ewm-start-module)
     (advice-add 'ewm-start-module :after #'flutter-ewm--maybe-start-wallpaper)
     (advice-add 'ewm-start-module :after #'flutter-ewm--maybe-start-notifications))
+  (add-hook 'kill-emacs-hook #'flutter-ewm--cleanup-children)
 
-  ;; Compositor hydra (this config's hydra idiom). Bound here so nested
-  ;; `emacs' never sees it.
+  ;; Bind the compositor hydra only after EWM loads.
   (when (require 'pretty-hydra nil t)
     (pretty-hydra-define flutter-ewm-hydra
       (:title (pretty-hydra-title "EWM" 'faicon "nf-fa-linux")
@@ -355,13 +391,12 @@ One-shot: later frames (e.g. emacsclient) are left alone."
         ("k" kill-current-buffer "kill client" :exit t))
        "Session"
        (("w" flutter-ewm-set-wallpaper "wallpaper" :exit t)
-        ("l" ewm-lock-session "lock" :exit t)
+        ("l" flutter-ewm-lock-session "lock" :exit t)
         ("o" ewm-list-outputs "outputs" :exit t)
         ("x" save-buffers-kill-emacs "exit EWM" :exit t))))
     (global-set-key (kbd "C-c e") #'flutter-ewm-hydra/body))
 
-  ;; Daemon-deferred setup first, then the dashboard — both one-shot on
-  ;; the first GUI frame (later frames, e.g. emacsclient, are untouched).
+  ;; Run daemon and dashboard setup only for the first compositor GUI frame.
   (add-hook 'after-make-frame-functions #'flutter-ewm--trigger-server-hooks)
   (add-hook 'after-make-frame-functions #'flutter-ewm--maybe-show-dashboard))
 

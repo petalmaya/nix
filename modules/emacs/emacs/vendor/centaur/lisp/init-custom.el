@@ -173,9 +173,7 @@ Native tree-sitter is introduced in 29."
 
 (defcustom flutter-player t
   "Enable players or not.
-
-Default flipped to t in Flutter Emacs because MPD is enabled on the
-hosts (see modules/home/services/mpd.nix and the home.nix modules)."
+Clients assume an external MPD; no daemon is configured in this repo."
   :group 'flutter
   :type 'boolean)
 

@@ -27,10 +27,20 @@ in
       wl-clipboard
       brightnessctl
       swaybg
+      swaylock
       mako
       libnotify
       ewmElisp
     ];
+
+    # Reuse sway's lock/notification styling when sway itself is off.
+    xdg.configFile."swaylock/config" = lib.mkIf (!(config.nixtop.sway.enable or false)) {
+      source = ../sway/swaylock/config;
+    };
+    xdg.configFile."mako" = lib.mkIf (!(config.nixtop.sway.enable or false)) {
+      source = ../sway/mako;
+      recursive = true;
+    };
 
     # Gated on $WAYLAND_DISPLAY, safe to source unconditionally.
     programs.zsh.initContent = lib.mkAfter ''
