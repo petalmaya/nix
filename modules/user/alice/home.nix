@@ -68,7 +68,6 @@ in
   };
 
   nixtop = {
-    wallpapers.enable = true;
     apps.emacs.enable = true;
     ewm.enable = true;
     shell = "noctalia";

@@ -10,7 +10,6 @@ _: {
   };
 
   nixtop = {
-    wallpapers.enable = true;
     apps.emacs.enable = true;
   };
 }

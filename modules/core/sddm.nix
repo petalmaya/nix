@@ -16,7 +16,7 @@ in
       theme = lib.mkDefault "default";
       # SDDM mirrors one image on every monitor.
       backgrounds = {
-        nixtop = ../../assets/wallpaper/misty_forest_stairs.png;
+        nixtop = ../../assets/greeter/misty_forest_stairs.png;
       };
       settings = {
         General = {

@@ -70,7 +70,7 @@
 (defcustom flutter-ewm-wallpaper-directory
   (expand-file-name "Pictures/Wallpapers" (getenv "HOME"))
   "Directory offered by `flutter-ewm-set-wallpaper'.
-Managed by `nixtop.wallpapers.enable' in modules/user/base.nix."
+Synced manually to ~/Pictures/Wallpapers; not tracked in this repo."
   :type 'directory
   :group 'flutter-ewm)
 

@@ -69,7 +69,7 @@ Mango session registration is via the upstream flake `github:mangowm/mango` (`pr
 
 ### `modules/user/<name>/home.nix`
 
-Thin profiles over `modules/user/base.nix`: `home.username`, `home.homeDirectory`, `nixtop.wallpapers.enable` (alice+rose), `nixtop.*.enable` switches, `home.packages` for one-offs (`with pkgs; [ ... unstable.xxx ]`). Shared defaults (zsh/tmux/foot, fetch/yazi, chromium, sway, git, `xdg.userDirs`) live in `base.nix`. `flatnix.nix` (alice, rose) is imported there.
+Thin profiles over `modules/user/base.nix`: `home.username`, `home.homeDirectory`, `nixtop.*.enable` switches, `home.packages` for one-offs (`with pkgs; [ ... unstable.xxx ]`). Shared defaults (zsh/tmux/foot, fetch/yazi, chromium, sway, git, `xdg.userDirs`) live in `base.nix`. `flatnix.nix` (alice, rose) is imported there. Wallpapers live in `~/Pictures/Wallpapers`, synced manually and never tracked in git.
 
 Host → user matrix: `wonderland` = alice+lewis, `rabbit` = lewis, `garden` = rose.
 
@@ -96,7 +96,7 @@ Shell HM modules live under `modules/shell/` (`noctalia/`, `quickshell/`,
 | `nixtop.shell` | `"noctalia"` \| `"quickshell"` \| `"jes"` \| `"none"` – the single switch for shell/Mango variant/theming default (EWM is separate, next row) |
 | `nixtop.ewm.enable` | Extra `ewm` login session (NixOS) + Emacs overlay (HM). Independent of `nixtop.shell` |
 | `nixtop.theme.*` | `owner` / `apps.<app>` – who writes the generated config (matugen vs noctalia) |
-| `nixtop.dev.*` | `liveEmacs` (default on), `liveMango`/`liveMatugen`/`liveQuickshell`/`liveSway`/`liveMako` (whole-dir, default off), `liveWaybar` (config file only — `style.css` is matugen-owned, default off), `~/Pictures/Wallpapers` (always-on, alice+rose) |
+| `nixtop.dev.*` | `liveEmacs` (default on), `liveMango`/`liveMatugen`/`liveQuickshell`/`liveSway`/`liveMako` (whole-dir, default off), `liveWaybar` (config file only — `style.css` is matugen-owned, default off) |
 
 ## Themes / shells
 

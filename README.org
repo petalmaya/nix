@@ -74,7 +74,7 @@ flake.nix
 │   ├── mango/               # shared + variants/noctalia|quickshell
 │   ├── matugen/             # templates + palette bridge + nixtop-theme CLI
 │   └── shell/               # noctalia/ + quickshell/ + jes/ (vendored, see NOTICE.md)
-├── assets/wallpaper, font, boilers (future dev-shell templates)
+├── assets/greeter, font, boilers (future dev-shell templates)
 └── secrets/
 #+END_SRC
 
