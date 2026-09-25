@@ -32,9 +32,9 @@
 
 ;; Rust
 (use-package rust-mode
-  :functions flutter-treesit-available-p
+  :functions pinaceae-treesit-available-p
   :init (setq rust-format-on-save t
-              rust-mode-treesitter-derive (flutter-treesit-available-p)))
+              rust-mode-treesitter-derive (pinaceae-treesit-available-p)))
 
 (use-package ron-mode
   :mode ("\\.ron" . ron-mode))

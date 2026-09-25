@@ -35,7 +35,7 @@
 
 (use-package eglot
   :ensure nil
-  :when flutter-lsp
+  :when pinaceae-lsp
   :hook ((prog-mode . (lambda ()
                         (unless (derived-mode-p
                                  'emacs-lisp-mode 'lisp-mode
@@ -53,7 +53,7 @@
   :bind (:map eglot-mode-map
          ("C-M-." . consult-eglot-symbols)))
 
-(when flutter-lsp
+(when pinaceae-lsp
   ;; Enable LSP in org babel
   ;; @see: https://github.com/emacs-lsp/lsp-mode/issues/377
   (cl-defmacro lsp-org-babel-enable (lang)

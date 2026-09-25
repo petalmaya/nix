@@ -75,7 +75,7 @@
      ("V" split-window-horizontally-instead "side-by-side, keep other")
      ("b" split-window-below "stacked")
      ("B" split-window-vertically-instead "stacked, keep other")
-     ("t" flutter-split-window-toggle "toggle orientation" :exit t))
+     ("t" pinaceae-split-window-toggle "toggle orientation" :exit t))
     "Zoom"
     (("+" text-scale-increase "in")
      ("=" text-scale-increase "in")

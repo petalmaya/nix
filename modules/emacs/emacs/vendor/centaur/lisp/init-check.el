@@ -51,10 +51,10 @@
 ;; Display Flymake errors with overlays
 (use-package flyover
   :diminish
-  :functions flutter-dark-theme-p
+  :functions pinaceae-dark-theme-p
   :custom
   (flyover-checkers '(flymake))
-  (flyover-background-lightness (if (flutter-dark-theme-p) 35 75))
+  (flyover-background-lightness (if (pinaceae-dark-theme-p) 35 75))
   (flyover-icon-background-tint-percent 50)
   :hook flymake-mode)
 

@@ -43,14 +43,14 @@
   :ensure nil
   :hook (prog-mode . prettify-symbols-mode)
   :init
-  (setq-default prettify-symbols-alist flutter-prettify-symbols-alist)
+  (setq-default prettify-symbols-alist pinaceae-prettify-symbols-alist)
   (setq prettify-symbols-unprettify-at-point 'right-edge))
 
 ;; Tree-sitter support
-(when (flutter-treesit-available-p)
+(when (pinaceae-treesit-available-p)
   ;; Automatic Tree-sitter grammar management
   (use-package treesit-auto
-    :functions flutter-treesit-available-p
+    :functions pinaceae-treesit-available-p
     :hook (after-init . global-treesit-auto-mode)
     :init (setq treesit-auto-install 'prompt)
     :config
@@ -177,7 +177,7 @@ Install the doc if it's not installed."
 (use-package powershell
   :custom (explicit-pwsh.exe-args explicit-powershell.exe-args))
 
-(if (flutter-treesit-available-p)
+(if (pinaceae-treesit-available-p)
     (progn
       (use-package julia-ts-mode :ensure nil)
       (use-package mermaid-ts-mode

@@ -93,7 +93,7 @@ mermaid.initialize({
     ;; Preview with webkit
     (defun my/markdown-export-and-preview ()
       "Preview with `xwidget' if applicable, otherwise with the default browser."
-      (flutter-browse-url-of-file (markdown-export)))
+      (pinaceae-browse-url-of-file (markdown-export)))
     (advice-add #'markdown-export-and-preview :override #'my/markdown-export-and-preview)))
 
 ;; Table of contents

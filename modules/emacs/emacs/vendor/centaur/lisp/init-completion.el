@@ -78,10 +78,10 @@
     (require 'vertico-directory nil t)
     (vertico-mode 1))
 
-  ;; Floating completion overlay. Off unless `flutter-completion-style'
+  ;; Floating completion overlay. Off unless `pinaceae-completion-style'
   ;; is 'childframe (default is the minibuffer above).
   (use-package vertico-posframe
-    :if (eq flutter-completion-style 'childframe)
+    :if (eq pinaceae-completion-style 'childframe)
     :functions (childframe-completion-workable-p
                 posframe-poshandler-frame-center-near-bottom)
     :commands vertico-posframe-mode

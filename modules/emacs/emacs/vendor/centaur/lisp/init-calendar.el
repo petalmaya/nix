@@ -35,7 +35,7 @@
 
 ;; Chinese calendar
 ;; `pC' can show lunar details
-(when flutter-chinese-calendar
+(when pinaceae-chinese-calendar
   (use-package cal-china-x
     :after calendar
     :autoload cal-china-x-setup

@@ -41,7 +41,7 @@
 ;; Display icons for buffers
 (use-package nerd-icons-ibuffer
   :hook ibuffer-mode
-  :init (setq nerd-icons-ibuffer-icon flutter-icon))
+  :init (setq nerd-icons-ibuffer-icon pinaceae-icon))
 
 ;; Group ibuffer's list by project
 (use-package ibuffer-project

@@ -1,8 +1,8 @@
 ;;; init-ewm.el --- EWM Wayland compositor config -*- lexical-binding: t -*-
 
-;; Copyright (C) 2026 Alice (Flutter Emacs)
+;; Copyright (C) 2026 Alice (Pinaceae Emacs)
 
-;; This file is part of Flutter Emacs, a fork of Centaur Emacs
+;; This file is part of Pinaceae Emacs, a fork of Centaur Emacs
 ;; (GPL-3.0, copyright Vincent Zhang — see vendor/centaur/NOTICE.md).
 ;;
 ;; EWM itself (https://codeberg.org/ezemtsov/ewm, GPL-3.0) runs the
@@ -56,41 +56,41 @@
 (declare-function ewm-surface-match "ewm")
 (declare-function open-dashboard "init-dashboard")
 
-(defgroup flutter-ewm nil
+(defgroup pinaceae-ewm nil
   "EWM compositor session."
-  :group 'flutter)
+  :group 'pinaceae)
 
-(defcustom flutter-ewm-wallpaper
+(defcustom pinaceae-ewm-wallpaper
   (expand-file-name "Pictures/Wallpapers/gothic_anime_girl_red_armchair.png"
                     (getenv "HOME"))
   "Image shown behind Emacs frames via swaybg."
   :type 'file
-  :group 'flutter-ewm)
+  :group 'pinaceae-ewm)
 
-(defcustom flutter-ewm-wallpaper-directory
+(defcustom pinaceae-ewm-wallpaper-directory
   (expand-file-name "Pictures/Wallpapers" (getenv "HOME"))
-  "Directory offered by `flutter-ewm-set-wallpaper'.
+  "Directory offered by `pinaceae-ewm-set-wallpaper'.
 Synced manually to ~/Pictures/Wallpapers; not tracked in this repo."
   :type 'directory
-  :group 'flutter-ewm)
+  :group 'pinaceae-ewm)
 
-(defun flutter-ewm--wallpaper-files ()
-  "Image files in `flutter-ewm-wallpaper-directory'."
-  (when (file-directory-p flutter-ewm-wallpaper-directory)
-    (directory-files flutter-ewm-wallpaper-directory t
+(defun pinaceae-ewm--wallpaper-files ()
+  "Image files in `pinaceae-ewm-wallpaper-directory'."
+  (when (file-directory-p pinaceae-ewm-wallpaper-directory)
+    (directory-files pinaceae-ewm-wallpaper-directory t
                      "\\.\\(png\\|jpe?g\\|webp\\|bmp\\)\\'")))
 
-(defvar flutter-ewm--wallpaper-process nil
+(defvar pinaceae-ewm--wallpaper-process nil
   "swaybg process started by this EWM session.")
 
-(defun flutter-ewm--wallpaper-sentinel (process event)
+(defun pinaceae-ewm--wallpaper-sentinel (process event)
   "Clear the wallpaper process and report abnormal exits."
-  (when (eq process flutter-ewm--wallpaper-process)
-    (setq flutter-ewm--wallpaper-process nil)
+  (when (eq process pinaceae-ewm--wallpaper-process)
+    (setq pinaceae-ewm--wallpaper-process nil)
     (when (string-match-p "abnormal" event)
       (message "swaybg failed (%s); see *ewm-swaybg*" (string-trim event)))))
 
-(defun flutter-ewm--start-wallpaper (image)
+(defun pinaceae-ewm--start-wallpaper (image)
   "Show IMAGE behind frames with swaybg, replacing this session's instance."
   (let ((file (expand-file-name image)))
     (cond ((not (getenv "WAYLAND_DISPLAY"))
@@ -100,51 +100,51 @@ Synced manually to ~/Pictures/Wallpapers; not tracked in this repo."
           ((null (executable-find "swaybg"))
            (user-error "swaybg not found in PATH"))
           (t
-           (when (process-live-p flutter-ewm--wallpaper-process)
-             (kill-process flutter-ewm--wallpaper-process))
-           (setq flutter-ewm--wallpaper-process
+           (when (process-live-p pinaceae-ewm--wallpaper-process)
+             (kill-process pinaceae-ewm--wallpaper-process))
+           (setq pinaceae-ewm--wallpaper-process
                  (start-process "ewm-swaybg" (get-buffer-create "*ewm-swaybg*")
                                 "swaybg" "-i" file "-m" "fill"))
-           (set-process-sentinel flutter-ewm--wallpaper-process
-                                 #'flutter-ewm--wallpaper-sentinel)
-           flutter-ewm--wallpaper-process))))
+           (set-process-sentinel pinaceae-ewm--wallpaper-process
+                                 #'pinaceae-ewm--wallpaper-sentinel)
+           pinaceae-ewm--wallpaper-process))))
 
-(defun flutter-ewm--maybe-start-wallpaper (&rest _)
+(defun pinaceae-ewm--maybe-start-wallpaper (&rest _)
   "Start swaybg after the compositor creates its Wayland socket."
   (condition-case err
-      (flutter-ewm--start-wallpaper flutter-ewm-wallpaper)
+      (pinaceae-ewm--start-wallpaper pinaceae-ewm-wallpaper)
     (error (display-warning 'init-ewm (error-message-string err)))))
 
-(defvar flutter-ewm--notif-process nil
+(defvar pinaceae-ewm--notif-process nil
   "mako process started by this EWM session.")
 
-(defun flutter-ewm--notif-sentinel (process event)
+(defun pinaceae-ewm--notif-sentinel (process event)
   "Clear the notification process and report abnormal exits."
-  (when (eq process flutter-ewm--notif-process)
-    (setq flutter-ewm--notif-process nil)
+  (when (eq process pinaceae-ewm--notif-process)
+    (setq pinaceae-ewm--notif-process nil)
     (when (string-match-p "abnormal" event)
       (message "mako failed (%s); see *ewm-mako*" (string-trim event)))))
 
-(defun flutter-ewm--maybe-start-notifications (&rest _)
+(defun pinaceae-ewm--maybe-start-notifications (&rest _)
   "Start mako after the compositor creates its Wayland socket."
   (when (and (getenv "WAYLAND_DISPLAY") (executable-find "mako"))
-    (unless (process-live-p flutter-ewm--notif-process)
-      (setq flutter-ewm--notif-process
+    (unless (process-live-p pinaceae-ewm--notif-process)
+      (setq pinaceae-ewm--notif-process
             (start-process "ewm-mako" (get-buffer-create "*ewm-mako*") "mako"))
-      (set-process-sentinel flutter-ewm--notif-process
-                            #'flutter-ewm--notif-sentinel))))
+      (set-process-sentinel pinaceae-ewm--notif-process
+                            #'pinaceae-ewm--notif-sentinel))))
 
-(defconst flutter-ewm-lock-command "swaylock -f"
+(defconst pinaceae-ewm-lock-command "swaylock -f"
   "Command used for manual and idle EWM screen locking.")
 
-(defcustom flutter-ewm-output-config
+(defcustom pinaceae-ewm-output-config
   '(("HDMI-A-1" :width 1680 :height 1050 :x 0 :y 0)
     ("eDP-1" :x 1680 :y 0))
   "Output layout; check names with `M-x ewm-list-outputs'."
   :type 'sexp
-  :group 'flutter-ewm)
+  :group 'pinaceae-ewm)
 
-(defcustom flutter-ewm-input-config
+(defcustom pinaceae-ewm-input-config
   '((keyboard :repeat-delay 200 :repeat-rate 45
               :xkb-layouts "us"
               :xkb-options "ctrl:nocaps")
@@ -152,65 +152,65 @@ Synced manually to ~/Pictures/Wallpapers; not tracked in this repo."
     (mouse :accel-profile "flat"))
   "Per-seat input config; Wayland shares one keymap across keyboards."
   :type 'sexp
-  :group 'flutter-ewm)
+  :group 'pinaceae-ewm)
 
-(defcustom flutter-ewm-idle-timeout 300
+(defcustom pinaceae-ewm-idle-timeout 300
   "Seconds of idleness before locking; nil disables idle locking."
   :type '(choice (const :tag "Disabled" nil) integer)
-  :group 'flutter-ewm)
+  :group 'pinaceae-ewm)
 
-(defvar flutter-ewm--lock-process nil
-  "Foreground swaylock process started by `flutter-ewm-lock-session'.")
+(defvar pinaceae-ewm--lock-process nil
+  "Foreground swaylock process started by `pinaceae-ewm-lock-session'.")
 
-(defun flutter-ewm--lock-sentinel (process event)
+(defun pinaceae-ewm--lock-sentinel (process event)
   "Clear the lock process and report abnormal exits."
-  (when (eq process flutter-ewm--lock-process)
-    (setq flutter-ewm--lock-process nil)
+  (when (eq process pinaceae-ewm--lock-process)
+    (setq pinaceae-ewm--lock-process nil)
     (when (string-match-p "abnormal" event)
       (message "swaylock failed (%s); see *ewm-swaylock*" (string-trim event)))))
 
-(defun flutter-ewm-lock-session ()
+(defun pinaceae-ewm-lock-session ()
   "Lock the EWM session with foreground swaylock."
   (interactive)
-  (cond ((process-live-p flutter-ewm--lock-process)
+  (cond ((process-live-p pinaceae-ewm--lock-process)
          (message "Screen is already locked"))
         ((null (executable-find "swaylock"))
          (user-error "swaylock not found in PATH"))
         (t
-         (setq flutter-ewm--lock-process
+         (setq pinaceae-ewm--lock-process
                (start-process "ewm-swaylock" (get-buffer-create "*ewm-swaylock*")
                               "swaylock" "-f"))
-         (set-process-sentinel flutter-ewm--lock-process
-                               #'flutter-ewm--lock-sentinel)
-         flutter-ewm--lock-process)))
+         (set-process-sentinel pinaceae-ewm--lock-process
+                               #'pinaceae-ewm--lock-sentinel)
+         pinaceae-ewm--lock-process)))
 
-(defun flutter-ewm--stop-process (process)
+(defun pinaceae-ewm--stop-process (process)
   "Stop PROCESS when it is still running."
   (when (and process (process-live-p process))
     (kill-process process)))
 
-(defun flutter-ewm--cleanup-children ()
+(defun pinaceae-ewm--cleanup-children ()
   "Stop helper processes started by this EWM session."
   ;; Leave swaylock running; killing it would unlock the screen on exit.
-  (dolist (process (list flutter-ewm--wallpaper-process
-                         flutter-ewm--notif-process))
-    (flutter-ewm--stop-process process))
-  (setq flutter-ewm--wallpaper-process nil
-        flutter-ewm--notif-process nil))
+  (dolist (process (list pinaceae-ewm--wallpaper-process
+                         pinaceae-ewm--notif-process))
+    (pinaceae-ewm--stop-process process))
+  (setq pinaceae-ewm--wallpaper-process nil
+        pinaceae-ewm--notif-process nil))
 
 ;;;###autoload
-(defun flutter-ewm-set-wallpaper (image)
-  "Pick a background from `flutter-ewm-wallpaper-directory' and apply it.
+(defun pinaceae-ewm-set-wallpaper (image)
+  "Pick a background from `pinaceae-ewm-wallpaper-directory' and apply it.
 Restarts swaybg and saves the choice for future sessions."
   (interactive
-   (list (completing-read "Wallpaper: " (flutter-ewm--wallpaper-files)
-                          nil t nil nil flutter-ewm-wallpaper)))
-  (when (flutter-ewm--start-wallpaper image)
-    (setq flutter-ewm-wallpaper image)
-    (customize-save-variable 'flutter-ewm-wallpaper image)
+   (list (completing-read "Wallpaper: " (pinaceae-ewm--wallpaper-files)
+                          nil t nil nil pinaceae-ewm-wallpaper)))
+  (when (pinaceae-ewm--start-wallpaper image)
+    (setq pinaceae-ewm-wallpaper image)
+    (customize-save-variable 'pinaceae-ewm-wallpaper image)
     (message "Wallpaper: %s" (file-name-nondirectory image))))
 
-(defun flutter-ewm--xdg-app-names ()
+(defun pinaceae-ewm--xdg-app-names ()
   "Names of installed XDG applications, for `consult-buffer'."
   (mapcar #'car (ewm-list-xdg-apps)))
 
@@ -219,82 +219,82 @@ Restarts swaybg and saves the choice for future sessions."
   '(:name "Apps"
     :narrow ?a
     :category app
-    :items flutter-ewm--xdg-app-names
+    :items pinaceae-ewm--xdg-app-names
     :action ewm-launch-xdg-command)
   "XDG desktop applications for `consult-buffer'. Narrow with `a SPC'.")
 
-(defvar flutter-ewm--dashboard-shown nil
+(defvar pinaceae-ewm--dashboard-shown nil
   "Non-nil once the compositor has shown the dashboard on its first frame.")
 
 ;; Use the repository's pamixer and brightnessctl tools for media keys.
-(defun flutter-ewm--run-audio (args)
+(defun pinaceae-ewm--run-audio (args)
   "Run pamixer with ARGS, warning when it is missing."
   (if (executable-find "pamixer")
       (apply #'start-process "ewm-audio" nil "pamixer" args)
     (message "pamixer not found (add it to the EWM host packages)")))
 
-(defun flutter-ewm-volume-up ()
+(defun pinaceae-ewm-volume-up ()
   "Raise the volume 5%."
   (interactive)
-  (flutter-ewm--run-audio '("-i" "5")))
+  (pinaceae-ewm--run-audio '("-i" "5")))
 
-(defun flutter-ewm-volume-down ()
+(defun pinaceae-ewm-volume-down ()
   "Lower the volume 5%."
   (interactive)
-  (flutter-ewm--run-audio '("-d" "5")))
+  (pinaceae-ewm--run-audio '("-d" "5")))
 
-(defun flutter-ewm-volume-mute ()
+(defun pinaceae-ewm-volume-mute ()
   "Toggle audio mute."
   (interactive)
-  (flutter-ewm--run-audio '("-t")))
+  (pinaceae-ewm--run-audio '("-t")))
 
-(defun flutter-ewm-mic-mute ()
+(defun pinaceae-ewm-mic-mute ()
   "Toggle microphone mute."
   (interactive)
-  (flutter-ewm--run-audio '("--default-source" "-t")))
+  (pinaceae-ewm--run-audio '("--default-source" "-t")))
 
-(defun flutter-ewm-brightness-up ()
+(defun pinaceae-ewm-brightness-up ()
   "Raise screen brightness 5%."
   (interactive)
   (start-process "ewm-bright" nil "brightnessctl" "set" "5%+"))
 
-(defun flutter-ewm-brightness-down ()
+(defun pinaceae-ewm-brightness-down ()
   "Lower screen brightness 5%."
   (interactive)
   (start-process "ewm-bright" nil "brightnessctl" "set" "5%-"))
 
-(defun flutter-ewm--trigger-server-hooks (frame)
+(defun pinaceae-ewm--trigger-server-hooks (frame)
   "Run `server-after-make-frame-hook' on the first compositor GUI FRAME.
 EWM frames come from `make-frame', which never fires that hook, so
 daemon-deferred setup (fonts, which-key, ...) would otherwise be
 skipped (upstream Doom-Emacs wiki pattern)."
   (when (and (frame-live-p frame) (display-graphic-p frame))
-    (remove-hook 'after-make-frame-functions #'flutter-ewm--trigger-server-hooks)
+    (remove-hook 'after-make-frame-functions #'pinaceae-ewm--trigger-server-hooks)
     (with-selected-frame frame
       (run-hooks 'server-after-make-frame-hook))))
 
-(defun flutter-ewm--maybe-show-dashboard (frame)
+(defun pinaceae-ewm--maybe-show-dashboard (frame)
   "Show the dashboard on the compositor's first GUI FRAME.
 One-shot: later frames (e.g. emacsclient) are left alone."
-  (when (and (not flutter-ewm--dashboard-shown)
+  (when (and (not pinaceae-ewm--dashboard-shown)
              (frame-live-p frame)
              (display-graphic-p frame))
-    (setq flutter-ewm--dashboard-shown t)
-    (remove-hook 'after-make-frame-functions #'flutter-ewm--maybe-show-dashboard)
+    (setq pinaceae-ewm--dashboard-shown t)
+    (remove-hook 'after-make-frame-functions #'pinaceae-ewm--maybe-show-dashboard)
     (with-selected-frame frame
       (when (and (string= (buffer-name) "*scratch*")
                  (fboundp 'open-dashboard))
         (open-dashboard)))))
 
-(defun flutter-ewm--setup ()
+(defun pinaceae-ewm--setup ()
   "Configure EWM once the compositor module loads."
-  (setq ewm-input-config flutter-ewm-input-config)
-  (setq ewm-output-config flutter-ewm-output-config)
+  (setq ewm-input-config pinaceae-ewm-input-config)
+  (setq ewm-output-config pinaceae-ewm-output-config)
   ;; Cursor settings come from the session environment owned by modules/ewm/default.nix.
   (setq ewm-unfocused-alpha 1.0
         ewm-animations-enabled t
-        ewm-idle (and flutter-ewm-idle-timeout
-                      (cons flutter-ewm-idle-timeout flutter-ewm-lock-command)))
+        ewm-idle (and pinaceae-ewm-idle-timeout
+                      (cons pinaceae-ewm-idle-timeout pinaceae-ewm-lock-command)))
 
   (setq ewm-focus-follows-mouse t)
   ;; Do not warp the pointer when keyboard focus changes.
@@ -313,7 +313,7 @@ One-shot: later frames (e.g. emacsclient) are left alone."
   (define-key ewm-mode-map (kbd "s-S-q") #'ewm-frame-close)
   ;; ace-window manages Emacs splits; s-q and hydra k close Wayland clients.
   (define-key ewm-mode-map (kbd "s-w") #'ace-window)
-  (define-key ewm-mode-map (kbd "s-l") #'flutter-ewm-lock-session)
+  (define-key ewm-mode-map (kbd "s-l") #'pinaceae-ewm-lock-session)
   (define-key ewm-mode-map (kbd "s-c") #'kill-ring-save)
   (define-key ewm-mode-map (kbd "s-v") #'yank)
   (define-key ewm-mode-map (kbd "s-a") #'mark-whole-buffer)
@@ -330,12 +330,12 @@ One-shot: later frames (e.g. emacsclient) are left alone."
   (dotimes (i 9)
     (define-key ewm-mode-map (kbd (format "s-%d" (1+ i))) #'ewm-frame-select))
   ;; EWM intercepts media keys even when a Wayland surface has focus.
-  (define-key ewm-mode-map (kbd "<AudioRaiseVolume>") #'flutter-ewm-volume-up)
-  (define-key ewm-mode-map (kbd "<AudioLowerVolume>") #'flutter-ewm-volume-down)
-  (define-key ewm-mode-map (kbd "<AudioMute>") #'flutter-ewm-volume-mute)
-  (define-key ewm-mode-map (kbd "<AudioMicMute>") #'flutter-ewm-mic-mute)
-  (define-key ewm-mode-map (kbd "<MonBrightnessUp>") #'flutter-ewm-brightness-up)
-  (define-key ewm-mode-map (kbd "<MonBrightnessDown>") #'flutter-ewm-brightness-down)
+  (define-key ewm-mode-map (kbd "<AudioRaiseVolume>") #'pinaceae-ewm-volume-up)
+  (define-key ewm-mode-map (kbd "<AudioLowerVolume>") #'pinaceae-ewm-volume-down)
+  (define-key ewm-mode-map (kbd "<AudioMute>") #'pinaceae-ewm-volume-mute)
+  (define-key ewm-mode-map (kbd "<AudioMicMute>") #'pinaceae-ewm-mic-mute)
+  (define-key ewm-mode-map (kbd "<MonBrightnessUp>") #'pinaceae-ewm-brightness-up)
+  (define-key ewm-mode-map (kbd "<MonBrightnessDown>") #'pinaceae-ewm-brightness-down)
 
   ;; Intercept hydra prefixes and fullscreen media keys for focused surfaces.
   (setq ewm-intercept-prefixes
@@ -365,13 +365,13 @@ One-shot: later frames (e.g. emacsclient) are left alone."
 
   ;; Defer wallpaper and notification helpers until the Wayland socket exists.
   (when (fboundp 'ewm-start-module)
-    (advice-add 'ewm-start-module :after #'flutter-ewm--maybe-start-wallpaper)
-    (advice-add 'ewm-start-module :after #'flutter-ewm--maybe-start-notifications))
-  (add-hook 'kill-emacs-hook #'flutter-ewm--cleanup-children)
+    (advice-add 'ewm-start-module :after #'pinaceae-ewm--maybe-start-wallpaper)
+    (advice-add 'ewm-start-module :after #'pinaceae-ewm--maybe-start-notifications))
+  (add-hook 'kill-emacs-hook #'pinaceae-ewm--cleanup-children)
 
   ;; Bind the compositor hydra only after EWM loads.
   (when (require 'pretty-hydra nil t)
-    (pretty-hydra-define flutter-ewm-hydra
+    (pretty-hydra-define pinaceae-ewm-hydra
       (:title (pretty-hydra-title "EWM" 'faicon "nf-fa-linux")
        :color amaranth :quit-key ("q" "C-g"))
       ("Launch"
@@ -390,18 +390,18 @@ One-shot: later frames (e.g. emacsclient) are left alone."
         ("TAB" ewm-next-surface-buffer "next surface")
         ("k" kill-current-buffer "kill client" :exit t))
        "Session"
-       (("w" flutter-ewm-set-wallpaper "wallpaper" :exit t)
-        ("l" flutter-ewm-lock-session "lock" :exit t)
+       (("w" pinaceae-ewm-set-wallpaper "wallpaper" :exit t)
+        ("l" pinaceae-ewm-lock-session "lock" :exit t)
         ("o" ewm-list-outputs "outputs" :exit t)
         ("x" save-buffers-kill-emacs "exit EWM" :exit t))))
-    (global-set-key (kbd "C-c e") #'flutter-ewm-hydra/body))
+    (global-set-key (kbd "C-c e") #'pinaceae-ewm-hydra/body))
 
   ;; Run daemon and dashboard setup only for the first compositor GUI frame.
-  (add-hook 'after-make-frame-functions #'flutter-ewm--trigger-server-hooks)
-  (add-hook 'after-make-frame-functions #'flutter-ewm--maybe-show-dashboard))
+  (add-hook 'after-make-frame-functions #'pinaceae-ewm--trigger-server-hooks)
+  (add-hook 'after-make-frame-functions #'pinaceae-ewm--maybe-show-dashboard))
 
 (with-eval-after-load 'ewm
-  (flutter-ewm--setup))
+  (pinaceae-ewm--setup))
 
 (provide 'init-ewm)
 

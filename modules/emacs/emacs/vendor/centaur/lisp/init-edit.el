@@ -246,10 +246,10 @@
 
 ;; Increase selected region by semantic units
 (use-package expand-region
-  :functions flutter-treesit-available-p treesit-buffer-root-node
+  :functions pinaceae-treesit-available-p treesit-buffer-root-node
   :bind ("C-=" . er/expand-region)
   :config
-  (when (flutter-treesit-available-p)
+  (when (pinaceae-treesit-available-p)
     (defun treesit-mark-bigger-node ()
       "Use tree-sitter to mark regions."
       (let* ((root (treesit-buffer-root-node))

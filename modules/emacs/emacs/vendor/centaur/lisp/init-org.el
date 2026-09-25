@@ -117,7 +117,7 @@ prepended to the element after the #+HEADER: tag."
 
   ;; To speed up startup, don't put to init section
   (setq org-modules nil                 ; Faster loading
-        org-directory flutter-org-directory
+        org-directory pinaceae-org-directory
         org-capture-templates
         `(("i" "Idea" entry (file ,(concat org-directory "/idea.org"))
            "*  %^{Title} %?\n%U\n%a\n")
@@ -142,7 +142,7 @@ prepended to the element after the #+HEADER: tag."
                              (?C . success))
 
         ;; Agenda styling
-        org-agenda-files (list flutter-org-directory)
+        org-agenda-files (list pinaceae-org-directory)
         org-agenda-block-separator ?─
         org-agenda-time-grid
         '((daily today require-timed)
@@ -167,7 +167,7 @@ prepended to the element after the #+HEADER: tag."
                '("\\.\\(x?html?\\|pdf\\)\\'"
                  .
                  (lambda (file _link)
-                   (flutter-browse-url-of-file file))))
+                   (pinaceae-browse-url-of-file file))))
 
   ;; Add md/gfm backends
   (add-to-list 'org-export-backends 'md)
@@ -284,7 +284,7 @@ prepended to the element after the #+HEADER: tag."
 (when (and (fboundp 'sqlite-available-p) (sqlite-available-p))
   (use-package org-roam
     :diminish
-    :functions flutter-browse-url org-roam-db-autosync-mode
+    :functions pinaceae-browse-url org-roam-db-autosync-mode
     :defines org-roam-graph-viewer
     :bind (("C-c n l" . org-roam-buffer-toggle)
            ("C-c n f" . org-roam-node-find)
@@ -293,9 +293,9 @@ prepended to the element after the #+HEADER: tag."
            ("C-c n c" . org-roam-capture)
            ("C-c n j" . org-roam-dailies-capture-today))
     :init
-    (setq org-roam-directory flutter-org-directory
+    (setq org-roam-directory pinaceae-org-directory
           org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag))
-          org-roam-graph-viewer #'flutter-browse-url)
+          org-roam-graph-viewer #'pinaceae-browse-url)
     :config
     (unless (file-exists-p org-roam-directory)
       (make-directory org-roam-directory))
@@ -306,7 +306,7 @@ prepended to the element after the #+HEADER: tag."
 
   (use-package org-roam-ui
     :bind ("C-c n u" . org-roam-ui-mode)
-    :init (setq org-roam-ui-browser-function #'flutter-browse-url)))
+    :init (setq org-roam-ui-browser-function #'pinaceae-browse-url)))
 
 (provide 'init-org)
 

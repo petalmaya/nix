@@ -33,7 +33,7 @@
 (eval-when-compile
   (require 'init-custom))
 
-(when flutter-player
+(when pinaceae-player
   ;; Music player
   (use-package bongo
     :bind ("C-<f8>" . bongo)

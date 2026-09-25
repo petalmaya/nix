@@ -124,12 +124,12 @@
            ("C-h ?"      . agent-shell-help-menu)
            ("C-<return>" . agent-shell-help-menu)
            :map magit-mode-map
-           ("C-c C-g"    . flutter-generate-commit)
-           ("C-c C-r"    . flutter-review-commit))
+           ("C-c C-g"    . pinaceae-generate-commit)
+           ("C-c C-r"    . pinaceae-review-commit))
     :config
     ;; Integrate into magit
     (with-eval-after-load 'magit
-      (defun flutter-generate-commit ()
+      (defun pinaceae-generate-commit ()
         "Generate conventional commit message from staged changes."
         (interactive)
         (if (magit-staged-files)
@@ -138,7 +138,7 @@
              :text "Commit changes with conventional message")
           (user-error "No staged changes")))
 
-      (defun flutter-review-commit ()
+      (defun pinaceae-review-commit ()
         "Send the commit at point to agent-shell for review."
         (interactive)
         (if-let* ((commit (magit-commit-p (magit-thing-at-point 'git-revision t))))

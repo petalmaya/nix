@@ -1,8 +1,8 @@
 ;;; init-extras.el --- QML + media extras -*- lexical-binding: t -*-
 
-;; Copyright (C) 2026 Alice (Flutter Emacs)
+;; Copyright (C) 2026 Alice (Pinaceae Emacs)
 
-;; This file is part of Flutter Emacs, a fork of Centaur Emacs
+;; This file is part of Pinaceae Emacs, a fork of Centaur Emacs
 ;; (GPL-3.0, copyright Vincent Zhang — see vendor/centaur/NOTICE.md).
 ;;
 ;; This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@
 ;;
 ;;; Code:
 
-;; Completion style remains customizable through `flutter-completion-style'.
+;; Completion style remains customizable through `pinaceae-completion-style'.
 
 ;; nil comes from the flake; nix-mode derives from prog-mode, which starts eglot.
 (use-package nix-mode
@@ -78,9 +78,9 @@
 (use-package pretty-hydra
   :ensure nil
   :if (or (featurep 'pretty-hydra) (locate-library "pretty-hydra"))
-  :bind ("C-c m" . flutter-media-hydra/body)
+  :bind ("C-c m" . pinaceae-media-hydra/body)
   :config
-  (pretty-hydra-define flutter-media-hydra
+  (pretty-hydra-define pinaceae-media-hydra
     (:title (pretty-hydra-title "Media" 'faicon "nf-fa-music")
      :color amaranth :quit-key ("q" "C-g"))
     ("Player"
@@ -99,14 +99,14 @@
      "Presence"
      (("d" elcord-mode "discord presence" :toggle t)))))
 
-;; M-x flutter-cheatsheet opens the key summary.
-(defun flutter-cheatsheet ()
-  "Open the Flutter Emacs key cheatsheet."
+;; M-x pinaceae-cheatsheet opens the key summary.
+(defun pinaceae-cheatsheet ()
+  "Open the Pinaceae Emacs key cheatsheet."
   (interactive)
-  (with-current-buffer (get-buffer-create "*flutter-cheatsheet*")
+  (with-current-buffer (get-buffer-create "*pinaceae-cheatsheet*")
     (let ((inhibit-read-only t))
       (erase-buffer)
-      (insert "Flutter Emacs cheatsheet\n"
+      (insert "Pinaceae Emacs cheatsheet\n"
               "========================\n\n"
               "Terminal\n"
               "  C-c t    ghostel (terminal here)\n"
@@ -132,7 +132,7 @@
               "  C-x C-r  recent files (recentf)\n\n"
               "Full list: modules/emacs/emacs/README.md § Cheatsheet.\n"))
     (special-mode)
-    (pop-to-buffer "*flutter-cheatsheet*")))
+    (pop-to-buffer "*pinaceae-cheatsheet*")))
 
 (provide 'init-extras)
 

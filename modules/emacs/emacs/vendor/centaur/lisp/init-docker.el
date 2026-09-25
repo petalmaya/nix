@@ -43,10 +43,10 @@
   (unless emacs/>=29p
     (use-package docker-tramp)))
 
-(unless (and (flutter-treesit-available-p)
+(unless (and (pinaceae-treesit-available-p)
              (fboundp 'dockerfile-ts-mode))
   (use-package dockerfile-mode
-    :functions flutter-treesit-available-p))
+    :functions pinaceae-treesit-available-p))
 
 (provide 'init-docker)
 

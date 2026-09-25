@@ -62,7 +62,7 @@
 ;; the dashboard banner (see init-dashboard.el) takes its place.
 
 ;; Title
-(setq frame-title-format '("Flutter Emacs - %b")
+(setq frame-title-format '("Pinaceae Emacs - %b")
       icon-title-format frame-title-format)
 
 (when (or sys/mac-ns-p sys/mac-port-p)
@@ -87,9 +87,9 @@
       (add-hook hook #'refresh-ns-appearance))))
 
 ;; Theme
-;; Flutter Emacs uses the matugen-generated `pinaceae' theme
+;; Pinaceae Emacs uses the matugen-generated `pinaceae' theme
 ;; (themes/pinaceae-theme.el) instead of Centaur's doom-themes stack.
-(flutter-load-theme)
+(pinaceae-load-theme)
 
 ;; Make certain buffers grossly incandescent
 (use-package solaire-mode
@@ -105,7 +105,7 @@
 (use-package doom-modeline
   :demand t
   :custom
-  (doom-modeline-icon flutter-icon)
+  (doom-modeline-icon pinaceae-icon)
   (doom-modeline-minor-modes t)
   :hook ((after-init . doom-modeline-mode)
          (server-after-make-frame . doom-modeline-mode))
@@ -358,7 +358,7 @@
 ;; Display transient in a floating overlay, but only when the childframe
 ;; completion style is on (default is the plain minibuffer).
 (use-package transient-posframe
-  :if (eq flutter-completion-style 'childframe)
+  :if (eq pinaceae-completion-style 'childframe)
   :diminish
   :defines posframe-border-width
   :functions childframe-completion-workable-p
@@ -385,7 +385,7 @@
     (setq ns-pop-up-frames nil)))
 
 ;; Ligatures support
-(unless flutter-prettify-symbols-alist
+(unless pinaceae-prettify-symbols-alist
   (use-package composite
     :ensure nil
     :init (defvar composition-ligature-table (make-char-table nil))

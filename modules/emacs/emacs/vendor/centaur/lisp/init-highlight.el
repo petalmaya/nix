@@ -188,7 +188,7 @@ FACE defaults to inheriting from default and highlight."
   (indent-bars-width-frac 0.1)
   (indent-bars-pad-frac 0.1)
   (indent-bars-color-by-depth nil)
-  (indent-bars-treesit-support (flutter-treesit-available-p))
+  (indent-bars-treesit-support (pinaceae-treesit-available-p))
   (indent-bars-no-descend-string t)
   (indent-bars-prefer-character t)
   :hook (prog-mode yaml-mode yaml-ts-mode))

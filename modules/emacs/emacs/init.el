@@ -1,6 +1,6 @@
-;;; init.el --- entry point for Flutter Emacs. -*- lexical-binding: t no-byte-compile: t -*-
+;;; init.el --- entry point for Pinaceae Emacs. -*- lexical-binding: t no-byte-compile: t -*-
 
-;; Flutter Emacs is a fork of Centaur Emacs
+;; Pinaceae Emacs is a fork of Centaur Emacs
 ;; (https://github.com/seagle0128/.emacs.d, GPL-3.0, copyright Vincent
 ;; Zhang), re-themed and re-branded, managed inside a Nix flake.
 ;; See NOTICE.md and vendor/centaur/NOTICE.md for attribution.
@@ -34,41 +34,41 @@
 
 (setq auto-mode-case-fold nil)
 
-(defun flutter/update-load-path (&rest _)
+(defun pinaceae/update-load-path (&rest _)
   "Prioritize the config's own load paths."
   (dolist (dir '("site-lisp" "lisp" "vendor/centaur/lisp"))
     (push (expand-file-name dir user-emacs-directory) load-path)))
 
-(flutter/update-load-path)
+(pinaceae/update-load-path)
 
 ;; Make the generated pinaceae theme findable before init-ui.el loads it.
 (add-to-list 'custom-theme-load-path
              (expand-file-name "themes" user-emacs-directory))
 
-(defun flutter/add-subdirs-to-load-path (&rest _)
+(defun pinaceae/add-subdirs-to-load-path (&rest _)
   "Recursively add subdirectories in `site-lisp' to `load-path'."
   (let ((default-directory (expand-file-name "site-lisp" user-emacs-directory)))
     (normal-top-level-add-subdirs-to-load-path)))
 
-(advice-add #'package-initialize :after #'flutter/add-subdirs-to-load-path)
+(advice-add #'package-initialize :after #'pinaceae/add-subdirs-to-load-path)
 
 (require 'init-const)
 (require 'init-custom)
 (require 'init-funcs)
 
 ;; Keep mutable state outside the symlinked checkout so store and live builds agree.
-(defvar flutter/state-directory
+(defvar pinaceae/state-directory
   (expand-file-name "emacs" (or (getenv "XDG_STATE_HOME")
                                 (expand-file-name "~/.local/state")))
   "Directory for Emacs runtime state (custom.el, recentf, places, ...).")
-(make-directory flutter/state-directory :parents)
-(setq custom-file (expand-file-name "custom.el" flutter/state-directory)
-      recentf-save-file (expand-file-name "recentf.eld" flutter/state-directory)
-      save-place-file (expand-file-name "places.eld" flutter/state-directory)
-      savehist-file (expand-file-name "history" flutter/state-directory)
-      eshell-aliases-file (expand-file-name "eshell-alias" flutter/state-directory)
-      eshell-history-file-name (expand-file-name "eshell-history" flutter/state-directory)
-      tramp-persistency-file-name (expand-file-name "tramp" flutter/state-directory))
+(make-directory pinaceae/state-directory :parents)
+(setq custom-file (expand-file-name "custom.el" pinaceae/state-directory)
+      recentf-save-file (expand-file-name "recentf.eld" pinaceae/state-directory)
+      save-place-file (expand-file-name "places.eld" pinaceae/state-directory)
+      savehist-file (expand-file-name "history" pinaceae/state-directory)
+      eshell-aliases-file (expand-file-name "eshell-alias" pinaceae/state-directory)
+      eshell-history-file-name (expand-file-name "eshell-history" pinaceae/state-directory)
+      tramp-persistency-file-name (expand-file-name "tramp" pinaceae/state-directory))
 
 ;; Bootstrap Elpaca before any use-package forms resolve `:ensure'.
 (require 'my-elpaca)

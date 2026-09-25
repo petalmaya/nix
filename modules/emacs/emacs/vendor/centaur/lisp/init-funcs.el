@@ -154,7 +154,7 @@ Same as `replace-string' `C-q' `C-m' `RET' `RET'."
   (and (display-graphic-p)
        (featurep 'xwidget-internal)))
 
-(defun flutter-webkit-browse-url (url &optional pop-buffer new-session)
+(defun pinaceae-webkit-browse-url (url &optional pop-buffer new-session)
   "Browse URL with `xwidget-webkit' and switch or pop to the buffer.
 
 POP-BUFFER specifies whether to pop to the buffer.
@@ -171,17 +171,17 @@ Interactively, URL defaults to the string looking like a url around point."
           (pop-to-buffer buf)
         (switch-to-buffer buf)))))
 
-(defun flutter-browse-url (url)
+(defun pinaceae-browse-url (url)
   "Open URL using a configurable method.
 See `browse-url' for more details."
   (interactive (progn
                  (require 'browse-url)
                  (browse-url-interactive-arg "URL: ")))
   (if (xwidget-workable-p)
-      (flutter-webkit-browse-url url t)
+      (pinaceae-webkit-browse-url url t)
     (browse-url url)))
 
-(defun flutter-browse-url-of-file (&optional file)
+(defun pinaceae-browse-url-of-file (&optional file)
   "Use a web browser to display FILE.
 Display the current buffer's file if FILE is nil or if called
 interactively.  Turn the filename into a URL with function
@@ -193,7 +193,7 @@ interactively.  Turn the filename into a URL with function
   (unless file
     (user-error "Current buffer is not visiting a file"))
   (if (xwidget-workable-p)
-      (flutter-webkit-browse-url (browse-url-file-url file) t)
+      (pinaceae-webkit-browse-url (browse-url-file-url file) t)
     (browse-url-of-file file)))
 
 ;; Reload configurations
@@ -201,13 +201,13 @@ interactively.  Turn the filename into a URL with function
   "Reload Emacs configurations."
   (interactive)
   (load user-init-file))
-(defalias 'flutter-reload-init-file #'reload-init-file)
+(defalias 'pinaceae-reload-init-file #'reload-init-file)
 
 ;; Browse the homepage
 (defun browse-homepage ()
-  "Browse the Github page of Flutter Emacs."
+  "Browse the Github page of Pinaceae Emacs."
   (interactive)
-  (browse-url flutter-homepage))
+  (browse-url pinaceae-homepage))
 
 ;; Open custom file
 (defun find-custom-file ()
@@ -216,13 +216,13 @@ If the custom file doesn't exist, copy the example file to create it.
 Also opens the custom-post file in another window if it exists."
   (interactive)
   (unless (file-exists-p custom-file)
-    (if (file-exists-p flutter-custom-example-file)
-        (copy-file flutter-custom-example-file custom-file)
-      (user-error "The file `%s' doesn't exist" flutter-custom-example-file)))
+    (if (file-exists-p pinaceae-custom-example-file)
+        (copy-file pinaceae-custom-example-file custom-file)
+      (user-error "The file `%s' doesn't exist" pinaceae-custom-example-file)))
   (when (file-exists-p custom-file)
     (find-file custom-file))
-  (when (file-exists-p flutter-custom-post-file)
-    (find-file-other-window flutter-custom-post-file)))
+  (when (file-exists-p pinaceae-custom-post-file)
+    (find-file-other-window pinaceae-custom-post-file)))
 
 ;; Misc
 (defun byte-compile-elpa ()
@@ -255,19 +255,19 @@ Also opens the custom-post file in another window if it exists."
 
 (defun icons-displayable-p ()
   "Return non-nil if icons are displayable."
-  (and flutter-icon
+  (and pinaceae-icon
        (or (featurep 'nerd-icons)
            (require 'nerd-icons nil t))))
 
-(defun flutter-treesit-available-p ()
+(defun pinaceae-treesit-available-p ()
   "Check whether tree-sitter is available.
 
 Native tree-sitter is built into 29.1+."
-  (and flutter-tree-sitter
+  (and pinaceae-tree-sitter
        (fboundp 'treesit-available-p)
        (treesit-available-p)))
 
-(defun flutter-set-variable (variable value &optional no-save)
+(defun pinaceae-set-variable (variable value &optional no-save)
   "Set the VARIABLE to VALUE, and return VALUE.
 
 If NO-SAVE is non-nil, don't save to the custom file.
@@ -297,11 +297,11 @@ lines, or more than 2,000 bytes in one line."
              (or (> (car statics) 10000)
                  (> (cadr statics) 2000))))))
 
-(define-minor-mode flutter-read-mode
+(define-minor-mode pinaceae-read-mode
   "Minor Mode for better reading experience."
   :init-value nil
-  :group flutter
-  (if flutter-read-mode
+  :group pinaceae
+  (if pinaceae-read-mode
       (progn
         (and (fboundp 'olivetti-mode) (olivetti-mode 1))
         (and (fboundp 'mixed-pitch-mode) (mixed-pitch-mode 1))
@@ -317,23 +317,23 @@ lines, or more than 2,000 bytes in one line."
 
 If REFRESH is non-nil, refresh the package contents.  If ASYNC is non-nil,
 perform the refresh in the background.  Save the setting to `custom-file'
-if NO-SAVE is nil.  This function updates `flutter-package-archives'."
+if NO-SAVE is nil.  This function updates `pinaceae-package-archives'."
   (interactive
    (list
     (intern
      (completing-read "Select package archives: "
-                      (mapcar #'car flutter-package-archives-alist)))))
+                      (mapcar #'car pinaceae-package-archives-alist)))))
   ;; Set option
-  (flutter-set-variable 'flutter-package-archives archives no-save)
+  (pinaceae-set-variable 'pinaceae-package-archives archives no-save)
 
   ;; Refresh if need
   (and refresh (package-refresh-contents async))
 
   (message "Set package archives to `%s'" archives))
-(defalias 'flutter-set-package-archives #'set-package-archives)
+(defalias 'pinaceae-set-package-archives #'set-package-archives)
 
 ;; Refer to https://emacs-china.org/t/elpa/11192
-(defun flutter-test-package-archives (&optional no-chart)
+(defun pinaceae-test-package-archives (&optional no-chart)
   "Test connection speed of all package archives and display on chart.
 
 Not displaying the chart if NO-CHART is non-nil.
@@ -349,9 +349,9 @@ Return the fastest package archive."
                          (ignore-errors
                            (url-copy-file url null-device t))
                          (float-time (time-subtract (current-time) start))))
-                     flutter-package-archives-alist))
+                     pinaceae-package-archives-alist))
          (fastest (car (nth (cl-position (apply #'min durations) durations)
-                            flutter-package-archives-alist))))
+                            pinaceae-package-archives-alist))))
 
     ;; Display on chart
     (when (and (not no-chart)
@@ -360,7 +360,7 @@ Return the fastest package archive."
       (chart-bar-quickie
        'vertical
        "Speed test for the ELPA mirrors"
-       (mapcar (lambda (p) (symbol-name (car p))) flutter-package-archives-alist)
+       (mapcar (lambda (p) (symbol-name (car p))) pinaceae-package-archives-alist)
        "ELPA"
        (mapcar (lambda (d) (* 1e3 d)) durations) "ms"))
 
@@ -395,17 +395,15 @@ Return the fastest package archive."
 
 ;; Update
 (defun update-config ()
-  "Update Flutter Emacs configurations to the latest version."
+  "Update Pinaceae Emacs configurations to the latest version."
   (interactive)
-  (let ((dir (expand-file-name user-emacs-directory)))
-    (unless (file-exists-p dir)
-      (user-error "\"%s\" doesn't exist" dir))
-
-    (message "Updating configurations...")
-    (cd dir)
-    (shell-command "git pull")
-    (message "Updating configurations...done")))
-(defalias 'flutter-update-config #'update-config)
+  (unless (file-exists-p pinaceae-homepage)
+    (user-error "\"%s\" doesn't exist" pinaceae-homepage))
+  (message "Updating configurations...")
+  (cd pinaceae-homepage)
+  (shell-command "git pull")
+  (message "Updating configurations...done"))
+(defalias 'pinaceae-update-config #'update-config)
 
 (defun update-packages ()
   "Update all packages (via Elpaca when available)."
@@ -417,14 +415,14 @@ Return the fastest package archive."
     (package-upgrade-all))
   (and (fboundp 'apheleia-global-mode) (apheleia-global-mode 1))
   (message "Updating packages...done"))
-(defalias 'flutter-update-packages #'update-packages)
+(defalias 'pinaceae-update-packages #'update-packages)
 
 (defun update-config-and-packages ()
   "Update configurations and packages."
   (interactive)
   (update-config)
   (update-packages))
-(defalias 'flutter-update #'update-config-and-packages)
+(defalias 'pinaceae-update #'update-config-and-packages)
 
 (defun update-dotfiles ()
   "Update the dotfiles to the latest version."
@@ -438,7 +436,7 @@ Return the fastest package archive."
           (shell-command "git pull")
           (message "Updating dotfiles...done"))
       (message "\"%s\" doesn't exist" dir))))
-(defalias 'flutter-update-dotfiles #'update-dotfiles)
+(defalias 'pinaceae-update-dotfiles #'update-dotfiles)
 
 (defun update-org ()
   "Update Org files to the latest version."
@@ -451,7 +449,7 @@ Return the fastest package archive."
           (shell-command "git pull")
           (message "Updating org files...done"))
       (message "\"%s\" doesn't exist" dir))))
-(defalias 'flutter-update-org #'update-org)
+(defalias 'pinaceae-update-org #'update-org)
 
 (defun update-all ()
   "Update dotfiles, org files, configurations and packages to the latest."
@@ -459,11 +457,11 @@ Return the fastest package archive."
   (update-org)
   (update-dotfiles)
   (update-config-and-packages))
-(defalias 'flutter-update-all #'update-all)
+(defalias 'pinaceae-update-all #'update-all)
 
 
 ;; Fonts
-(defun flutter-install-fonts ()
+(defun pinaceae-install-fonts ()
   "Install necessary fonts."
   (interactive)
   (nerd-icons-install-fonts))
@@ -492,18 +490,18 @@ Return the fastest package archive."
 
 (defun childframe-completion-workable-p ()
   "Whether childframe completion is workable."
-  (and (eq flutter-completion-style 'childframe)
+  (and (eq pinaceae-completion-style 'childframe)
        (childframe-workable-p)))
 
-(defun flutter-dark-theme-p ()
+(defun pinaceae-dark-theme-p ()
   "Check if the current theme is a dark theme."
   (eq (frame-parameter nil 'background-mode) 'dark))
 
-(defun flutter-load-theme (&optional _theme _no-save)
+(defun pinaceae-load-theme (&optional _theme _no-save)
   "Load the `pinaceae' theme.
 
 THEME and NO-SAVE are accepted for compatibility with the old
-Centaur API; Flutter Emacs has a single matugen-generated
+Centaur API; Pinaceae Emacs has a single matugen-generated
 theme (themes/pinaceae-theme.el), so they are ignored."
   (interactive)
   (mapc #'disable-theme custom-enabled-themes)
@@ -538,7 +536,7 @@ Kills other windows first, then splits top/bottom."
     (when other-buffer
       (set-window-buffer new-window other-buffer))))
 
-(defun flutter-split-window-toggle ()
+(defun pinaceae-split-window-toggle ()
   "Toggle a two-window frame between side-by-side and stacked."
   (interactive)
   (unless (= (count-windows) 2)
@@ -561,37 +559,37 @@ Kills other windows first, then splits top/bottom."
 
 
 ;; Frame
-(defvar flutter-frame--geometry nil)
-(defun flutter-frame--save-geometry ()
+(defvar pinaceae-frame--geometry nil)
+(defun pinaceae-frame--save-geometry ()
   "Save current frame's geometry."
-  (setq flutter-frame--geometry
+  (setq pinaceae-frame--geometry
         `((left   . ,(frame-parameter nil 'left))
           (top    . ,(frame-parameter nil 'top))
           (width  . ,(frame-parameter nil 'width))
           (height . ,(frame-parameter nil 'height))
           (fullscreen . ,(frame-parameter nil 'fullscreen)))))
 
-(defun flutter-frame--fullscreen-p ()
+(defun pinaceae-frame--fullscreen-p ()
   "Return non-nil if the frame is fullscreen or maximized."
   (memq (frame-parameter nil 'fullscreen) '(fullscreen fullboth maximized)))
 
-(defun flutter-frame-maximize ()
+(defun pinaceae-frame-maximize ()
   "Maximize the frame."
   (interactive)
   (unless (eq (frame-parameter nil 'fullscreen) 'maximized)
-    (flutter-frame--save-geometry)
+    (pinaceae-frame--save-geometry)
     (set-frame-parameter nil 'fullscreen 'maximized)))
 
-(defun flutter-frame-restore ()
+(defun pinaceae-frame-restore ()
   "Restore the frame's size and position."
   (interactive)
-  (modify-frame-parameters nil flutter-frame--geometry))
+  (modify-frame-parameters nil pinaceae-frame--geometry))
 
-(defun flutter-frame-left-half ()
+(defun pinaceae-frame-left-half ()
   "Put the frame to the left-half."
   (interactive)
-  (unless (flutter-frame--fullscreen-p)
-    (flutter-frame--save-geometry)
+  (unless (pinaceae-frame--fullscreen-p)
+    (pinaceae-frame--save-geometry)
     (let* ((attr (frame-monitor-workarea))
            (width (- (/ (nth 2 attr) 2) 20))
            (height (- (nth 3 attr) 30))
@@ -601,11 +599,11 @@ Kills other windows first, then splits top/bottom."
       (set-frame-position nil left top)
       (set-frame-size nil width height t))))
 
-(defun flutter-frame-right-half ()
+(defun pinaceae-frame-right-half ()
   "Put the frame to the right-half."
   (interactive)
-  (unless (flutter-frame--fullscreen-p)
-    (flutter-frame--save-geometry)
+  (unless (pinaceae-frame--fullscreen-p)
+    (pinaceae-frame--save-geometry)
     (let* ((attr (frame-monitor-workarea))
            (width (- (/ (nth 2 attr) 2) 20))
            (height (- (nth 3 attr) 30))
@@ -615,11 +613,11 @@ Kills other windows first, then splits top/bottom."
       (set-frame-position nil left top)
       (set-frame-size nil width height t))))
 
-(defun flutter-frame-top-half ()
+(defun pinaceae-frame-top-half ()
   "Put the frame to the top-half."
   (interactive)
-  (unless (flutter-frame--fullscreen-p)
-    (flutter-frame--save-geometry)
+  (unless (pinaceae-frame--fullscreen-p)
+    (pinaceae-frame--save-geometry)
     (let* ((attr (frame-monitor-workarea))
            (width (- (nth 2 attr) 20))
            (height (- (/ (nth 3 attr) 2) 30))
@@ -629,11 +627,11 @@ Kills other windows first, then splits top/bottom."
       (set-frame-position nil left top)
       (set-frame-size nil width height t))))
 
-(defun flutter-frame-bottom-half ()
+(defun pinaceae-frame-bottom-half ()
   "Put the frame to the bottom-half."
   (interactive)
-  (unless (flutter-frame--fullscreen-p)
-    (flutter-frame--save-geometry)
+  (unless (pinaceae-frame--fullscreen-p)
+    (pinaceae-frame--save-geometry)
     (let* ((attr (frame-monitor-workarea))
            (width (- (nth 2 attr) 20))
            (height (- (/ (nth 3 attr) 2) 30))
@@ -643,7 +641,7 @@ Kills other windows first, then splits top/bottom."
       (set-frame-position nil left top)
       (set-frame-size nil width height t))))
 
-(defun flutter-recover-layout ()
+(defun pinaceae-recover-layout ()
   "Recover window layout."
   (cond
    ((bound-and-true-p tab-bar-history-mode)
@@ -659,15 +657,15 @@ Kills other windows first, then splits top/bottom."
   "Show HTTP/HTTPS proxy."
   (interactive)
   (if url-proxy-services
-      (message "Current HTTP proxy is `%s'" flutter-proxy)
+      (message "Current HTTP proxy is `%s'" pinaceae-proxy)
     (message "No HTTP proxy")))
 
 (defun enable-http-proxy ()
   "Enable HTTP/HTTPS proxy."
   (interactive)
   (setq url-proxy-services
-        `(("http" . ,flutter-proxy)
-          ("https" . ,flutter-proxy)
+        `(("http" . ,pinaceae-proxy)
+          ("https" . ,pinaceae-proxy)
           ("no_proxy" . "^\\(localhost\\|192.168.*\\|10.*\\)")))
   (show-http-proxy))
 
@@ -698,11 +696,11 @@ Kills other windows first, then splits top/bottom."
   (require 'socks)
   (setq url-gateway-method 'socks
         socks-noproxy '("localhost"))
-  (let* ((proxy (split-string flutter-socks-proxy ":"))
+  (let* ((proxy (split-string pinaceae-socks-proxy ":"))
          (host (car proxy))
          (port (string-to-number (cadr proxy))))
     (setq socks-server `("Default server" ,host ,port 5)))
-  (setenv "all_proxy" (concat "socks5://" flutter-socks-proxy))
+  (setenv "all_proxy" (concat "socks5://" pinaceae-socks-proxy))
   (show-socks-proxy))
 
 (defun disable-socks-proxy ()

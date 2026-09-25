@@ -39,7 +39,7 @@ let
   ];
 in
 {
-  options.nixtop.apps.emacs.enable = lib.mkEnableOption "Emacs (pinaceae-emacs config)";
+  options.nixtop.apps.emacs.enable = lib.mkEnableOption "Emacs (Pinaceae Emacs config)";
   options.nixtop.apps.emacs.repoPath = lib.mkOption {
     type = lib.types.str;
     default = "${config.home.homeDirectory}/nix";

@@ -137,28 +137,28 @@
         ("M" diff-hl-margin-mode "margin gutter *" :toggle t)
         ("D" diff-hl-dired-mode "dired gutter" :toggle t))
        "Theme"
-       ;; Flutter Emacs has a single matugen-generated theme; the
+       ;; Pinaceae Emacs has a single matugen-generated theme; the
        ;; old Centaur theme gallery is replaced by a one-key reload plus
        ;; `consult-theme' for anything else.
-       (("t l" (flutter-load-theme) "pinaceae"
+       (("t l" (pinaceae-load-theme) "pinaceae"
          :toggle (memq 'pinaceae custom-enabled-themes) :exit t)
         ("t t" (consult-theme) "pick theme" :exit t))
        "Package Archive"
-       (("p m" (flutter-set-package-archives 'melpa t)
-         "melpa" :toggle (eq flutter-package-archives 'melpa) :exit t)
-        ("p b" (flutter-set-package-archives 'bfsu t)
-         "bfsu" :toggle (eq flutter-package-archives 'bfsu) :exit t)
-        ("p i" (flutter-set-package-archives 'iscas t)
-         "iscas" :toggle (eq flutter-package-archives 'iscas) :exit t)
-        ("p n" (flutter-set-package-archives 'netease t)
-         "netease" :toggle (eq flutter-package-archives 'netease) :exit t)
-        ("p s" (flutter-set-package-archives 'sjtu t)
-         "sjtu" :toggle (eq flutter-package-archives 'sjtu) :exit t)
-        ("p t" (flutter-set-package-archives 'tuna t)
-         "tuna" :toggle (eq flutter-package-archives 'tuna) :exit t)
-        ("p u" (flutter-set-package-archives 'ustc t)
-         "ustc" :toggle (eq flutter-package-archives 'ustc) :exit t)
-        ("p T" (flutter-test-package-archives) "speed test" :exit t))))))
+       (("p m" (pinaceae-set-package-archives 'melpa t)
+         "melpa" :toggle (eq pinaceae-package-archives 'melpa) :exit t)
+        ("p b" (pinaceae-set-package-archives 'bfsu t)
+         "bfsu" :toggle (eq pinaceae-package-archives 'bfsu) :exit t)
+        ("p i" (pinaceae-set-package-archives 'iscas t)
+         "iscas" :toggle (eq pinaceae-package-archives 'iscas) :exit t)
+        ("p n" (pinaceae-set-package-archives 'netease t)
+         "netease" :toggle (eq pinaceae-package-archives 'netease) :exit t)
+        ("p s" (pinaceae-set-package-archives 'sjtu t)
+         "sjtu" :toggle (eq pinaceae-package-archives 'sjtu) :exit t)
+        ("p t" (pinaceae-set-package-archives 'tuna t)
+         "tuna" :toggle (eq pinaceae-package-archives 'tuna) :exit t)
+        ("p u" (pinaceae-set-package-archives 'ustc t)
+         "ustc" :toggle (eq pinaceae-package-archives 'ustc) :exit t)
+        ("p T" (pinaceae-test-package-archives) "speed test" :exit t))))))
 
 (provide 'init-hydra)
 

@@ -1,6 +1,6 @@
 # NOTICE
 
-**Flutter Emacs** is a fork of **Centaur Emacs** v8.3.1,
+**Pinaceae Emacs** is a fork of **Centaur Emacs** v8.3.1,
 <https://github.com/seagle0128/.emacs.d>, written by Vincent Zhang
 (seagle0128) and distributed under the GNU General Public License,
 version 3 or later (see `LICENSE` in this directory).
@@ -11,10 +11,10 @@ copyright and license headers are retained in the vendored files.
 
 ## Changes made relative to upstream Centaur Emacs v8.3.1
 
-- **De-branded**: `centaur-*` symbols renamed to `flutter-*`; the
+- **De-branded**: `centaur-*` symbols renamed to `pinaceae-*`; the
   Centaur logo (`logo.png`, `banner.txt`), the "Centaur Emacs" frame
   title, and the ASCII-art banner in `init.el` were removed; the
-  dashboard title/footer now read "Flutter Emacs".
+  dashboard title/footer now read "Pinaceae Emacs".
 - **Re-themed**: the doom-themes/circadian/auto-dark theme machinery
   and the `centaur-theme(-alist/-auto/-system)` options were removed.
   The config loads the single `pinaceae` theme

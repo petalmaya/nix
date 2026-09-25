@@ -9,31 +9,31 @@
 | **License** | GNU GPL v3 or later (see `../LICENSE`) |
 
 The `lisp/init-*.el` files in this directory are the Centaur Emacs
-configuration modules, vendored wholesale into Flutter Emacs. All
+configuration modules, vendored wholesale into Pinaceae Emacs. All
 original copyright headers are retained.
 
 ## Modifications
 
-- **Renamed**: every `centaur-*` symbol renamed to `flutter-*`
+- **Renamed**: every `centaur-*` symbol renamed to `pinaceae-*`
   (mechanical `sed`, plus manual fixes). File and feature names
   (`init-*`) are unchanged.
-- **init-custom.el**: dropped the `flutter-logo` defcustom and the
-  theme-machinery defcustoms (`flutter-theme-alist`,
-  `flutter-auto-themes`, `flutter-system-themes`, `flutter-theme`);
-  `defgroup centaur` → `defgroup flutter`; `flutter-player` default
+- **init-custom.el**: dropped the `pinaceae-logo` defcustom and the
+  theme-machinery defcustoms (`pinaceae-theme-alist`,
+  `pinaceae-auto-themes`, `pinaceae-system-themes`, `pinaceae-theme`);
+  `defgroup centaur` → `defgroup pinaceae`; `pinaceae-player` default
   flipped to `t` (MPD is enabled on the hosts); removed the
   `(eval-when-compile (require 'package))` header (it loaded package.el
   before Elpaca and tripped Elpaca's "Package.el loaded before Elpaca"
   warning).
 - **init-funcs.el**: theme machinery functions
-  (`flutter--theme-name`, `flutter-compatible-theme-p`,
-  `flutter-theme-enable-p`, `flutter--load-theme`,
-  `flutter--load-system-theme`, `flutter-load-random-theme`, the
-  circadian/auto-dark `flutter-load-theme`, and the `consult-theme`
-  advice) replaced with a simple `flutter-load-theme` that loads the
-  `pinaceae` theme. `flutter-dark-theme-p` kept (used by
+  (`pinaceae--theme-name`, `pinaceae-compatible-theme-p`,
+  `pinaceae-theme-enable-p`, `pinaceae--load-theme`,
+  `pinaceae--load-system-theme`, `pinaceae-load-random-theme`, the
+  circadian/auto-dark `pinaceae-load-theme`, and the `consult-theme`
+  advice) replaced with a simple `pinaceae-load-theme` that loads the
+  `pinaceae` theme. `pinaceae-dark-theme-p` kept (used by
   init-check.el). `update-packages` now prefers `elpaca-update-all`.
-  `flutter-homepage` now points at the local Nix repo (`~/nix`).
+  `pinaceae-homepage` now points at the local Nix repo (`~/nix`).
 - **init-package.el**: rewritten for Elpaca — removed package.el
   initialization, mirror selection, and the Windows "all packages in
   one dir" hacks; kept use-package setup, custom-file/custom-post
@@ -43,19 +43,19 @@ original copyright headers are retained.
   `set-face-attribute` was a fatal startup error.
 - **init-ui.el**: removed the doom-themes block and the
   `fancy-splash-image` logo reference; frame title now
-  "Flutter Emacs - %b".
-- **init-dashboard.el**: banner title "Flutter Emacs"; the Centaur
+  "Pinaceae Emacs - %b".
+- **init-dashboard.el**: banner title "Pinaceae Emacs"; the Centaur
   logo was dropped so `dashboard-startup-banner` is `'official`;
-  footer reads "Powered by Flutter Emacs".
+  footer reads "Powered by Pinaceae Emacs".
 - **init-hydra.el**: the Theme section of the toggles hydra now has a
   single "pinaceae" reload plus `consult-theme`; everything else
   (toggles, proxies, package archives) unchanged.
-- **init-const.el**: `flutter-homepage` repointed at the local repo.
+- **init-const.el**: `pinaceae-homepage` repointed at the local repo.
 - **init-edit.el**: `elec-pair` marked `:ensure nil` — it is not a
   real package, just a config hook for the built-in
   `electric-pair-mode`; package.el swallowed the failed install
   silently, Elpaca fails loudly.
-- **Targeted upstream sync (2026-09-21, flutter-* names kept)**:
+- **Targeted upstream sync (2026-09-21, pinaceae-* names kept)**:
   `init-base.el` gains `markdown-ts-mode` plus a `C-x C-m` M-x alias;
   `init-window.el` ports `winner` restores and the upstream ace-window hydra
   on `C-c w` (a `C-x o w` alias was dropped: `C-x o` is not a prefix key,
@@ -67,11 +67,11 @@ original copyright headers are retained.
   compositor-only setup (runs after `ewm' loads, so nested `emacs' is
   untouched); wallpaper default is
   `gothic_anime_girl_red_armchair.png`; new
-  `M-x flutter-ewm-set-wallpaper` picker; daily super-key bindings
+  `M-x pinaceae-ewm-set-wallpaper` picker; daily super-key bindings
   (fullscreen, float, next surface, lock, ...); dashboard opens on the
   first compositor frame. `init-custom.el` defaults flipped:
-  `flutter-completion-style` → minibuffer (posframe overlay off,
-  opt-in via customize), `flutter-dashboard` → t (dashboard on
+  `pinaceae-completion-style` → minibuffer (posframe overlay off,
+  opt-in via customize), `pinaceae-dashboard` → t (dashboard on
   startup, including the EWM daemon). `init-completion.el`: vertico
   cycles, orderless gains initialism + flex fuzzy matching, and
   `vertico-posframe` only installs for the childframe style (same for
@@ -79,7 +79,7 @@ original copyright headers are retained.
   init-utils.el). `lisp/init-extras.el` no longer overrides the
   completion style (it used to clobber custom.el).
 - **Keybind audit (2026-09-21)**: defined the missing
-  `revert-buffer-quick` (`s-r`) and `flutter-split-window-toggle`
+  `revert-buffer-quick` (`s-r`) and `pinaceae-split-window-toggle`
   (window hydra `t`); installed `aggressive-indent` (toggles hydra
   `a`); window hydra splits re-keyed to vim mnemonics (`v`
   side-by-side, `b` stacked, was: misleading horizontal/vertical
@@ -89,7 +89,7 @@ original copyright headers are retained.
 
 ## Renaming
 
-All user-facing "pinaceae Emacs" branding (frame title, dashboard
-banner/footer, hydra titles, docstrings) was renamed to **Flutter
-Emacs**. The `pinaceae` theme (matugen-generated, `themes/
+Every `centaur-*` symbol became `pinaceae-*`; user-facing "Centaur Emacs"
+strings (frame title, dashboard banner/footer, hydra titles, docstrings)
+became "Pinaceae Emacs". The `pinaceae` theme (matugen-generated, `themes/
 pinaceae-theme.el`) keeps its name.

@@ -38,8 +38,8 @@
 (require 'init-funcs)
 
 ;; Personal information
-(setq user-full-name flutter-full-name
-      user-mail-address flutter-mail-address)
+(setq user-full-name pinaceae-full-name
+      user-mail-address pinaceae-mail-address)
 
 (with-no-warnings
   ;; Key Modifiers
@@ -105,7 +105,7 @@
   (set-selection-coding-system 'utf-8))
 
 ;; Environment
-(when flutter-use-exec-path-from-shell
+(when pinaceae-use-exec-path-from-shell
   (use-package exec-path-from-shell
     :commands exec-path-from-shell-initialize
     :custom (exec-path-from-shell-arguments '("-l"))
@@ -221,8 +221,8 @@
 ;; Frame
 (when (display-graphic-p)
   ;; Frame maximized on startup
-  (when flutter-frame-maximized-on-startup
-    (add-hook 'window-setup-hook #'flutter-frame-maximize))
+  (when pinaceae-frame-maximized-on-startup
+    (add-hook 'window-setup-hook #'pinaceae-frame-maximize))
 
   ;; Frame fullscreen
   (bind-key "S-s-<return>" #'toggle-frame-fullscreen)
@@ -230,12 +230,12 @@
 
   ;; Resize and re-position frames conveniently
   ;; Same keybindings as Rectangle on macOS
-  (bind-keys ("C-M-<return>"    . flutter-frame-maximize)
-             ("C-M-<backspace>" . flutter-frame-restore)
-             ("C-M-<left>"      . flutter-frame-left-half)
-             ("C-M-<right>"     . flutter-frame-right-half)
-             ("C-M-<up>"        . flutter-frame-top-half)
-             ("C-M-<down>"      . flutter-frame-bottom-half))
+  (bind-keys ("C-M-<return>"    . pinaceae-frame-maximize)
+             ("C-M-<backspace>" . pinaceae-frame-restore)
+             ("C-M-<left>"      . pinaceae-frame-left-half)
+             ("C-M-<right>"     . pinaceae-frame-right-half)
+             ("C-M-<up>"        . pinaceae-frame-top-half)
+             ("C-M-<down>"      . pinaceae-frame-bottom-half))
 
   ;; Frame transparency
   (use-package transwin

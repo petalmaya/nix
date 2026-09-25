@@ -37,9 +37,9 @@
     :hook ((elixir-mode elixir-ts-mode)
            (alchemist-mode . alchemist-phoenix-mode))))
 
-(if (flutter-treesit-available-p)
+(if (pinaceae-treesit-available-p)
     (use-package elixir-ts-mode
-      :functions flutter-treesit-available-p
+      :functions pinaceae-treesit-available-p
       :mode (("\\.elixir\\'" . elixir-ts-mode)
              ("\\.ex\\'"     . elixir-ts-mode)
              ("\\.exs\\'"    . elixir-ts-mode)

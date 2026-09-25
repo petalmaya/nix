@@ -1,7 +1,7 @@
 ;;; early-init.el --- Early initialization. -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2019-2026 Vincent Zhang (Centaur Emacs, GPL-3.0 —
-;; see NOTICE.md), with Flutter Emacs additions (transparency).
+;; see NOTICE.md), with Pinaceae Emacs additions (transparency).
 
 ;; This file is not part of GNU Emacs.
 ;;

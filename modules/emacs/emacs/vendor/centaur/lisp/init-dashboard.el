@@ -35,7 +35,7 @@
   (require 'init-custom))
 
 ;; Dashboard. Always declared so <f2> / `open-dashboard' exists in every
-;; session. Auto-show at startup only when `flutter-dashboard' is set
+;; session. Auto-show at startup only when `pinaceae-dashboard' is set
 ;; (default on, including the EWM compositor daemon).
 (use-package dashboard
     :diminish
@@ -56,7 +56,7 @@
                               (setq-local frame-title-format nil
                                           global-hl-line-mode nil)))
     :init
-    (setq dashboard-banner-logo-title "Flutter Emacs"
+    (setq dashboard-banner-logo-title "Pinaceae Emacs"
           dashboard-startup-banner 'official ; the Centaur logo was dropped with the branding
           dashboard-page-separator "\n\n"
           dashboard-projects-backend 'project-el
@@ -81,8 +81,8 @@
                                       dashboard-insert-footer)
 
           dashboard-display-icons-p #'icons-displayable-p
-          dashboard-set-file-icons flutter-icon
-          dashboard-set-heading-icons flutter-icon
+          dashboard-set-file-icons pinaceae-icon
+          dashboard-set-heading-icons pinaceae-icon
           dashboard-heading-icons '((recents   . "nf-oct-history")
                                     (bookmarks . "nf-oct-bookmark")
                                     (agenda    . "nf-oct-calendar")
@@ -93,7 +93,7 @@
           `(((,(when (icons-displayable-p)
                  (nerd-icons-mdicon "nf-md-github" :height 1.4))
               "Homepage" "Visit homepage (H)"
-              (lambda (&rest _) (browse-url flutter-homepage)))
+              (lambda (&rest _) (browse-url pinaceae-homepage)))
              (,(when (icons-displayable-p)
                  (nerd-icons-mdicon "nf-md-backup_restore" :height 1.5))
               "Restore" "Restore previous session (O)"
@@ -104,13 +104,13 @@
               (lambda (&rest _) (open-setting-files)))
              (,(when (icons-displayable-p)
                  (nerd-icons-mdicon "nf-md-update" :height 1.3))
-              "Update" "Update Flutter Emacs (U)"
-              (lambda (&rest _) (flutter-update)))
+              "Update" "Update Pinaceae Emacs (U)"
+              (lambda (&rest _) (pinaceae-update)))
              (,(if (icons-displayable-p)
                    (nerd-icons-mdicon "nf-md-keyboard" :height 1.2)
                  "?")
-              "Cheatsheet" "Open key cheatsheet (or M-x flutter-cheatsheet)"
-              (lambda (&rest _) (flutter-cheatsheet)))
+              "Cheatsheet" "Open key cheatsheet (or M-x pinaceae-cheatsheet)"
+              (lambda (&rest _) (pinaceae-cheatsheet)))
              (,(if (icons-displayable-p)
                    (nerd-icons-mdicon "nf-md-help" :height 1.2)
                  "?")
@@ -122,7 +122,7 @@
               (nerd-icons-octicon "nf-oct-heart" :height 1.2 :face 'nerd-icons-lred)
             (propertize ">" 'face 'dashboard-footer)))
 
-    (when flutter-dashboard
+    (when pinaceae-dashboard
       (dashboard-setup-startup-hook))
     :config
     (with-no-warnings
@@ -131,7 +131,7 @@
       (defun my/dashboard-insert-copyright ()
         "Insert copyright in the footer."
         (dashboard-insert-center
-         (propertize (format "\nPowered by Flutter Emacs, %s\n" (format-time-string "%Y"))
+         (propertize (format "\nPowered by Pinaceae Emacs, %s\n" (format-time-string "%Y"))
                      'face 'font-lock-comment-face)))
       (advice-add #'dashboard-insert-footer :after #'my/dashboard-insert-copyright)
 
@@ -170,7 +170,7 @@
           (tabspaces-switch-or-create-workspace tabspaces-default-tab))
 
         ;; Recover layout
-        (flutter-recover-layout))))
+        (pinaceae-recover-layout))))
 
 (provide 'init-dashboard)
 

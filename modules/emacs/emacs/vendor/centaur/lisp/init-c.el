@@ -37,10 +37,10 @@
 (use-package cc-mode
   :init (setq-default c-basic-offset 4))
 
-(when (flutter-treesit-available-p)
+(when (pinaceae-treesit-available-p)
   (use-package c-ts-mode
     :ensure nil
-    :functions flutter-treesit-available-p
+    :functions pinaceae-treesit-available-p
     :init
     (setq c-ts-mode-indent-offset 4)
 

@@ -30,28 +30,28 @@
 
 ;;; Code:
 
-(defconst flutter-homepage
+(defconst pinaceae-homepage
   (expand-file-name "~/nix")
-  "The local checkout of the Flutter Emacs config (your Nix repo).
+  "The local checkout of the Pinaceae Emacs config (your Nix repo).
 
 Upstream source of this fork: https://github.com/seagle0128/.emacs.d
 (Centaur Emacs, GPL-3.0, copyright Vincent Zhang).")
 
-(defconst flutter-custom-example-file
+(defconst pinaceae-custom-example-file
   (expand-file-name "custom-example.el" user-emacs-directory)
-  "Custom example file of Flutter Emacs.")
+  "Custom example file of Pinaceae Emacs.")
 
-(defconst flutter-custom-post-file
+(defconst pinaceae-custom-post-file
   (expand-file-name "custom-post.el" user-emacs-directory)
   "Custom file after startup.
 
 Put private configurations to override defaults here.")
 
-(defconst flutter-env-file
+(defconst pinaceae-env-file
   (expand-file-name "env.el" user-emacs-directory)
   "Environment file at startup.")
 
-(defconst flutter-custom-post-org-file
+(defconst pinaceae-custom-post-org-file
   (expand-file-name "custom-post.org" user-emacs-directory)
   "Custom org file after startup.
 

@@ -63,7 +63,7 @@
            (message "Failed to install %s: %d" pkg status)))))))
 
 ;; Configure Golang automatically
-(defvar go-keymap (if (flutter-treesit-available-p)
+(defvar go-keymap (if (pinaceae-treesit-available-p)
                       'go-ts-mode-map
                     'go-mode-map)
   "The keymap for Golang.")
@@ -96,10 +96,10 @@
            ("C-c t x" . go-run))))
 
 ;; Golang
-(if (flutter-treesit-available-p)
+(if (pinaceae-treesit-available-p)
     (use-package go-ts-mode
       :ensure nil
-      :functions (flutter-treesit-available-p exec-path-from-shell-copy-envs)
+      :functions (pinaceae-treesit-available-p exec-path-from-shell-copy-envs)
       :mode (("\\.go\\'" . go-ts-mode)
              ("/go\\.mod\\'" . go-mod-ts-mode))
       :custom (go-ts-mode-indent-offset 4)

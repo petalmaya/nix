@@ -68,12 +68,12 @@
 (use-package nov
   :mode ("\\.epub\\'" . nov-mode)
   :hook (nov-mode . my/nov-setup)
-  :bind ("M-<f7>" . flutter-read-mode)
+  :bind ("M-<f7>" . pinaceae-read-mode)
   :init
   (defun my/nov-setup ()
     "Setup `nov-mode' for better reading experience."
     (visual-line-mode 1)
-    (flutter-read-mode)
+    (pinaceae-read-mode)
     (face-remap-add-relative 'variable-pitch :family "Times New Roman" :height 1.5))
   :config
   (with-no-warnings
@@ -125,7 +125,7 @@
          ("h" . elfeed-hydra/body)
          ("?" . elfeed-hydra/body))
   :init (setq url-queue-timeout 30
-              elfeed-db-directory (expand-file-name "elfeed" flutter/state-directory)
+              elfeed-db-directory (expand-file-name "elfeed" pinaceae/state-directory)
               elfeed-show-entry-switch #'pop-to-buffer
               elfeed-show-entry-delete #'delete-window
               elfeed-feeds '(("https://planet.emacslife.com/atom.xml" planet emacslife)

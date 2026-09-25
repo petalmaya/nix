@@ -1,11 +1,11 @@
-;;; init-mini.el --- Flutter Emacs minimal configurations.	-*- lexical-binding: t no-byte-compile: t -*-
+;;; init-mini.el --- Pinaceae Emacs minimal configurations.	-*- lexical-binding: t no-byte-compile: t -*-
 
 ;; Copyright (C) 2018-2026 Vincent Zhang
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; URL: https://github.com/seagle0128/.emacs.d
 ;; Version: 1.2.0
-;; Keywords: .emacs.d flutter
+;; Keywords: .emacs.d pinaceae
 
 ;; This file is not part of GNU Emacs.
 ;;

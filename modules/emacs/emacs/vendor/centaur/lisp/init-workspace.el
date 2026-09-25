@@ -57,8 +57,8 @@
   (tabspaces-project-switch-opens-workspace t)
 
   ;; sessions
-  (tabspaces-session (not flutter-dashboard))
-  (tabspaces-session-auto-restore (not flutter-dashboard))
+  (tabspaces-session (not pinaceae-dashboard))
+  (tabspaces-session-auto-restore (not pinaceae-dashboard))
   (tabspaces-session-file (concat user-emacs-directory "tabspaces/tabsession.el"))
   (tabspaces-session-project-session-store (concat user-emacs-directory "tabspaces/"))
   (tabspaces-session-auto-save-delay 300)  ; Save after 5 idle minutes

@@ -27,7 +27,7 @@
 ;;
 ;; Emacs Package management configurations.
 ;;
-;; Adapted for Flutter Emacs: packages are installed by Elpaca (see
+;; Adapted for Pinaceae Emacs: packages are installed by Elpaca (see
 ;; lisp/my-elpaca.el for the bootstrap), not package.el.  The Centaur
 ;; machinery for package.el (mirror selection, package-initialize, the
 ;; Windows "all packages in one dir" hack) has been removed; the
@@ -52,8 +52,8 @@
 ;; At first startup, copy the example custom file so `customize' has
 ;; something to write into.
 (when (and (not (file-exists-p custom-file))
-           (file-exists-p flutter-custom-example-file))
-  (copy-file flutter-custom-example-file custom-file))
+           (file-exists-p pinaceae-custom-example-file))
+  (copy-file pinaceae-custom-example-file custom-file))
 
 ;; Load `custom-file'
 (load custom-file 'noerror)
@@ -61,11 +61,11 @@
 ;; Load custom-post file
 (defun load-custom-post-file ()
   "Load custom-post file."
-  (cond ((file-exists-p flutter-custom-post-org-file)
+  (cond ((file-exists-p pinaceae-custom-post-org-file)
          (and (fboundp 'org-babel-load-file)
-              (org-babel-load-file flutter-custom-post-org-file)))
-        ((file-exists-p flutter-custom-post-file)
-         (load flutter-custom-post-file))))
+              (org-babel-load-file pinaceae-custom-post-org-file)))
+        ((file-exists-p pinaceae-custom-post-file)
+         (load pinaceae-custom-post-file))))
 (add-hook 'after-init-hook #'load-custom-post-file)
 
 ;; HACK: DO NOT save `package-selected-packages' to `custom-file'

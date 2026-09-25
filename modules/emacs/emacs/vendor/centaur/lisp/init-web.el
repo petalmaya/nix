@@ -92,10 +92,10 @@
   (use-package json-mode))
 
 ;; Typescript
-(unless (and (flutter-treesit-available-p)
+(unless (and (pinaceae-treesit-available-p)
              (fboundp 'typescript-ts-mode))
   (use-package typescript-mode
-    :functions flutter-treesit-available-p))
+    :functions pinaceae-treesit-available-p))
 
 ;; Major mode for CoffeeScript code
 (use-package coffee-mode
