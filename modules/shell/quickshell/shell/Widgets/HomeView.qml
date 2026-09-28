@@ -26,7 +26,6 @@ Item {
       radius: Dat.Radius.xl
 
       StackView {
-        // visible: false
         id: stack
 
         anchors.fill: parent
@@ -250,7 +249,7 @@ Item {
 
             anchors.centerIn: parent
             color: Dat.Colors.current.on_surface
-            font.pointSize: 10
+            font.pointSize: Dat.Type.labelSmall
             text: Dat.Resources.uptime
           }
         }

@@ -1,4 +1,3 @@
-// Custom notification server; read before reusing elsewhere.
 pragma Singleton
 import QtQuick
 import Quickshell
@@ -19,8 +18,6 @@ Singleton {
     });
   }
 
-  // qs ipc call notifications clear - bindable in niri/mangowc same as
-  // "launcher"/"lockscreen" targets elsewhere in Data/
   IpcHandler {
     function clear() {
       notif.clearNotifs();

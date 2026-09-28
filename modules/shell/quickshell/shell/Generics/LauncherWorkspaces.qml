@@ -5,20 +5,16 @@ import QtQuick.Layouts
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// Numbered grid for Dat.Launcher "workspaces" mode; tiles, not live thumbnails (needs wlr-screencopy).
-// Works against Niri or MangoWC backends.
+// Numbered grid, not live thumbnails; wlr-screencopy is unavailable.
 Item {
   id: root
 
   signal requestFocus
 
   readonly property string outputName: Dat.Launcher.outputName
-  // sway is primary (Go ipc), mango is archived fallback — pick whichever is active
   readonly property bool backendActive: (Dat.Sway.active || Dat.MangoWC.active)
   readonly property var backend: Dat.Sway.active ? Dat.Sway : Dat.MangoWC
 
-  // just "how many tiles do we know about for this output", not a
-  // hardcoded grid size
   readonly property var workspacesForOutput: {
     if (!root.backendActive)
       return [];
@@ -49,8 +45,7 @@ Item {
       root.switchTo(w.idx);
   }
 
-  // lands the cursor on the current workspace, so the first arrow
-  // press moves relative to "where you are"
+  // Cursor starts on the current workspace so arrows move relative to it.
   function _resetSelection() {
     const idx = root.workspacesForOutput.findIndex(w => w.idx == root.currentIdx);
     root.selectedIndex = idx >= 0 ? idx : (root.workspacesForOutput.length > 0 ? 0 : -1);
@@ -74,7 +69,7 @@ Item {
     id: fallback
 
     color: Dat.Colors.current.on_surface_variant
-    font.pointSize: 10
+    font.pointSize: Dat.Type.labelSmall
     horizontalAlignment: Text.AlignHCenter
     text: Dat.Sway.active ? "No workspaces" : (Dat.MangoWC.active ? "No workspaces" : "Workspace switching needs sway (or archived mango)")
     visible: !root.backendActive
@@ -102,8 +97,7 @@ Item {
 
         readonly property bool current: tile.modelData.idx == root.currentIdx
         readonly property bool selected: tile.index == root.selectedIndex
-        // mango-only field - always undefined (falsy) on niri, so this
-        // just never lights up there
+        // Mango-only urgent flag reads falsy on niri, so it never lights up there.
         readonly property bool urgent: !!tile.modelData.is_urgent
 
         Layout.fillWidth: true
@@ -116,13 +110,13 @@ Item {
         Text {
           anchors.centerIn: parent
           color: Dat.Colors.current.on_surface
-          font.pointSize: 14
+          font.pointSize: Dat.Type.titleSmall
           text: tile.modelData.name || `${tile.modelData.idx}`
         }
 
         Gen.MouseArea {
           layerColor: Dat.Colors.current.on_surface
-          layerRadius: 14
+          layerRadius: Dat.Radius.lgSm
 
           onClicked: root.switchTo(tile.modelData.idx)
           onContainsMouseChanged: {

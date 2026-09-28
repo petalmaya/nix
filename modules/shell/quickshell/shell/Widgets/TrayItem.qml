@@ -29,7 +29,7 @@ Item {
     mipmap: true
     smooth: true
     source: {
-      // adapted from soramanew
+      // QsMenuOpener icon URLs embed "?path=" and must be split to a file URL.
       const icon = root.modelData?.icon ?? "";
       if (icon.includes("?path=")) {
         const [name, path] = icon.split("?path=");
@@ -55,7 +55,6 @@ Item {
 
         if (root.stackView.depth > 1) {
           if (root.stackView.currentItem == root.menu) {
-            // unwind nesting
             if (root.menu.trayMenu != trayMenu) {
               root.menu.trayMenu = trayMenu;
               return;

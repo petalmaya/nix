@@ -15,14 +15,12 @@ WlrLayershell {
   required property ShellScreen modelData
 
   readonly property bool open: Dat.Globals.networkPanelOpen(root.modelData?.name ?? "")
-  // stays true through the close animation, mirrors the notch's own
-  // visible/PropertyAction dance for its transitions
+  // Lingers mapped through the close animation like the notch.
   property bool surfaceVisible: false
 
   function close() {
     Dat.Globals.setNetworkPanelOpen(root.modelData?.name ?? "", false);
-    // NetworkPanel.qml isn't torn down on close (no Loader), so
-    // nothing else stops a bluetooth scan it started
+    // No Loader tears NetworkPanel down on close, so close must stop its scans.
     if (Bluetooth.defaultAdapter?.discovering) {
       Bluetooth.defaultAdapter.discovering = false;
     }
@@ -60,8 +58,6 @@ WlrLayershell {
     onTriggered: root.surfaceVisible = false
   }
 
-  // covers the whole output; click outside the panel closes it, Esc
-  // does the same via the focus scope below
   MouseArea {
     anchors.fill: parent
 
@@ -84,8 +80,7 @@ WlrLayershell {
     anchors.rightMargin: 10
     anchors.top: parent.top
     anchors.topMargin: 34
-    // constant-alpha translucency, same as Launcher.qml - no
-    // desktop-vs-window state to key off here
+    // Constant translucency; no desktop-vs-window state exists here.
     color: Dat.Colors.withAlpha(Dat.Colors.current.surface_container_high, 0.89)
     height: content.height + 28
     implicitWidth: 320

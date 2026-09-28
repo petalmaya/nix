@@ -12,8 +12,6 @@ Singleton {
   property alias mem: memInfo
   property string uptime: "0:00"
 
-  // CPU usage derived from /proc/stat deltas (see cpuInfo below).
-  // Adapted from FridayFaerie/quickshell via pterror.
   FileView {
     id: cpuInfo
 

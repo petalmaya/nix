@@ -68,14 +68,15 @@ Item {
 
       required property int index
 
-      color: (index == list.currentIndex) ? "white" : Dat.Colors.withAlpha("white", 0.5)
+      color: (index == list.currentIndex) ? Dat.Colors.current.on_surface : Dat.Colors.withAlpha(Dat.Colors.current.on_surface_variant, 0.5)
       height: this.width
       radius: Dat.Radius.full
       width: 6
 
       Behavior on color {
         ColorAnimation {
-          duration: 500
+          duration: Dat.MaterialEasing.emphasizedDecelTime
+          easing.bezierCurve: Dat.MaterialEasing.emphasizedDecel
         }
       }
     }

@@ -3,14 +3,7 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
-// Sway IPC — event-driven via Go daemon (modules/shell/quickshell/ipc/daemon.go)
-// The daemon watches $SWAYSOCK and writes a compact snapshot to
-// ~/.cache/nixtop-shell/sway.json. This QML only FileViews that file,
-// so we never spawn `swaymsg` per frame. Fallback to direct swaymsg
-// polling if the daemon cache is missing (e.g. no Go build).
-//
-// Shape mirrors MangoWC so widgets can swap backends with minimal changes:
-//   active, focusedOutput, currentWorkspace, currentWorkspaceByOutput, workspaces, monitors
+// Event-driven Sway IPC via the Go daemon cache, shaped to match MangoWC.
 Singleton {
   id: root
 
@@ -55,7 +48,6 @@ Singleton {
     root.active = true
   }
 
-  // swaymsg wrappers — compositor-agnostic callers use these
   function workspaceFor(outputName) {
     if (outputName && root.currentWorkspaceByOutput[outputName] !== undefined) {
       return root.currentWorkspaceByOutput[outputName]
@@ -67,8 +59,7 @@ Singleton {
     // sway workspaces are global, not per-output tags; focus then workspace
     if (outputName && outputName !== root.focusedOutput) {
       Quickshell.execDetached(["bash", "-c", `swaymsg workspace ${idx} >/dev/null 2>&1 || swaymsg --no-auto-reply workspace number ${idx}`])
-      // swaymsg workspace <num> already switches output if that workspace is on another output;
-      // for true per-output isolation we also focus output first:
+      // swaymsg switches output implicitly, so focus output first for per-output isolation.
       Quickshell.execDetached(["bash", "-c", `swaymsg focus output ${root._escape(outputName)} >/dev/null 2>&1; swaymsg workspace number ${idx}`])
     } else {
       Quickshell.execDetached(["swaymsg", "workspace", "number", `${idx}`])
@@ -83,7 +74,6 @@ Singleton {
     Quickshell.execDetached(["swaymsg", "workspace", "prev"])
   }
 
-  // Go daemon cache file — cheap, inotify-driven
   FileView {
     id: cacheView
     path: Qt.resolvedUrl("file://" + root.cachePath)
@@ -107,19 +97,16 @@ Singleton {
     }
   }
 
-  // Fallback: poll swaymsg directly if daemon cache missing (no Go build or first boot)
-  // This is intentionally slower (500ms) and only runs when FileView fails.
+  // Slow swaymsg fallback polling only while the daemon cache file is missing.
   Process {
     id: fallbackPoll
     running: false
-    // only run when no active snapshot and sway socket exists
     command: ["bash", "-c", "command -v swaymsg >/dev/null 2>&1 && swaymsg -t get_workspaces 2>/dev/null | jq -c '{workspaces: ., focusedOutput: \"\", currentWorkspace: 1}' || echo '{}'"]
     stdout: SplitParser {
       onRead: data => {
         if (!data || data.length === 0) return
         try {
           const obj = JSON.parse(data)
-          // crude fallback: synthesize workspaces map from get_workspaces array
           if (obj && Array.isArray(obj.workspaces)) {
             const byOutput = {}
             const wsMap = {}
@@ -141,7 +128,6 @@ Singleton {
       }
     }
     onExited: (code, status) => {
-      // retry every 2s while cache still missing
       if (!root.active) {
         retryTimer.restart()
       }
@@ -159,8 +145,7 @@ Singleton {
     }
   }
 
-  // daemon launcher — start nixtop-sway-ipc if available and sway socket exists
-  // The binary is `nixtop-sway-ipc` from package.nix (Go build) or fallback to `swaymsg` loop above.
+  // Starts nixtop-sway-ipc when available and a sway socket exists.
   Process {
     id: daemonProc
     command: ["bash", "-c", "command -v nixtop-sway-ipc >/dev/null 2>&1 && test -n \"$SWAYSOCK\" && exec nixtop-sway-ipc || exit 0"]
@@ -171,7 +156,6 @@ Singleton {
 
   // also watch SWAYSOCK env to auto-enable under swayfx
   Component.onCompleted: {
-    // try to load cache immediately if it exists
     cacheView.reload()
   }
 }

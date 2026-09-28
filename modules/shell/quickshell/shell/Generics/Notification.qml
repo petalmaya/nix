@@ -70,8 +70,7 @@ Rectangle {
       implicitWidth: this.implicitHeight
       visible: root.notif?.image ?? false
 
-      // plain rounded-rect clip, not a real alpha-mask shape - see
-      // GreeterWidget.qml/handoff.md Session 18 for the same swap
+      // ClippingRectangle avoids a second mask texture.
       ClippingRectangle {
         anchors.fill: parent
         color: "transparent"
@@ -94,8 +93,8 @@ Rectangle {
         Layout.fillWidth: true
         color: "transparent"
         implicitHeight: sumText.contentHeight + bodText.contentHeight
-        topLeftRadius: 20
-        topRightRadius: 20
+        topLeftRadius: Dat.Radius.xl
+        topRightRadius: Dat.Radius.xl
 
         RowLayout {
           id: infoRow
@@ -125,8 +124,8 @@ Rectangle {
 
               anchors.centerIn: parent
               color: Dat.Colors.current.tertiary
-              font.bold: true
-              font.pointSize: 8
+              font.pointSize: Dat.Type.labelSmall
+              font.weight: Dat.Type.weightBold
               text: root.notif?.appName ?? "idk"
             }
           }
@@ -137,7 +136,7 @@ Rectangle {
 
           anchors.top: infoRow.bottom
           color: Dat.Colors.current.on_surface
-          font.pointSize: 11
+          font.pointSize: Dat.Type.labelMedium
           text: root.notif?.body ?? "very cool body that is missing"
           textFormat: Text.MarkdownText
           width: parent.width
@@ -149,7 +148,6 @@ Rectangle {
             acceptedButtons: Qt.LeftButton
             anchors.fill: parent
 
-            // thanks end_4 for this <3
             onClicked: {
               const hovLink = bodText.hoveredLink;
               if (hovLink == "") {
@@ -171,7 +169,6 @@ Rectangle {
         clip: true
         contentWidth: actionRow.width
         implicitHeight: 23
-        // thanks to Aureus :>
         implicitWidth: Math.min(bodyNActionCol.width - 20, actionRow.width)
 
         RowLayout {
@@ -196,7 +193,7 @@ Rectangle {
 
                 anchors.centerIn: parent
                 color: Dat.Colors.current.on_secondary
-                font.pointSize: 11
+                font.pointSize: Dat.Type.labelMedium
                 text: parent.modelData?.text ?? "activate"
               }
 

@@ -34,8 +34,8 @@ Rectangle {
 
   Behavior on Layout.minimumWidth {
     NumberAnimation {
-      duration: 150
-      easing.type: Easing.Linear
+      duration: Dat.MaterialEasing.standardAccelTime
+      easing.bezierCurve: Dat.MaterialEasing.standardAccel
     }
   }
 
@@ -56,7 +56,7 @@ Rectangle {
 
         anchors.centerIn: parent
         color: Dat.Colors.current.on_primary_container
-        font.pointSize: 11
+        font.pointSize: Dat.Type.labelMedium
         text: Math.round(root.batPercentage * 100) + "%"
         visible: UPower.displayDevice.percentage > 0
       }
@@ -71,7 +71,7 @@ Rectangle {
       Gen.NerdIcon {
         anchors.centerIn: parent
         color: Dat.Colors.current.on_primary
-        font.pointSize: (mArea.containsMouse || !root.hasBattery) ? 9 : 11
+        font.pointSize: Dat.Type.labelMedium
         icon: (mArea.containsMouse || !root.hasBattery) ? root.profileIcon : ((root.batCharging) ? root.chargeIcon : root.batIcon)
       }
     }

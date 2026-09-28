@@ -40,8 +40,8 @@ Repeater {
     Gen.NerdIcon {
       anchors.centerIn: parent
       color: Dat.Colors.current.on_primary
-      font.bold: true
-      font.pointSize: 12 * Dat.Globals.notchScale
+      font.weight: Dat.Type.weightBold
+      font.pointSize: Dat.Type.labelMedium * Dat.Globals.notchScale
       icon: dot.modelData.text
     }
   }

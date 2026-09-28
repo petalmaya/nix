@@ -7,7 +7,6 @@ import qs.Data as Dat
 import qs.Widgets as Wid
 import qs.Generics as Gen
 
-// Login UI, one per greeter.qml run. Same backdrop as LockScreenSurface, auth via Dat.Greeter (greetd).
 Item {
   id: root
 
@@ -35,7 +34,6 @@ Item {
     color: Dat.Colors.withAlpha(Dat.Colors.current.background, 0.25)
   }
 
-  // Oversized top-left clock, DM-greeter style.
   ColumnLayout {
     anchors.left: parent.left
     anchors.leftMargin: 48
@@ -45,20 +43,19 @@ Item {
 
     Text {
       color: Dat.Colors.current.on_background
-      font.bold: true
-      font.pointSize: 52
+      font.weight: Dat.Type.weightBold
+      font.pointSize: Dat.Type.displayLarge
       text: Qt.formatDateTime(Dat.Clock.date, "h:mm")
     }
 
     Text {
       color: Dat.Colors.current.on_background
-      font.pointSize: 16
+      font.pointSize: Dat.Type.titleMedium
       opacity: 0.8
       text: Qt.formatDateTime(Dat.Clock.date, "dddd d MMMM")
     }
   }
 
-  // Bottom-left card; no current context to anchor near like panels have.
   ColumnLayout {
     id: card
 
@@ -69,7 +66,6 @@ Item {
     spacing: 10
     width: 340
 
-    // Username row, focused first.
     Rectangle {
       Layout.fillWidth: true
       Layout.preferredHeight: 44
@@ -92,7 +88,7 @@ Item {
 
           Layout.fillWidth: true
           color: Dat.Colors.current.on_surface
-          font.pointSize: 12
+          font.pointSize: Dat.Type.labelMedium
           selectByMouse: true
           text: Dat.Greeter.username
           verticalAlignment: TextInput.AlignVCenter
@@ -130,7 +126,7 @@ Item {
           Layout.fillWidth: true
           color: Dat.Colors.current.on_surface
           echoMode: Dat.Greeter.passwordVisible ? TextInput.Normal : TextInput.Password
-          font.pointSize: 12
+          font.pointSize: Dat.Type.labelMedium
           selectByMouse: true
           text: Dat.Greeter.password
           verticalAlignment: TextInput.AlignVCenter
@@ -161,7 +157,7 @@ Item {
       Layout.fillWidth: true
       Layout.leftMargin: 14
       color: Dat.Colors.current.error
-      font.pointSize: 10
+      font.pointSize: Dat.Type.labelSmall
       text: Dat.Greeter.errorMessage
       visible: Dat.Greeter.errorMessage.length > 0
       wrapMode: Text.WordWrap
@@ -180,8 +176,8 @@ Item {
       Text {
         anchors.centerIn: parent
         color: Dat.Colors.current.on_primary
-        font.bold: true
-        font.pointSize: 12
+        font.weight: Dat.Type.weightBold
+        font.pointSize: Dat.Type.labelMedium
         text: Dat.Greeter.busy ? "Logging in…" : "Login"
       }
 
@@ -193,18 +189,17 @@ Item {
       }
     }
 
-    // Click-to-cycle session, keeps the card keyboard-first.
     Text {
       Layout.alignment: Qt.AlignHCenter
       Layout.topMargin: 6
       color: Dat.Colors.current.on_background
-      font.pointSize: 10
+      font.pointSize: Dat.Type.labelSmall
       opacity: 0.85
       text: "Session (" + (Dat.Greeter.selectedSession?.name ?? "none found") + ")"
 
       Gen.MouseArea {
         anchors.margins: -6
-        layerRadius: 8
+        layerRadius: Dat.Radius.sm
 
         onClicked: Dat.Greeter.cycleSession()
       }

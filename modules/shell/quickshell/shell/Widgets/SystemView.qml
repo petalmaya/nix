@@ -61,12 +61,11 @@ Item {
         }
       }
 
-      ColumnLayout { // area to the right of the image
+      ColumnLayout {
         id: rightArea
 
         anchors.bottom: parent.bottom
         anchors.left: nixLogo.right
-        // radius: 10
         anchors.margins: 10
         anchors.right: parent.right
         anchors.rightMargin: 11
@@ -96,7 +95,7 @@ Item {
 
                 anchors.fill: parent
                 color: Dat.Colors.current.primary
-                font.pointSize: 32 * Dat.Globals.notchScale
+                font.pointSize: Dat.Type.headlineLarge * Dat.Globals.notchScale
                 horizontalAlignment: Text.AlignHCenter
                 icon: ""
                 verticalAlignment: Text.AlignVCenter
@@ -117,7 +116,6 @@ Item {
 
                   Rectangle {
                     required property int index
-                    // prefer Sway (Go daemon) else Mango (archived)
                     property int workspace: Dat.Sway.active ? Dat.Sway.currentWorkspace : Dat.MangoWC.currentWorkspace
                     property bool urgent: !!( (Dat.Sway.active ? Dat.Sway.workspaces : Dat.MangoWC.workspaces)[`${root.outputName}-${index + 1}`]?.is_urgent )
 
@@ -144,7 +142,6 @@ Item {
         }
 
         Rectangle {
-          // no longer system tray, its gonna be the base of a monitor
           Layout.alignment: Qt.AlignCenter
           antialiasing: true
           color: Dat.Colors.current.outline

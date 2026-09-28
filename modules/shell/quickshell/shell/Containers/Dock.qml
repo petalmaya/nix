@@ -5,18 +5,14 @@ import qs.Data as Dat
 import qs.Generics as Gen
 import qs.Widgets as Wid
 
-// Open apps on the left, pinned apps + launcher on the right.
-// Divider shows only when both groups are non-empty.
 RowLayout {
   id: root
 
   property string outputName: ""
-  // Pill geometry for Layers/Dock.qml launcher morph-in.
   property real pillWidth: 0
   property real pillHeight: 0
 
-  // Row-local pointer x (-1 = off-row) for DockItem magnification.
-  // HoverHandler (not MouseArea) so items underneath keep hover.
+  // Row-local pointer x (-1 off-row); HoverHandler keeps hover non-exclusive.
   readonly property real hoverX: rowHover.hovered ? rowHover.point.position.x : -1
 
   spacing: 6
@@ -30,8 +26,7 @@ RowLayout {
   Repeater {
     model: Dat.Dock.runningModel
 
-    // Wrapper binds ListModel roles (DockItem can't redeclare them required); toplevel via toplevelForKey.
-    // closing fades out via Dat.Dock.confirmClosed; see Data/Dock.qml.
+    // Wrapper binds ListModel roles DockItem cannot redeclare; closing fades via confirmClosed.
     Item {
       id: row
 
@@ -99,13 +94,13 @@ RowLayout {
     Gen.MatIcon {
       anchors.centerIn: parent
       color: (Dat.Launcher.open && Dat.Launcher.outputName == root.outputName) ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
-      font.pointSize: 16
+      font.pointSize: Dat.Type.titleMedium
       icon: "apps"
     }
 
     Gen.MouseArea {
       layerColor: Dat.Colors.current.on_surface
-      layerRadius: 14
+      layerRadius: Dat.Radius.lgSm
 
       onClicked: Dat.Launcher.toggleFromDock(root.outputName, root.pillWidth, root.pillHeight)
     }

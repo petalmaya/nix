@@ -5,19 +5,15 @@ import Quickshell.Io
 
 import qs.Data as Dat
 
-// Central launcher state (query/mode); new modes need a value here
-// plus a branch in Layers/Launcher.qml's Loader.
+// Central launcher state; new modes also need a branch in Layers/Launcher.qml.
 Singleton {
   id: root
 
-  // name of the mode used when the launcher is first opened / reset
   readonly property string defaultMode: "apps"
   // ordered so Tab can cycle through them - see cycleMode()
   readonly property var modes: ["apps", "wallpaper", "workspaces"]
 
   property bool open: false
-  // which screen currently owns the launcher - only that screen's
-  // Layers/Launcher.qml instance actually shows itself
   property string outputName: ""
   property string mode: root.defaultMode
   property string query: ""
@@ -29,8 +25,7 @@ Singleton {
   // True only for dock-click opens; Layers/Launcher.qml skips the grow animation otherwise.
   property bool morphFromDock: false
 
-  // best guess at "the monitor you're on", for calls with no explicit
-  // output (e.g. a global IPC keybind). Prefers Sway (Go daemon) then Mango (archived).
+  // Guesses the focused monitor for calls without an output.
   function _guessOutput() {
     if (Dat.Sway.active && Dat.Sway.focusedOutput) {
       return Dat.Sway.focusedOutput;
@@ -82,14 +77,11 @@ Singleton {
     }
   }
 
-  // switches mode without closing the launcher
   function setMode(m) {
     root.mode = m;
     root.query = "";
   }
 
-  // Tab cycles forward through `modes`, wrapping - bound to
-  // Keys.onTabPressed on the launcher panel
   function cycleMode() {
     const idx = root.modes.indexOf(root.mode);
     const next = root.modes[(idx + 1) % root.modes.length];

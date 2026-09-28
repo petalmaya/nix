@@ -14,8 +14,7 @@ Singleton {
   property bool connecting: false
   property string connectError: ""
   property string scanError: ""
-  // [{ssid, signal, security, active, known}], sorted strongest-first,
-  // deduped by ssid (nmcli lists one row per BSSID otherwise)
+  // Strongest-first SSIDs deduped by name; nmcli lists one row per BSSID.
   property var networks: []
 
   function refreshStatus() {
@@ -169,8 +168,7 @@ Singleton {
     }
   }
 
-  // cross-references saved connections against scan results so known
-  // networks skip the password prompt
+  // Known networks skip the password prompt by matching saved connections.
   Process {
     id: knownProc
 

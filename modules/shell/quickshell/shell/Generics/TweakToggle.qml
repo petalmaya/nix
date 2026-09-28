@@ -70,7 +70,7 @@ Rectangle {
 
         anchors.centerIn: parent
         color: root.active ? Dat.Colors.current.on_primary : Dat.Colors.current.primary
-        font.pointSize: 15
+        font.pointSize: Dat.Type.labelLarge
         icon: root.active ? "check" : "close"
 
         Behavior on color {

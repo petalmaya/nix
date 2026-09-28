@@ -6,8 +6,6 @@ import Quickshell.Services.Notifications
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// basically a clone of Notification.qml but this comes with a flickable
-
 Item {
   id: root
 
@@ -39,9 +37,6 @@ Item {
       anchors.fill: parent
       boundsBehavior: Flickable.StopAtBounds
       contentHeight: bodyNActionCol.height
-
-      // height starts at 0 and I needa monitor it changing
-      // also thanks to Aureus for this
       onHeightChanged: bodyNActionCol.implicitHeight = Math.max(bodyNActionCol.height, parent.height)
 
       ColumnLayout {
@@ -82,8 +77,8 @@ Item {
 
                 anchors.centerIn: parent
                 color: Dat.Colors.current.tertiary
-                font.bold: true
-                font.pointSize: 8
+                font.pointSize: Dat.Type.labelSmall
+                font.weight: Dat.Type.weightBold
                 text: root.notif?.appName ?? "idk"
               }
             }
@@ -94,7 +89,7 @@ Item {
 
             anchors.top: infoRow.bottom
             color: Dat.Colors.current.on_surface
-            font.pointSize: 11
+            font.pointSize: Dat.Type.labelMedium
             text: root.notif?.body ?? "very cool body that is missing"
             textFormat: Text.MarkdownText
             width: parent.width
@@ -118,7 +113,6 @@ Item {
           clip: true
           contentWidth: actionRow.width
           implicitHeight: 23
-          // thanks to Aureus :>
           implicitWidth: Math.min(bodyNActionCol.width - 20, actionRow.width)
           visible: root.notif?.actions.length != 0
 
@@ -144,7 +138,7 @@ Item {
 
                   anchors.centerIn: parent
                   color: Dat.Colors.current.on_secondary
-                  font.pointSize: 11
+                  font.pointSize: Dat.Type.labelMedium
                   text: parent.modelData?.text ?? "activate"
                 }
 

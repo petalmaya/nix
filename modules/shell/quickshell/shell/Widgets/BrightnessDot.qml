@@ -9,7 +9,7 @@ Rectangle {
   Gen.NerdIcon {
     anchors.centerIn: parent
     color: Dat.Colors.current.tertiary
-    font.pointSize: 11
+    font.pointSize: Dat.Type.labelSmall
     icon: "󰃠"
   }
 

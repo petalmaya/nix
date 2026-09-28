@@ -5,8 +5,8 @@ import Quickshell.Wayland
 import qs.Data as Dat
 import qs.Containers as Con
 
-// Floating bottom dock - translucent pill, floats over windows (no exclusion zone).
-// Auto-hide on hot edge / pill hover / desktop focus; input masked to hot edge + pill (see `mask`).
+// Floating pill with no exclusion zone; input stays masked to the edge and pill.
+
 WlrLayershell {
   id: root
 
@@ -82,8 +82,7 @@ WlrLayershell {
     }
   }
 
-  // Only revealEdge and hoverTarget accept input, not the live `pill`
-  // item - see hoverTarget's comment below for why.
+  // Only the edge and hover target accept input, never the live pill.
   mask: Region {
     Region {
       item: revealEdge
@@ -117,7 +116,6 @@ WlrLayershell {
     target: root
   }
 
-  // Thin bottom-edge strip that reveals the hidden pill; sized to the pill so only an edge touch wakes it.
   MouseArea {
     id: revealEdge
 
@@ -157,7 +155,7 @@ WlrLayershell {
     color: Dat.Colors.withAlpha(Dat.Colors.current.surface_container_high, 0.89)
     height: dockRow.implicitHeight + 16
     opacity: forceHidden ? 0 : 1
-    radius: Dat.Radius.xxl
+    radius: Dat.Radius.xl
     width: dockRow.implicitWidth + 16
 
     Behavior on anchors.bottomMargin {
@@ -186,7 +184,6 @@ WlrLayershell {
 
       anchors.centerIn: parent
       outputName: root.modelData?.name ?? ""
-      // Pill size snapshot for Dat.Launcher - see Layers/Launcher.qml morph-in animation.
       pillHeight: pill.height
       pillWidth: pill.width
     }

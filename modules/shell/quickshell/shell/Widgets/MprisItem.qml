@@ -67,7 +67,6 @@ Rectangle {
     anchors.left: rect.left
     anchors.right: rect.right
 
-    // wonky but required
     height: rect.height * 0.40
     hoverEnabled: true
 
@@ -90,7 +89,7 @@ Rectangle {
     running: Dat.Globals.notchState(rect.outputName) == "FULLY_EXPANDED" && Dat.Globals.swipeIndex(rect.outputName) == 3 && rect.player.isPlaying
 
     onRunningChanged: {
-      // better hack to not wait for interval completion on quick state changes
+      // Applies one step immediately so resume does not wait for the first interval.
       imgDisk.rotation += (rotateTimer.running) ? 3 : 0;
     }
     onTriggered: imgDisk.rotation += 3
@@ -128,8 +127,8 @@ Rectangle {
         anchors.fill: parent
         color: Dat.Colors.current.primary
         elide: Text.ElideRight
-        font.bold: true
-        font.pointSize: 16
+        font.pointSize: Dat.Type.titleMedium
+        font.weight: Dat.Type.weightBold
         horizontalAlignment: Text.AlignHCenter
         text: rect.player.trackTitle
         verticalAlignment: Text.AlignBottom
@@ -144,8 +143,8 @@ Rectangle {
         anchors.fill: parent
         color: Dat.Colors.current.secondary
         elide: Text.ElideRight
-        font.bold: true
-        font.pointSize: 9
+        font.pointSize: Dat.Type.labelSmall
+        font.weight: Dat.Type.weightBold
         horizontalAlignment: Text.AlignHCenter
         text: rect.player.trackArtist
         verticalAlignment: Text.AlignTop
@@ -165,8 +164,8 @@ Rectangle {
 
       anchors.centerIn: parent
       color: Dat.Colors.current.secondary
-      font.bold: true
-      font.pixelSize: 30
+      font.pointSize: Dat.Type.headlineMedium
+      font.weight: Dat.Type.weightBold
       icon: "arrow_circle_left"
     }
 
@@ -194,8 +193,8 @@ Rectangle {
 
       anchors.centerIn: parent
       color: Dat.Colors.current.secondary
-      font.bold: true
-      font.pixelSize: 30
+      font.pointSize: Dat.Type.headlineMedium
+      font.weight: Dat.Type.weightBold
       icon: "arrow_circle_right"
     }
 

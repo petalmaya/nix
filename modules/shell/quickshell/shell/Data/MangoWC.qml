@@ -3,29 +3,14 @@ import Quickshell
 import Quickshell.Io
 import QtQuick
 
-// Mango IPC — event-driven via Go daemon (modules/shell/quickshell/ipc/daemon.go
-// mango mode). The daemon watches `mmsg watch all-monitors` and writes a
-// compact snapshot to ~/.cache/nixtop-shell/mango.json. This QML only
-// FileViews that file, so per-event JSON parsing stays in Go instead of
-// blocking the QML thread. Falls back to a direct `mmsg watch` subprocess
-// when the daemon cache is missing (first boot, no Go build).
-//
-// Shape mirrors Data/Sway.qml so widgets swap backends with minimal changes:
-//   active, focusedOutput, currentWorkspace, currentWorkspaceByOutput, workspaces, monitors
-// First active tag reads as current.
+// Event-driven Mango IPC via the Go daemon cache, shaped like Data/Sway.qml.
 Singleton {
   id: root
 
-  // true once we've actually heard from a running mango instance
   property bool active: false
-  // name of mango's currently focused output
   property string focusedOutput: ""
-  // idx (1-based) of the focused output's primary active tag, 0 = overview
   property int currentWorkspace: 1
-  // output name -> idx of that output's primary active tag
   property var currentWorkspaceByOutput: ({})
-  // output name -> raw monitor JSON from mmsg (tags, active_tags,
-  // active_client, layout_symbol, keymode, ...)
   property var monitors: ({})
   // "<output>-<tagIndex>" workspaces shaped like Niri.workspaces, plus mango is_active/is_urgent extras.
   property var workspaces: ({})
@@ -77,8 +62,7 @@ Singleton {
     root.currentWorkspace = focusedIdx;
   }
 
-  // tag idx active on the given output, falling back to the focused
-  // output's idx if we don't have per-output data yet
+  // Falls back to the focused output tag index when per-output data is missing.
   function workspaceFor(outputName) {
     if (outputName && root.currentWorkspaceByOutput[outputName] !== undefined) {
       return root.currentWorkspaceByOutput[outputName];
@@ -113,9 +97,7 @@ Singleton {
 
   Process {
     id: fallbackWatch
-    // Fallback when the daemon cache is missing (no Go build or first boot).
-    // Skipped where mmsg is absent; avoids forking bash for a doomed process.
-    // Stops itself once the cache takes over (see cacheView adapter).
+    // Slow mmsg fallback while the daemon cache is missing; stands down once live.
     command: ["bash", "-c", "command -v mmsg >/dev/null 2>&1 && exec mmsg watch all-monitors || exit 0"]
     running: Quickshell.env("XDG_CURRENT_DESKTOP") === "mango"
 
@@ -189,9 +171,7 @@ Singleton {
     }
   }
 
-  // daemon launcher — start nixtop-mango-ipc if available under mango.
-  // Same source as nixtop-sway-ipc (package.nix): mango mode via explicit
-  // --mango or auto-detect (no SWAYSOCK + mmsg on PATH).
+  // Starts nixtop-mango-ipc when available; auto-detects mango when SWAYSOCK is absent.
   Process {
     id: daemonProc
     command: ["bash", "-c", "command -v nixtop-mango-ipc >/dev/null 2>&1 && exec nixtop-mango-ipc || command -v nixtop-sway-ipc >/dev/null 2>&1 && exec nixtop-sway-ipc --mango || exit 0"]

@@ -6,7 +6,6 @@ import qs.Data as Dat
 Item {
   id: root
 
-  // default gradient used by greeter
   property Gradient gradient: Gradient {
     GradientStop {
       color: Dat.Colors.current.background

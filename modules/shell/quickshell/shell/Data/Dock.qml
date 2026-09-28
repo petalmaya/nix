@@ -7,7 +7,6 @@ import Quickshell.Wayland
 
 import qs.Data as Dat
 
-// Dock backing store (see Containers/Dock.qml); pins persist to dock.json like Config.qml.
 Singleton {
   id: root
 
@@ -74,15 +73,13 @@ Singleton {
     return root._toplevelKeys.get(t);
   }
 
-  // Key -> live Toplevel; DockItem resolves via toplevelForKey against what's alive.
   property var toplevelsByKey: ({})
 
   function toplevelForKey(key) {
     return root.toplevelsByKey[key] ?? null;
   }
 
-  // runningModel is an incrementally synced ListModel of flat {appId, key, closing} roles:
-  // wholesale rebuilds segfaulted on hover, nested roles break type inference, raw Toplevels dangle.
+  // Incremental ListModel sync; wholesale rebuilds segfaulted on hover.
   function _syncRunningModel() {
     const desired = [];
     for (const id in root.toplevelsByAppId) {
@@ -100,8 +97,7 @@ Singleton {
     for (let i = runningModel.count - 1; i >= 0; i--) {
       const row = runningModel.get(i);
       if (!desiredKeys.has(row.key) && !row.closing) {
-        // still present in the model, just flagged - DockItem will
-        // call confirmClosed() once it's safe to actually remove it
+        // Flagged closed until DockItem confirms removal after its exit animation.
         runningModel.setProperty(i, "closing", true);
       }
     }
@@ -158,13 +154,10 @@ Singleton {
     }
   }
 
-  // One entry per pinned app regardless of open window count - click
-  // focuses the most recent window, or launches if not running.
   readonly property var pinnedEntries: jsonData.pinnedApps.map(appId => ({
         "appId": appId
       }))
 
-  // One row per window (not per app); pinned apps excluded to avoid duplicates (see _syncRunningModel).
   property alias runningModel: runningModel
 
   ListModel {

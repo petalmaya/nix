@@ -17,11 +17,11 @@ Rectangle {
 
     anchors.centerIn: parent
     color: Dat.Colors.current.tertiary
-    font.pointSize: 11
+    font.pointSize: Dat.Type.labelSmall
     icon: "music_note"
     rotation: Dat.Globals.mprisDotRotation
 
-    // MAKE SURE THIS IS THE SAME AS MPRIS ITEM's
+    // Must match MprisItem's rotation interval and step.
     Behavior on rotation {
       NumberAnimation {
         duration: 500

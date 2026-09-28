@@ -7,7 +7,6 @@ import Qt.labs.platform
 Singleton {
   id: root
 
-  // Cache/config via Qt StandardPaths; see https://doc.qt.io/qt-6/qstandardpaths.html#StandardLocation-enum
   readonly property url cache: `${StandardPaths.standardLocations(StandardPaths.GenericCacheLocation)[0]}/nixtop-shell`
   readonly property url config: `${StandardPaths.standardLocations(StandardPaths.GenericConfigLocation)[0]}/nixtop-shell`
 

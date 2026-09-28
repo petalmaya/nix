@@ -66,8 +66,7 @@ Item {
     }
 
     onContentHeightChanged: {
-      // lets us see the add animation when inbox has no notifications and a
-      // new notification is added
+      // Preserves the add animation when the first notification arrives on an empty inbox.
       inboxExpandBehv.enabled = !(prevContentHeight == 0);
       prevContentHeight = this.contentHeight;
     }

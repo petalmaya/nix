@@ -7,12 +7,9 @@ import Quickshell.Widgets
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// Content for Dat.Launcher "apps" mode; owns selection/filtering for Layers/Launcher.qml Loader.
 Item {
   id: root
 
-  // pulses when the panel wants the search field focused/refocused
-  // (e.g. right after the launcher opens)
   signal requestFocus
 
   function launchSelected() {
@@ -33,8 +30,7 @@ Item {
         }));
   }
 
-  // filtered still holds {entry, search} wrappers, not raw
-  // DesktopEntry objects - the delegate below reads modelData.entry.
+  // Filtered rows wrap {entry, search}; the delegate reads modelData.entry.
   readonly property var filtered: {
     const q = Dat.Launcher.query.trim().toLowerCase();
     if (q == "")
@@ -100,7 +96,6 @@ Item {
           ListView.onPooled: hoverArea.hoverEnabled = false
           ListView.onReused: hoverArea.hoverEnabled = true
 
-          // Selection marker is a primary pill; background wash collapses on monochrome wallpapers.
           Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 6
@@ -138,7 +133,7 @@ Item {
               Gen.MatIcon {
                 anchors.centerIn: parent
                 color: Dat.Colors.current.on_surface_variant
-                font.pointSize: 16
+                font.pointSize: Dat.Type.titleMedium
                 icon: "apps"
                 visible: appIcon.status != Image.Ready
               }
@@ -152,7 +147,7 @@ Item {
                 Layout.fillWidth: true
                 color: Dat.Colors.current.on_surface
                 elide: Text.ElideRight
-                font.pointSize: 10
+                font.pointSize: Dat.Type.labelSmall
                 text: entryDelegate.modelData.entry.name
               }
 
@@ -160,7 +155,7 @@ Item {
                 Layout.fillWidth: true
                 color: Dat.Colors.current.on_surface_variant
                 elide: Text.ElideRight
-                font.pointSize: 8
+                font.pointSize: Dat.Type.labelSmall
                 opacity: 0.8
                 text: entryDelegate.modelData.entry.comment ?? ""
                 visible: text.length > 0
@@ -173,7 +168,7 @@ Item {
 
             hoverEnabled: true
             layerColor: Dat.Colors.current.on_surface
-            layerRadius: 12
+            layerRadius: Dat.Radius.md
 
             acceptedButtons: Qt.LeftButton | Qt.RightButton
 
@@ -192,15 +187,13 @@ Item {
             }
           }
 
-          // pin indicator - right-click toggles it. Pinning moved
-          // here from the dock (see Widgets/DockItem.qml)
           Gen.MatIcon {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 6
             anchors.right: parent.right
             anchors.rightMargin: 8
             color: Dat.Colors.current.primary
-            font.pointSize: 11
+            font.pointSize: Dat.Type.labelSmall
             icon: "push_pin"
             visible: Dat.Dock.isPinned(entryDelegate.modelData.entry.id)
           }
@@ -224,7 +217,7 @@ Item {
 
         Gen.MatIcon {
           color: Dat.Colors.current.on_surface_variant
-          font.pointSize: 14
+          font.pointSize: Dat.Type.titleSmall
           icon: "search"
         }
 
@@ -233,7 +226,7 @@ Item {
 
           Layout.fillWidth: true
           color: Dat.Colors.current.on_surface
-          font.pointSize: 11
+          font.pointSize: Dat.Type.labelSmall
           selectByMouse: true
           text: Dat.Launcher.query
           verticalAlignment: TextInput.AlignVCenter
@@ -263,7 +256,7 @@ Item {
           Text {
             anchors.fill: parent
             color: Dat.Colors.current.on_surface_variant
-            font.pointSize: 11
+            font.pointSize: Dat.Type.labelSmall
             opacity: 0.6
             text: "Search apps..."
             verticalAlignment: Text.AlignVCenter

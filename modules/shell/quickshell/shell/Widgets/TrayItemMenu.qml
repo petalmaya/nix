@@ -94,8 +94,6 @@ Rectangle {
           }
         }
 
-        // untested cause nothing I use have radio buttons
-        // if you use this and find somethings wrong / "yes rexi everything is fine" lemme know by opening an issue
         Item {
           Layout.fillHeight: true
           implicitWidth: this.height
@@ -120,7 +118,7 @@ Rectangle {
             anchors.fill: parent
             color: (entry.modelData?.enabled) ? Dat.Colors.current.on_surface : Dat.Colors.current.primary
             elide: Text.ElideRight
-            font.pointSize: 11
+            font.pointSize: Dat.Type.labelSmall
             text: entry.modelData?.text ?? ""
             verticalAlignment: Text.AlignVCenter
           }
@@ -147,7 +145,7 @@ Rectangle {
           Gen.NerdIcon {
             anchors.centerIn: parent
             color: Dat.Colors.current.on_surface
-            font.pointSize: 11
+            font.pointSize: Dat.Type.labelSmall
             icon: ""
           }
         }

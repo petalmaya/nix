@@ -8,7 +8,6 @@ import qs.Data as Dat
 import qs.Generics as Gen
 import qs.Widgets as Wid
 
-// Right-hand pane of the expanded notch; tapping art/title jumps to MusicView (tab 3).
 Item {
   id: root
 
@@ -21,7 +20,6 @@ Item {
     const players = Mpris.players.values.filter(hasRealTrack);
     if (players.length === 0)
       return null;
-    // prefer whichever player is actually playing, else just the first
     for (const p of players) {
       if (p.isPlaying)
         return p;
@@ -30,8 +28,7 @@ Item {
   }
   readonly property bool hasPlayer: root.activePlayer !== null
 
-  // position doesn't update reactively on its own - poll it while a
-  // track is actually playing, same approach as MprisItem's rotateTimer
+  // Position never updates reactively, so poll it while playing.
   property real polledPosition: 0
 
   Timer {
@@ -49,7 +46,6 @@ Item {
     anchors.margins: 14
     spacing: 10
 
-    // Notification controls row.
     RowLayout {
       Layout.fillWidth: true
 
@@ -68,7 +64,6 @@ Item {
       Layout.fillHeight: true
       Layout.fillWidth: true
 
-      // idle state - no player at all
       ColumnLayout {
         anchors.centerIn: parent
         spacing: 6
@@ -77,7 +72,7 @@ Item {
         Gen.MatIcon {
           Layout.alignment: Qt.AlignHCenter
           color: Dat.Colors.current.on_surface_variant
-          font.pixelSize: 32
+          font.pointSize: Dat.Type.headlineLarge
           icon: "music_off"
         }
 
@@ -88,7 +83,6 @@ Item {
         }
       }
 
-      // now-playing card
       Rectangle {
         anchors.fill: parent
         color: Dat.Colors.current.surface_container_low
@@ -145,8 +139,8 @@ Item {
                 Layout.fillWidth: true
                 color: Dat.Colors.current.on_surface
                 elide: Text.ElideRight
-                font.bold: true
-                font.pointSize: 11
+                font.weight: Dat.Type.weightBold
+                font.pointSize: Dat.Type.labelSmall
                 text: root.hasPlayer ? (root.activePlayer.trackTitle || "Unknown track") : ""
               }
 
@@ -154,13 +148,12 @@ Item {
                 Layout.fillWidth: true
                 color: Dat.Colors.current.on_surface_variant
                 elide: Text.ElideRight
-                font.pointSize: 9
+                font.pointSize: Dat.Type.labelSmall
                 text: root.hasPlayer ? (root.activePlayer.trackArtist || "Unknown artist") : ""
               }
             }
           }
 
-          // progress bar
           Rectangle {
             id: progressTrack
 
@@ -186,14 +179,13 @@ Item {
             }
           }
 
-          // transport controls
           RowLayout {
             Layout.alignment: Qt.AlignHCenter
             spacing: 20
 
             Gen.MatIcon {
               color: Dat.Colors.current.on_surface_variant
-              font.pixelSize: 22
+              font.pointSize: Dat.Type.titleLarge
               icon: "skip_previous"
 
               Gen.MouseArea {
@@ -207,7 +199,7 @@ Item {
             Gen.MatIcon {
               color: Dat.Colors.current.on_surface
               fill: 1
-              font.pixelSize: 30
+              font.pointSize: Dat.Type.headlineLarge
               icon: (root.hasPlayer && root.activePlayer.isPlaying) ? "pause_circle" : "play_circle"
 
               Gen.MouseArea {
@@ -220,7 +212,7 @@ Item {
 
             Gen.MatIcon {
               color: Dat.Colors.current.on_surface_variant
-              font.pixelSize: 22
+              font.pointSize: Dat.Type.titleLarge
               icon: "skip_next"
 
               Gen.MouseArea {

@@ -1,5 +1,4 @@
-// heavily referenced soramane's lockscreen code
-// https://github.com/caelestia-dots/shell/tree/main/modules/lock
+// Lock layout references soramane/caelestia-dots/shell lockscreen.
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
@@ -24,7 +23,6 @@ WlSessionLockSurface {
   Wid.Wallpaper {
     id: wallpaper
 
-    // Same lock image on every monitor.
     anchors.fill: parent
 
     layer.effect: MultiEffect {
@@ -88,7 +86,7 @@ WlSessionLockSurface {
 
       anchors.centerIn: parent
       anchors.verticalCenterOffset: contentHeight * 0.2
-      font.bold: true
+      font.weight: Dat.Type.weightBold
       font.family: "Libre Barcode 128"
       font.pointSize: 400
       layer.enabled: true
@@ -121,7 +119,6 @@ WlSessionLockSurface {
     mipmap: true
     smooth: true
     source: Dat.Config.wallFg
-    // Don't show the fg if fg is being generated
     visible: !Dat.Config.fgGenProc.running && Dat.Config.data.wallFgLayer
 
     NumberAnimation on opacity {
@@ -240,7 +237,7 @@ WlSessionLockSurface {
             antialiasing: true
             color: (surface.error) ? Dat.Colors.current.on_error : (surface.unlocking) ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
             fill: 1
-            font.pointSize: 16
+            font.pointSize: Dat.Type.titleMedium
             icon: "bedtime"
           }
 
@@ -263,7 +260,7 @@ WlSessionLockSurface {
             antialiasing: true
             color: (surface.error) ? Dat.Colors.current.on_error : (surface.unlocking) ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
             fill: pam.active
-            font.pointSize: 16
+            font.pointSize: Dat.Type.titleMedium
             icon: "lock"
 
             Behavior on color {
@@ -325,7 +322,7 @@ WlSessionLockSurface {
 
             anchors.centerIn: parent
             color: (surface.error) ? Dat.Colors.current.on_error : (surface.unlocking) ? Dat.Colors.current.on_primary : (reFingerTimer.running) ? Dat.Colors.current.error : Dat.Colors.current.on_surface
-            font.pointSize: 16
+            font.pointSize: Dat.Type.titleMedium
             icon: "fingerprint"
 
             Behavior on color {
@@ -346,7 +343,7 @@ WlSessionLockSurface {
             antialiasing: true
             color: (surface.error) ? Dat.Colors.current.on_error : (surface.unlocking) ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
             fill: 1
-            font.pointSize: 16
+            font.pointSize: Dat.Type.titleMedium
             icon: "login"
           }
 

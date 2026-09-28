@@ -6,15 +6,14 @@ import Quickshell.Wayland
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// `open` is logical state, `surfaceVisible` lingers via closeLinger so the close animation finishes first.
+// Logical open state; surfaceVisible lingers so the close animation finishes.
 WlrLayershell {
   id: root
 
   required property ShellScreen modelData
 
   readonly property bool open: Dat.Launcher.open && Dat.Launcher.outputName == (root.modelData?.name ?? "")
-  // stays mapped through the close animation, same pattern as
-  // NetPanel/Notch - visible flipping instantly would cut it short
+  // Lingers through the close animation so it is never cut short.
   property bool surfaceVisible: false
 
   function close() {
@@ -41,8 +40,7 @@ WlrLayershell {
       closeLinger.stop();
       root.surfaceVisible = true;
       content.requestFocus();
-      // surface isn't guaranteed fully mapped the same tick, so the
-      // immediate focus request can land too early - retry shortly after
+      // First focus request can land before mapping, so retry shortly after.
       refocusTimer.restart();
     } else {
       closeLinger.restart();
@@ -66,7 +64,6 @@ WlrLayershell {
     onTriggered: root.surfaceVisible = false
   }
 
-  // covers the whole output; click outside the panel closes it
   MouseArea {
     anchors.fill: parent
 
@@ -80,8 +77,7 @@ WlrLayershell {
     focus: root.open
 
     Keys.onEscapePressed: root.close()
-    // Tab cycles apps/wallpaper mode, accepted here so it never tabs
-    // focus out of the panel
+    // Traps Tab focus inside the panel.
     Keys.onTabPressed: event => {
       Dat.Launcher.cycleMode();
       content.requestFocus();
@@ -92,15 +88,11 @@ WlrLayershell {
     // Fixed to screen height so the search field stays pinned as results resize the panel.
     anchors.bottomMargin: parent.height * 0.01
     anchors.horizontalCenter: parent.horizontalCenter
-    // Same tint as Layers/Notch.qml and the dock pill (Layers/Dock.qml); geometry alone sells the morph.
     color: Dat.Colors.withAlpha(Dat.Colors.current.surface_container_high, 0.89)
-    // Only collapses to dock-pill size when morphFromDock; otherwise stays full size and opacity carries the fade.
     height: root.open ? (modeSwitcher.height + content.implicitHeight + 12 + 10 + 12) : (Dat.Launcher.morphFromDock ? Dat.Launcher.dockOriginHeight : (modeSwitcher.height + content.implicitHeight + 12 + 10 + 12))
     implicitWidth: root.open ? 560 : (Dat.Launcher.morphFromDock ? Dat.Launcher.dockOriginWidth : 560)
-    // Only the dock-morph open skips this - see the opacity binding
-    // below for the non-morph path's fade.
     opacity: Dat.Launcher.morphFromDock ? 1 : (root.open ? 1 : 0)
-    radius: Dat.Radius.xxl
+    radius: Dat.Radius.xl
     transformOrigin: Item.Bottom
 
     Behavior on height {
@@ -117,7 +109,6 @@ WlrLayershell {
       }
     }
 
-    // Only animates on the non-morph path; dock-morph stays at 1 so geometry sells the transition.
     Behavior on opacity {
       NumberAnimation {
         duration: root.open ? Dat.MaterialEasing.standardDecelTime : Dat.MaterialEasing.standardAccelTime
@@ -144,8 +135,7 @@ WlrLayershell {
         }
       }
 
-      // setMode() clears query but leaves open/outputName alone, so
-      // switching tabs doesn't close the panel
+      // Mode switch keeps the panel open.
       Row {
         id: modeSwitcher
 
@@ -179,13 +169,13 @@ WlrLayershell {
             Gen.MatIcon {
               anchors.centerIn: parent
               color: (modeTab.modelData.mode == Dat.Launcher.mode) ? Dat.Colors.current.primary : Dat.Colors.current.on_surface_variant
-              font.pointSize: 13
+              font.pointSize: Dat.Type.labelMedium
               icon: modeTab.modelData.icon
             }
 
             Gen.MouseArea {
               layerColor: Dat.Colors.current.on_surface
-              layerRadius: 10
+              layerRadius: Dat.Radius.mdSm
 
               onClicked: {
                 Dat.Launcher.setMode(modeTab.modelData.mode);
@@ -196,8 +186,6 @@ WlrLayershell {
         }
       }
 
-      // a future mode just adds a branch here and its own
-      // Generics/Launcher*.qml - everything else stays untouched
       Loader {
         id: content
 

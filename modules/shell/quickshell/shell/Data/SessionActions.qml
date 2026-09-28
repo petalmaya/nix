@@ -12,8 +12,7 @@ Singleton {
   property alias idleInhibited: persist.enabled
 
   function poweroff() {
-    // raw poweroff/reboot binaries need root and fail silently for a
-    // normal user - systemctl goes through logind/polkit instead
+    // systemctl goes through logind/polkit; raw power binaries fail silently unprivileged.
     Quickshell.execDetached(["systemctl", "poweroff"]);
   }
 
@@ -22,7 +21,6 @@ Singleton {
   }
 
   function suspend() {
-    // Locks in-process via Data/Globals.qml (see lock request note there).
     Dat.Globals.requestLock();
     Quickshell.execDetached(["systemctl", "suspend"]);
   }

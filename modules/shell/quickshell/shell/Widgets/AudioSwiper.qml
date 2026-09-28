@@ -30,7 +30,7 @@ Rectangle {
     Text {
       color: Dat.Colors.current.on_primary_container
       font.family: "NotoSansM Nerd Font Propo"
-      font.pointSize: 11
+      font.pointSize: Dat.Type.labelSmall
       height: audRect.height
       horizontalAlignment: Text.AlignHCenter
       text: Math.round(Dat.Audio.sinkVolume * 100) + "%" + " " + Dat.Audio.sinkIcon
@@ -66,7 +66,7 @@ Rectangle {
     Text {
       color: Dat.Colors.current.on_primary_container
       font.family: "NotoSansM Nerd Font Propo"
-      font.pointSize: 11
+      font.pointSize: Dat.Type.labelSmall
       height: audRect.height
       horizontalAlignment: Text.AlignHCenter
       text: Math.round(Dat.Audio.sourceVolume * 100) + "%" + " " + Dat.Audio.sourceIcon

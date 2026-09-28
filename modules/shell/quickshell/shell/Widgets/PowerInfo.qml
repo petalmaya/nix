@@ -17,7 +17,7 @@ RowLayout {
       anchors.fill: parent
       color: Dat.Colors.current.on_surface
       font.family: "NotoSansM Nerd Font Propo"
-      font.pointSize: 10
+      font.pointSize: Dat.Type.labelSmall
       horizontalAlignment: Text.AlignLeft
       text: "󰂏 " + info.bat.energyCapacity.toFixed(2)
       verticalAlignment: Text.AlignVCenter
@@ -43,7 +43,7 @@ RowLayout {
 
       anchors.centerIn: parent
       color: Dat.Colors.current.on_surface
-      font.pointSize: 10
+      font.pointSize: Dat.Type.labelSmall
       text: switch (info.bat.state) {
       case UPowerDeviceState.Charging:
         return `  ${timeToFull}`;
@@ -63,7 +63,7 @@ RowLayout {
       anchors.fill: parent
       color: Dat.Colors.current.on_surface
       font.family: "NotoSansM Nerd Font Propo"
-      font.pointSize: 10
+      font.pointSize: Dat.Type.labelSmall
       horizontalAlignment: Text.AlignRight
       text: "󱐋 " + info.bat.changeRate.toFixed(2)
       verticalAlignment: Text.AlignVCenter

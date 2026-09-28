@@ -14,11 +14,9 @@ Item {
   property bool pinned: false
   property var toplevel: null
 
-  // Row-local pointer x from Containers/Dock.qml's HoverHandler, or -1
-  // when the pointer isn't over the row at all.
+  // Row-local pointer x from the dock row, or -1 when off-row.
   property real containerMouseX: -1
 
-  // Row-local x for magnify; running-model wrapper overrides this with its own x.
   property real rowX: root.x
 
   // Set on toplevel loss; disables hover synchronously to avoid clearHover segfault (see Data/Dock.qml).
@@ -51,7 +49,6 @@ Item {
   // Pointer distance to icon center; off-row (-1) reads as infinitely far.
   readonly property real distanceFromPointer: root.containerMouseX < 0 ? Dat.Dock.magnifyRadius : Math.abs((root.rowX + root.width / 2) - root.containerMouseX)
 
-  // Cosine falloff to magnifyRadius; curve tuned by eye, no spec reference.
   readonly property real influence: Math.max(0, Math.cos((Math.min(root.distanceFromPointer, Dat.Dock.magnifyRadius) / Dat.Dock.magnifyRadius) * (Math.PI / 2)))
 
   implicitHeight: 48
@@ -98,14 +95,12 @@ Item {
       Gen.MatIcon {
         anchors.centerIn: parent
         color: Dat.Colors.current.on_surface_variant
-        font.pointSize: 18
+        font.pointSize: Dat.Type.titleMedium
         icon: "apps"
         visible: icon.status != Image.Ready
       }
     }
 
-    // running indicator - a little dot under the icon, doubled-width
-    // when this specific window/app currently has focus
     Rectangle {
       anchors.bottom: parent.bottom
       anchors.bottomMargin: 2
@@ -135,8 +130,7 @@ Item {
 
     onClicked: mevent => {
       if (mevent.button == Qt.RightButton) {
-        // pinning happens from the launcher (Generics/LauncherApps.qml);
-        // right-click here is unpin-only
+        // Right-click here is unpin-only; pinning lives in the launcher.
         if (root.pinned) {
           Dat.Dock.unpin(root.appId);
         }

@@ -11,8 +11,7 @@ Scope {
   id: root
 
   property alias lock: lock
-  // output name -> notchState it had right before we locked, so unlocking
-  // restores every monitor's bar to how it was, not just one
+  // Restores every monitor's pre-lock bar state on unlock.
   property var prevStateByOutput: ({})
 
   // Shared by both lock triggers so the double-invocation guard lives in one place.
@@ -56,7 +55,6 @@ Scope {
   }
 
   IpcHandler {
-    // External trigger (e.g. niri keybind) - see Globals.qml lockRequested comment for CLI name.
     function lock() {
       root.doLock();
     }

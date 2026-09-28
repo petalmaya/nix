@@ -13,7 +13,6 @@ RowLayout {
 
   spacing: 8
 
-  // Left pill - workspace, media, recording
   Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -54,7 +53,6 @@ RowLayout {
     }
   }
 
-  // Center pill - clock
   Item {
     Layout.fillHeight: true
     Layout.preferredWidth: centerPill.implicitWidth
@@ -77,7 +75,6 @@ RowLayout {
     }
   }
 
-  // Right pill - notch toggle, battery, quick actions, audio, brightness
   Item {
     Layout.fillHeight: true
     Layout.fillWidth: true
@@ -102,7 +99,7 @@ RowLayout {
         Gen.MatIcon {
           Layout.rightMargin: 2
           color: Dat.Colors.current.primary
-          font.pointSize: 11
+          font.pointSize: Dat.Type.labelSmall
           icon: (Dat.Globals.notchState(root.outputName) == "FULLY_EXPANDED") ? "expand_less" : "expand_more"
           verticalAlignment: Text.AlignVCenter
 
@@ -134,7 +131,7 @@ RowLayout {
           Gen.MatIcon {
             anchors.centerIn: parent
             color: (Dat.Launcher.open && Dat.Launcher.outputName == root.outputName) ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
-            font.pointSize: 11
+            font.pointSize: Dat.Type.labelSmall
             icon: "apps"
           }
 
@@ -146,7 +143,6 @@ RowLayout {
           }
         }
 
-        // Quick-options popover; Wi-Fi/NetPanel folded into QuickOptionsPanel expander.
         Rectangle {
           color: Dat.Globals.quickOptionsOpen(root.outputName) ? Dat.Colors.current.primary : Dat.Colors.current.surface_container_high
           implicitHeight: 20
@@ -156,7 +152,7 @@ RowLayout {
           Gen.MatIcon {
             anchors.centerIn: parent
             color: Dat.Globals.quickOptionsOpen(root.outputName) ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
-            font.pointSize: 11
+            font.pointSize: Dat.Type.labelSmall
             icon: "tune"
           }
 

@@ -28,8 +28,7 @@ Singleton {
       property bool wallFgLayer: false
       // Lock screen background. Key stayed "wallSrc" so existing config.json files keep their image.
       property string wallSrc: Quickshell.env("HOME") + "/.config/background"
-      // Output name -> desktop wallpaper path. Desktops are drawn by swaybg
-      // (scripts/wallpaper.sh), this map is just the state it reads.
+      // Per-output desktops drawn by swaybg; this map is the state scripts/wallpaper.sh reads.
       property var wallpapersByOutput: ({})
       property string wallpaperDir: Quickshell.env("HOME") + "/Pictures/Wallpapers"
     }
@@ -38,8 +37,7 @@ Singleton {
   // Lock-screen alias for wallSrc at call sites.
   readonly property alias lockWallpaper: jsonData.wallSrc
 
-  // Desktop wallpaper for an output, "" when it has none. Empty outputName
-  // resolves to the lock image so the launcher's lock chip can preview it.
+  // Empty outputName resolves to the lock image for the lock-chip preview.
   function wallpaperFor(outputName) {
     if (!outputName) {
       return jsonData.wallSrc;
@@ -79,7 +77,6 @@ Singleton {
       root.retheme(path);
     }
 
-    // e.g. `qs ipc call config setWallpaperFor eDP-1 /path/to/img.png`
     function setWallpaperFor(outputName: string, path: string) {
       path = Qt.resolvedUrl(path);
       root.setWallpaperFor(outputName, path);
@@ -108,8 +105,7 @@ Singleton {
     }
   }
 
-  // swaybg + matugen live in scripts/wallpaper.sh. The wallpapers map goes
-  // over argv as JSON so the script never races config.json's write-back.
+  // Map travels over argv as JSON so the script never races config.json write-back.
   property string wallpaperScript: Dat.Paths.urlToPath(Qt.resolvedUrl("../scripts/wallpaper.sh"))
 
   Process {
@@ -130,7 +126,6 @@ Singleton {
     wallpaperProc.running = true;
   }
 
-  // Redraw all desktops via swaybg, re-theme off the just-picked image.
   function applyWallpapers(rethemePath) {
     const map = JSON.stringify(jsonData.wallpapersByOutput ?? {});
     const retheme = (rethemePath && jsonData.matugenEnabled) ? Dat.Paths.urlToPath(rethemePath) : "";
@@ -145,7 +140,6 @@ Singleton {
   }
 
   Connections {
-    // Re-theme immediately if the toggle gets flipped back on.
     function onMatugenEnabledChanged() {
       root.retheme(jsonData.wallSrc);
     }

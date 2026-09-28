@@ -7,7 +7,6 @@ import Quickshell.Wayland
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// Bottom-center pill on volume/mute changes; purely visual, never takes input.
 WlrLayershell {
   id: root
 
@@ -41,8 +40,7 @@ WlrLayershell {
   surfaceFormat.opaque: false
   visible: root.osdVisible
 
-  // empty mask - this surface never captures clicks/keys, it's purely
-  // an overlay indicator
+  // Empty mask so this overlay never captures input.
   mask: Region {
   }
 
@@ -59,8 +57,7 @@ WlrLayershell {
   }
 
   Timer {
-    // give Pipewire a moment to report the real default sink before we
-    // start reacting to changes, so app startup doesn't itself pop the OSD
+    // Waits for the real default sink so startup never pops the OSD.
     id: readyTimer
 
     interval: 500
@@ -123,7 +120,7 @@ WlrLayershell {
 
       Gen.MatIcon {
         color: root.displayMuted ? Dat.Colors.current.error : Dat.Colors.current.on_surface
-        font.pointSize: 16
+        font.pointSize: Dat.Type.titleMedium
         icon: root.displayMuted ? "volume_off" : (root.displayVolume > 0.5 ? "volume_up" : root.displayVolume > 0.01 ? "volume_down" : "volume_mute")
       }
 
@@ -151,7 +148,7 @@ WlrLayershell {
       Text {
         Layout.preferredWidth: 34
         color: Dat.Colors.current.on_surface
-        font.pointSize: 9
+        font.pointSize: Dat.Type.labelSmall
         horizontalAlignment: Text.AlignRight
         text: root.displayMuted ? "mute" : Math.round(root.displayVolume * 100) + "%"
       }

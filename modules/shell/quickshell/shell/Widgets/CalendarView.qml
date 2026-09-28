@@ -13,7 +13,6 @@ Item {
     anchors.rightMargin: 5
 
     ColumnLayout {
-      // Month display
       Layout.fillHeight: true
       Layout.minimumWidth: 30
       spacing: 0
@@ -23,7 +22,6 @@ Item {
         bottomLeftRadius: 0
         bottomRightRadius: 0
         color: Dat.Colors.current.primary_container
-        // Day display
         implicitHeight: 18
         radius: Dat.Radius.full
 
@@ -32,7 +30,7 @@ Item {
 
           anchors.centerIn: parent
           color: Dat.Colors.current.on_primary_container
-          font.pointSize: 8
+          font.pointSize: Dat.Type.labelSmall
           text: Qt.formatDateTime(Dat.Clock?.date, "ddd")
         }
       }
@@ -78,7 +76,7 @@ Item {
         Text {
           anchors.centerIn: parent
           color: (parent.model.month == monthGrid.currMonth) ? (parent.model.day == monthGrid.currDay) ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface : Dat.Colors.withAlpha(Dat.Colors.current.on_surface_variant, 0.70)
-          font.pointSize: 10
+          font.pointSize: Dat.Type.labelSmall
           text: parent.model.day
         }
       }

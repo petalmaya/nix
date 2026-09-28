@@ -4,9 +4,9 @@ import qs.Data as Dat
 MouseArea {
   id: area
 
-  property real clickOpacity: 0.2
-  property real hoverOpacity: 0.08
-  property color layerColor: "white"
+  property real clickOpacity: Dat.Elevation.pressOpacity
+  property real hoverOpacity: Dat.Elevation.hoverOpacity
+  property color layerColor: Dat.Colors.current.on_surface
   property NumberAnimation layerOpacityAnimation: NumberAnimation {
     duration: Dat.MaterialEasing.standardTime
     easing.bezierCurve: Dat.MaterialEasing.standard

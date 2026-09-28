@@ -31,7 +31,7 @@ Rectangle {
 
     Gen.MatIcon {
       color: root.active ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
-      font.pointSize: 15
+      font.pointSize: Dat.Type.labelLarge
       icon: root.icon
     }
 
@@ -39,14 +39,14 @@ Rectangle {
       Layout.fillWidth: true
       color: root.active ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
       elide: Text.ElideRight
-      font.pointSize: 10
+      font.pointSize: Dat.Type.labelSmall
       text: root.label
     }
   }
 
   Gen.MouseArea {
     layerColor: root.active ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
-    layerRadius: 14
+    layerRadius: Dat.Radius.lgSm
 
     onClicked: root.clicked()
   }

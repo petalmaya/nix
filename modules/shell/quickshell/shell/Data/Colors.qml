@@ -6,7 +6,7 @@ import QtQuick
 import qs.Data as Dat
 
 Singleton {
-  property var current: (true) ? dark : light
+  property var current: dark
   property alias dark: dark
   property alias light: light
 
@@ -28,7 +28,6 @@ Singleton {
     onAdapterUpdated: writeAdapter()
     onFileChanged: reload()
 
-    // writes the defualt values if file not found
     onLoadFailed: err => {
       if (err == FileViewError.FileNotFound) {
         writeAdapter();
@@ -86,6 +85,7 @@ Singleton {
           property string surface_container_lowest: "#0d0e13"
           property string surface_dim: "#121318"
           property string surface_tint: "#b6c4ff"
+          property string surface_variant: "#49454f"
           property string tertiary: "#e3bada"
           property string tertiary_container: "#5b3d57"
           property string tertiary_fixed: "#ffd7f5"

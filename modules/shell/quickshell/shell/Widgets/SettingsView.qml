@@ -154,7 +154,6 @@ Item {
         }
       }
 
-      // Network tab placeholder; no backend yet.
       Wid.AdvancedTab {
         opacity: visible ? 1 : 0
 

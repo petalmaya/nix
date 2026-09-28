@@ -7,15 +7,12 @@ import Qt.labs.platform as Labs
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// Dat.Launcher.mode == "wallpaper" picker. Self-contained like LauncherApps.qml.
-// "This Display" sets this output's swaybg background, "Lock Screen" the shared lock image.
+// Wallpaper mode; This Display sets the output background, Lock Screen the shared image.
 Item {
   id: root
 
-  // pulses when the panel wants the search field focused/refocused
   signal requestFocus
 
-  // Output this launcher instance is open on (only the matching one shows).
   readonly property string outputName: Dat.Launcher.outputName
   property bool editingDefault: false
   readonly property string targetOutput: root.editingDefault ? "" : root.outputName
@@ -68,13 +65,13 @@ Item {
 
             anchors.centerIn: parent
             color: (chip.modelData.isDefault == root.editingDefault) ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
-            font.pointSize: 9
+            font.pointSize: Dat.Type.labelSmall
             text: chip.modelData.label
           }
 
           Gen.MouseArea {
             layerColor: chip.modelData.isDefault ? Dat.Colors.current.on_surface : Dat.Colors.current.on_primary
-            layerRadius: 8
+            layerRadius: Dat.Radius.sm
 
             onClicked: root.editingDefault = chip.modelData.isDefault
           }
@@ -96,7 +93,7 @@ Item {
         Gen.MatIcon {
           anchors.centerIn: parent
           color: Dat.Config.data.matugenEnabled ? Dat.Colors.current.on_primary : Dat.Colors.current.on_surface
-          font.pointSize: 12
+          font.pointSize: Dat.Type.labelMedium
           icon: "palette"
         }
 
@@ -119,13 +116,13 @@ Item {
         Gen.MatIcon {
           anchors.centerIn: parent
           color: Dat.Colors.current.on_surface
-          font.pointSize: 12
+          font.pointSize: Dat.Type.labelMedium
           icon: "refresh"
         }
 
         Gen.MouseArea {
           layerColor: Dat.Colors.current.on_surface
-          layerRadius: 8
+          layerRadius: Dat.Radius.sm
 
           onClicked: folderModel.folder = folderModel.folder
         }
@@ -146,8 +143,7 @@ Item {
         anchors.fill: parent
         anchors.margins: 6
         boundsBehavior: Flickable.StopAtBounds
-        // same as LauncherApps.qml - keep a few thumbnails cached
-        // just off-screen instead of re-requesting on scroll wobbles
+        // Caches a few off-screen thumbnails so scroll wobbles never re-request.
         cacheBuffer: 220
         clip: true
         currentIndex: folderModel.count > 0 ? 0 : -1
@@ -219,7 +215,7 @@ Item {
 
             Gen.MouseArea {
               layerColor: Dat.Colors.current.primary
-              layerRadius: 10
+              layerRadius: Dat.Radius.mdSm
 
               onClicked: {
                 list.currentIndex = thumbDelegate.index;
@@ -235,7 +231,7 @@ Item {
             anchors.bottomMargin: 2
             color: Dat.Colors.current.on_surface_variant
             elide: Text.ElideMiddle
-            font.pointSize: 7
+            font.pointSize: Dat.Type.labelSmall
             horizontalAlignment: Text.AlignHCenter
             opacity: 0.8
             text: thumbDelegate.fileName
@@ -247,7 +243,7 @@ Item {
     Text {
       Layout.fillWidth: true
       color: Dat.Colors.current.on_surface
-      font.pointSize: 9
+      font.pointSize: Dat.Type.labelSmall
       horizontalAlignment: Text.AlignHCenter
       opacity: 0.7
       text: (Dat.Config.data.wallpaperDir == "" || folderModel.count > 0) ? "" : (Dat.Launcher.query == "" ? "No wallpapers found in this folder" : "No wallpapers match \u201c" + Dat.Launcher.query + "\u201d")
@@ -270,7 +266,7 @@ Item {
 
         Gen.MatIcon {
           color: Dat.Colors.current.on_surface_variant
-          font.pointSize: 14
+          font.pointSize: Dat.Type.titleSmall
           icon: "search"
         }
 
@@ -279,7 +275,7 @@ Item {
 
           Layout.fillWidth: true
           color: Dat.Colors.current.on_surface
-          font.pointSize: 11
+          font.pointSize: Dat.Type.labelSmall
           selectByMouse: true
           text: Dat.Launcher.query
           verticalAlignment: TextInput.AlignVCenter
@@ -298,8 +294,7 @@ Item {
               event.accepted = false;
             }
           }
-          // Left/Right move the row selection instead of the text
-          // cursor, same idea as LauncherApps' Up/Down override
+          // Left/Right switch thumbnails instead of moving the text cursor.
           Keys.onLeftPressed: {
             list.decrementCurrentIndex();
             if (list.currentIndex >= 0)
@@ -314,7 +309,7 @@ Item {
           Text {
             anchors.fill: parent
             color: Dat.Colors.current.on_surface_variant
-            font.pointSize: 11
+            font.pointSize: Dat.Type.labelSmall
             opacity: 0.6
             text: "Search wallpapers..."
             verticalAlignment: Text.AlignVCenter
@@ -324,7 +319,7 @@ Item {
 
         Gen.MatIcon {
           color: Dat.Colors.current.on_surface_variant
-          font.pointSize: 13
+          font.pointSize: Dat.Type.labelMedium
           icon: "close"
           opacity: clearArea.containsMouse ? 1 : 0.6
           visible: input.text.length > 0

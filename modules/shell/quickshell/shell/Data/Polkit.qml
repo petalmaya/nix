@@ -12,8 +12,7 @@ Singleton {
   property bool interactionAvailable: false
   property bool failed: false
 
-  // true for the lifetime of a single auth request, not "is this
-  // shell's agent registered" (that happens once, on startup)
+  // Lifetime of one auth request, not shell agent registration.
   readonly property bool active: agent.isActive
 
   readonly property string message: root.flow ? root.flow.message : ""

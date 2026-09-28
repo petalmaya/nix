@@ -82,7 +82,7 @@ Rectangle {
                 Text {
                   anchors.centerIn: parent
                   color: Dat.Colors.current.primary
-                  font.pointSize: 24
+                  font.pointSize: Dat.Type.headlineSmall
                   text: (parent.usage * 100).toFixed(0)
                 }
 
@@ -99,7 +99,7 @@ Rectangle {
                   Gen.NerdIcon {
                     anchors.centerIn: parent
                     color: Dat.Colors.current.on_primary
-                    font.pointSize: 16
+                    font.pointSize: Dat.Type.titleMedium
                     icon: itemRoot.modelData.icon
                   }
                 }
@@ -111,7 +111,6 @@ Rectangle {
         Rectangle {
           id: informationRect
 
-          // BATTERY information
           Layout.fillWidth: true
           color: Dat.Colors.current.surface_container_highest
           implicitHeight: 28
@@ -136,7 +135,6 @@ Rectangle {
       implicitHeight: parent.height - 14
       implicitWidth: 40
 
-      // I should write my own generic slider
       Slider {
         id: slider
 

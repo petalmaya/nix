@@ -6,7 +6,7 @@ import Quickshell.Wayland
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// Single global instance (like Layers/LockScreen.qml) on Niri.focusedOutput so it shows where the user is.
+// Single global instance on the focused output so it shows where the user is.
 WlrLayershell {
   id: root
 
@@ -61,7 +61,7 @@ WlrLayershell {
   // Scrim has no click-off (unlike NetPanel/Launcher); a stray click must never dismiss a live auth request.
   Rectangle {
     anchors.fill: parent
-    color: Dat.Colors.withAlpha(Dat.Colors.current.surface, 0.6)
+    color: Dat.Colors.withAlpha(Dat.Colors.current.scrim, Dat.Elevation.scrimOpacity)
     opacity: root.open ? 1 : 0
 
     Behavior on opacity {
@@ -78,7 +78,7 @@ WlrLayershell {
     color: Dat.Colors.current.surface_container_high
     height: content.implicitHeight + 48
     opacity: root.open ? 1 : 0
-    radius: Dat.Radius.xxl
+    radius: Dat.Radius.xl
     scale: root.open ? 1 : 0.92
     width: 420
 
@@ -110,21 +110,21 @@ WlrLayershell {
       Gen.MatIcon {
         anchors.horizontalCenter: parent.horizontalCenter
         color: Dat.Colors.current.primary
-        font.pointSize: 24
+        font.pointSize: Dat.Type.headlineSmall
         icon: "shield_lock"
       }
 
       Text {
         anchors.horizontalCenter: parent.horizontalCenter
         color: Dat.Colors.current.on_surface
-        font.pointSize: 14
-        font.weight: Font.DemiBold
+        font.pointSize: Dat.Type.titleSmall
+        font.weight: Dat.Type.weightBold
         text: "Authentication required"
       }
 
       Text {
         color: Dat.Colors.current.on_surface_variant
-        font.pointSize: 10
+        font.pointSize: Dat.Type.labelSmall
         horizontalAlignment: Text.AlignHCenter
         text: Dat.Polkit.message
         width: parent.width
@@ -151,13 +151,13 @@ WlrLayershell {
           color: Dat.Colors.current.on_surface
           echoMode: (Dat.Polkit.flow && Dat.Polkit.flow.responseVisible) ? TextInput.Normal : TextInput.Password
           enabled: Dat.Polkit.interactionAvailable
-          font.pointSize: 11
+          font.pointSize: Dat.Type.labelMedium
           verticalAlignment: TextInput.AlignVCenter
 
           Text {
             anchors.verticalCenter: parent.verticalCenter
             color: Dat.Colors.current.on_surface_variant
-            font.pointSize: 11
+            font.pointSize: Dat.Type.labelMedium
             text: Dat.Polkit.cleanPrompt
             visible: passwordField.text.length == 0
           }
@@ -170,7 +170,7 @@ WlrLayershell {
 
       Text {
         color: Dat.Colors.current.error
-        font.pointSize: 9
+        font.pointSize: Dat.Type.labelSmall
         text: "Authentication failed, try again"
         visible: Dat.Polkit.failed
       }
@@ -188,7 +188,7 @@ WlrLayershell {
           Text {
             anchors.centerIn: parent
             color: Dat.Colors.current.primary
-            font.pointSize: 10
+            font.pointSize: Dat.Type.labelSmall
             text: "Cancel"
           }
 
@@ -209,7 +209,7 @@ WlrLayershell {
           Text {
             anchors.centerIn: parent
             color: Dat.Polkit.interactionAvailable ? Dat.Colors.current.primary : Dat.Colors.current.on_surface_variant
-            font.pointSize: 10
+            font.pointSize: Dat.Type.labelSmall
             text: "OK"
           }
 

@@ -32,7 +32,7 @@ Item {
           anchors.fill: parent
           color: Dat.Colors.current.on_surface
           elide: Text.ElideRight
-          font.pointSize: 10
+          font.pointSize: Dat.Type.labelSmall
           text: (root.node?.isStream ? root.node?.name : (nameArea.containsMouse) ? root.node?.description : (root.node?.nickname) ? root.node?.nickname : root.node?.description) ?? "Unidentified"
           verticalAlignment: Text.AlignVCenter
 
@@ -59,7 +59,7 @@ Item {
 
         icon {
           color: Dat.Colors.current.primary
-          font.pointSize: 12
+          font.pointSize: Dat.Type.labelMedium
           icon: (!root.node?.isSink) ? "mic" : "volume_up"
         }
 

@@ -17,7 +17,6 @@ Item {
     spacing: 8
 
     Rectangle {
-      // the page indicator
       Layout.leftMargin: 8
       color: Dat.Colors.current.surface_container_low
       implicitHeight: tabCols.height + 10
@@ -49,7 +48,7 @@ Item {
 
               anchors.centerIn: parent
               color: Dat.Colors.current.on_surface
-              font.pointSize: 11
+              font.pointSize: Dat.Type.labelSmall
               // QtRendering stays crisp when scaled; NativeRendering pixelates.
               renderType: Text.QtRendering
               state: (swipeArea.currentIndex == tabDot.index) ? "ACTIVE" : "INACTIVE"
@@ -111,7 +110,6 @@ Item {
 
       Layout.fillHeight: true
       Layout.fillWidth: true
-      // Pages
       clip: true
       color: Dat.Colors.current.surface_container_low
       radius: Dat.Radius.xl

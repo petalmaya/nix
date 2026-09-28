@@ -44,8 +44,8 @@ Rectangle {
         anchors.centerIn: parent
         color: Dat.Colors.current.on_primary
         font.family: "Rubik"
-        font.pointSize: 10
-        font.weight: Font.Medium
+        font.pointSize: Dat.Type.labelSmall
+        font.weight: Dat.Type.weightMedium
         text: Dat.Sway.active ? Dat.Sway.currentWorkspace : Dat.MangoWC.currentWorkspace
       }
     }
@@ -61,15 +61,15 @@ Rectangle {
       font.capitalization: Font.Capitalize
       font.family: "Rubik"
       font.letterSpacing: 0.1
-      font.pointSize: 11
-      font.weight: Font.Medium
+      font.pointSize: Dat.Type.labelSmall
+      font.weight: Dat.Type.weightMedium
       text: Dat.Globals.actWinName
     }
   }
 
   Gen.MouseArea {
     layerColor: Dat.Colors.current.on_surface
-    layerRadius: 20
+    layerRadius: Dat.Radius.full
 
     onClicked: {
       if (Dat.Globals.notchState(root.outputName) == "FULLY_EXPANDED" && Dat.Globals.swipeIndex(root.outputName) == 2) {

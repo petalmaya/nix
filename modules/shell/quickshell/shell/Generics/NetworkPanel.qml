@@ -8,7 +8,6 @@ import Quickshell.Bluetooth
 import qs.Data as Dat
 import qs.Generics as Gen
 
-// Wi-Fi + Bluetooth lists for Layers/NetPanel.qml popup surface.
 ColumnLayout {
   id: root
 
@@ -17,7 +16,6 @@ ColumnLayout {
 
   spacing: 14
 
-  // --- WiFi ---
   ColumnLayout {
     Layout.fillWidth: true
     spacing: 6
@@ -27,15 +25,15 @@ ColumnLayout {
 
       Gen.MatIcon {
         color: Dat.Colors.current.primary
-        font.pointSize: 16
+        font.pointSize: Dat.Type.titleMedium
         icon: Dat.Network.wifiEnabled ? "wifi" : "wifi_off"
       }
 
       Text {
         Layout.fillWidth: true
         color: Dat.Colors.current.on_surface
-        font.pointSize: 12
-        font.weight: Font.Medium
+        font.pointSize: Dat.Type.labelMedium
+        font.weight: Dat.Type.weightMedium
         text: "Wi-Fi"
       }
 
@@ -47,7 +45,7 @@ ColumnLayout {
         Gen.MatIcon {
           anchors.centerIn: parent
           color: Dat.Colors.current.on_surface
-          font.pointSize: 14
+          font.pointSize: Dat.Type.titleSmall
           icon: "progress_activity"
 
           RotationAnimation on rotation {
@@ -69,7 +67,7 @@ ColumnLayout {
         Gen.MatIcon {
           anchors.centerIn: parent
           color: Dat.Colors.current.on_surface
-          font.pointSize: 13
+          font.pointSize: Dat.Type.labelMedium
           icon: "refresh"
         }
 
@@ -106,7 +104,7 @@ ColumnLayout {
 
         Gen.MouseArea {
           layerColor: Dat.Colors.current.on_surface
-          layerRadius: 10
+          layerRadius: Dat.Radius.mdSm
 
           onClicked: Dat.Network.toggleWifi()
         }
@@ -143,7 +141,7 @@ ColumnLayout {
               Gen.MatIcon {
                 color: netEntry.modelData.active ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
                 fill: netEntry.modelData.signal >= 50 ? 1 : 0
-                font.pointSize: 13
+                font.pointSize: Dat.Type.labelMedium
                 icon: "wifi"
               }
 
@@ -151,20 +149,20 @@ ColumnLayout {
                 Layout.fillWidth: true
                 color: netEntry.modelData.active ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
                 elide: Text.ElideRight
-                font.pointSize: 11
+                font.pointSize: Dat.Type.labelSmall
                 text: netEntry.modelData.ssid
               }
 
               Text {
                 color: Dat.Colors.current.primary
-                font.pointSize: 9
+                font.pointSize: Dat.Type.labelSmall
                 text: "Connected"
                 visible: netEntry.modelData.active
               }
 
               Gen.MatIcon {
                 color: netEntry.modelData.active ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
-                font.pointSize: 13
+                font.pointSize: Dat.Type.labelMedium
                 icon: "lock"
                 visible: netEntry.modelData.security && netEntry.modelData.security.length > 0
               }
@@ -172,7 +170,7 @@ ColumnLayout {
 
             Gen.MouseArea {
               layerColor: Dat.Colors.current.on_surface
-              layerRadius: 10
+              layerRadius: Dat.Radius.mdSm
 
               onClicked: {
                 if (netEntry.modelData.active) {
@@ -220,13 +218,13 @@ ColumnLayout {
               Text {
                 anchors.centerIn: parent
                 color: Dat.Colors.current.on_primary
-                font.pointSize: 9
+                font.pointSize: Dat.Type.labelSmall
                 text: Dat.Network.connecting ? "..." : "Connect"
               }
 
               Gen.MouseArea {
                 layerColor: Dat.Colors.current.on_primary
-                layerRadius: 8
+                layerRadius: Dat.Radius.sm
 
                 onClicked: Dat.Network.connectToNetwork(netEntry.modelData.ssid, pwField.text)
               }
@@ -237,7 +235,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.leftMargin: 8
             color: Dat.Colors.current.error
-            font.pointSize: 9
+            font.pointSize: Dat.Type.labelSmall
             text: Dat.Network.connectError
             visible: root.expandedSsid == netEntry.modelData.ssid && Dat.Network.connectError.length > 0
             wrapMode: Text.Wrap
@@ -248,7 +246,7 @@ ColumnLayout {
       Text {
         Layout.fillWidth: true
         color: Dat.Colors.current.on_surface
-        font.pointSize: 9
+        font.pointSize: Dat.Type.labelSmall
         horizontalAlignment: Text.AlignHCenter
         opacity: 0.7
         text: "No networks found"
@@ -258,7 +256,7 @@ ColumnLayout {
       Text {
         Layout.fillWidth: true
         color: Dat.Colors.current.error
-        font.pointSize: 9
+        font.pointSize: Dat.Type.labelSmall
         horizontalAlignment: Text.AlignHCenter
         text: Dat.Network.scanError
         visible: Dat.Network.scanError.length > 0
@@ -274,7 +272,6 @@ ColumnLayout {
     opacity: 0.4
   }
 
-  // --- Bluetooth ---
   ColumnLayout {
     id: btSection
 
@@ -288,15 +285,15 @@ ColumnLayout {
 
       Gen.MatIcon {
         color: Dat.Colors.current.primary
-        font.pointSize: 16
+        font.pointSize: Dat.Type.titleMedium
         icon: btSection.adapter?.enabled ? "bluetooth" : "bluetooth_disabled"
       }
 
       Text {
         Layout.fillWidth: true
         color: Dat.Colors.current.on_surface
-        font.pointSize: 12
-        font.weight: Font.Medium
+        font.pointSize: Dat.Type.labelMedium
+        font.weight: Dat.Type.weightMedium
         text: "Bluetooth"
       }
 
@@ -310,7 +307,7 @@ ColumnLayout {
         Gen.MatIcon {
           anchors.centerIn: parent
           color: (btSection.adapter?.discovering ?? false) ? Dat.Colors.current.primary : Dat.Colors.current.on_surface
-          font.pointSize: 14
+          font.pointSize: Dat.Type.titleSmall
           icon: "bluetooth_searching"
         }
 
@@ -351,7 +348,7 @@ ColumnLayout {
 
         Gen.MouseArea {
           layerColor: Dat.Colors.current.on_surface
-          layerRadius: 10
+          layerRadius: Dat.Radius.mdSm
 
           onClicked: {
             const adapter = Bluetooth.defaultAdapter;
@@ -387,7 +384,7 @@ ColumnLayout {
 
             Gen.MatIcon {
               color: btEntry.modelData.connected ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
-              font.pointSize: 13
+              font.pointSize: Dat.Type.labelMedium
               icon: "bluetooth"
             }
 
@@ -395,27 +392,27 @@ ColumnLayout {
               Layout.fillWidth: true
               color: btEntry.modelData.connected ? Dat.Colors.current.on_primary_container : Dat.Colors.current.on_surface
               elide: Text.ElideRight
-              font.pointSize: 11
+              font.pointSize: Dat.Type.labelSmall
               text: btEntry.modelData.name || btEntry.modelData.deviceName || "Unknown device"
             }
 
             Text {
               color: Dat.Colors.current.primary
-              font.pointSize: 9
+              font.pointSize: Dat.Type.labelSmall
               text: "Connected"
               visible: btEntry.modelData.connected
             }
 
             Text {
               color: Dat.Colors.current.primary
-              font.pointSize: 9
+              font.pointSize: Dat.Type.labelSmall
               text: "Pairing…"
               visible: btEntry.modelData.pairing
             }
 
             Gen.MatIcon {
               color: Dat.Colors.current.on_surface
-              font.pointSize: 14
+              font.pointSize: Dat.Type.titleSmall
               icon: "link"
               opacity: 0.6
               visible: !btEntry.modelData.paired && !btEntry.modelData.pairing
@@ -431,13 +428,13 @@ ColumnLayout {
               Gen.MatIcon {
                 anchors.centerIn: parent
                 color: Dat.Colors.current.on_surface
-                font.pointSize: 12
+                font.pointSize: Dat.Type.labelMedium
                 icon: "delete"
               }
 
               Gen.MouseArea {
                 layerColor: Dat.Colors.current.on_surface
-                layerRadius: 10
+                layerRadius: Dat.Radius.mdSm
 
                 onClicked: btEntry.modelData.forget()
               }
@@ -446,7 +443,7 @@ ColumnLayout {
 
           Gen.MouseArea {
             layerColor: Dat.Colors.current.on_surface
-            layerRadius: 10
+            layerRadius: Dat.Radius.mdSm
             z: -1
 
             onClicked: {
@@ -468,7 +465,7 @@ ColumnLayout {
       Text {
         Layout.fillWidth: true
         color: Dat.Colors.current.on_surface
-        font.pointSize: 9
+        font.pointSize: Dat.Type.labelSmall
         horizontalAlignment: Text.AlignHCenter
         opacity: 0.7
         text: "No devices found"
@@ -479,7 +476,7 @@ ColumnLayout {
     Text {
       Layout.fillWidth: true
       color: Dat.Colors.current.on_surface
-      font.pointSize: 9
+      font.pointSize: Dat.Type.labelSmall
       horizontalAlignment: Text.AlignHCenter
       opacity: 0.7
       text: "No Bluetooth adapter found"

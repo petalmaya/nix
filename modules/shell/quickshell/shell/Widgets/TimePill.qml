@@ -10,7 +10,7 @@ Text {
 
   anchors.centerIn: parent
   color: Dat.Colors.current.secondary
-  font.pointSize: 11
+  font.pointSize: Dat.Type.labelMedium
   text: Qt.formatDateTime(Dat.Clock.date, "h:mm:ss AP")
 
   Gen.MouseArea {
@@ -18,7 +18,7 @@ Text {
     anchors.fill: null
     height: 20
     layerColor: Dat.Colors.current.secondary
-    layerRadius: 20
+    layerRadius: Dat.Radius.full
     width: timeText.contentWidth + 12
 
     onClicked: {

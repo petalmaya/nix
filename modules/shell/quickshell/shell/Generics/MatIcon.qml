@@ -1,5 +1,3 @@
-// https://m3.material.io/styles/typography/editorial-treatments#a8196c1e-387e-4303-b0bf-b9bac44e4e72
-// Thin wrapper for Material Symbols.
 import QtQuick
 import qs.Data as Dat
 

@@ -1,4 +1,3 @@
-// Nerd Font glyphs on a shared patched typeface; Propo variant for proportional UI.
 import QtQuick
 
 Text {

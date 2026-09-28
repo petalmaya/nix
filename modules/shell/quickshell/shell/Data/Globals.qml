@@ -9,8 +9,7 @@ import qs.Data as Dat
 Singleton {
   id: root
 
-  // only one focused toplevel compositor-wide, so this stays global on
-  // purpose - every bar showing the same focused app is correct
+  // Single focused toplevel compositor-wide, so every bar shows the same app.
   property string actWinName: activeWindow?.activated ? activeWindow?.appId : "desktop"
   readonly property Toplevel activeWindow: ToplevelManager.activeToplevel
   property string hostName: "Nagare"
@@ -19,7 +18,6 @@ Singleton {
   // Global UI scale multiplier; experimental, expect rough edges.
   property real notchScale: 1
 
-  // --- per-output UI state (keyed by output name, so monitors stay independent) ---
   property var notchStateByOutput: ({})
   property var notchHoveredByOutput: ({})
   property var notifStateByOutput: ({})
@@ -113,8 +111,7 @@ Singleton {
   readonly property int tabIndexSystem: 2
   readonly property int tabIndexMusic: 3
 
-  // best guess at "the monitor you're on", for IPC calls that don't
-  // specify an output. Prefers Sway (primary, Go-backed) then Mango (archived).
+  // Guesses the focused monitor for IPC calls without an output.
   function _guessOutput() {
     if (Dat.Sway.active && Dat.Sway.focusedOutput) {
       return Dat.Sway.focusedOutput;
@@ -125,8 +122,7 @@ Singleton {
     return Quickshell.screens[0]?.name ?? "";
   }
 
-  // opens to full pane on whichever tab was last showing; doesn't
-  // touch swipeIndex, so repeat calls land back where you left it.
+  // Opens to the last tab without touching swipeIndex.
   function notchOpen(outputName) {
     root.setNotchState(outputName || root._guessOutput(), "FULLY_EXPANDED");
   }
@@ -162,8 +158,7 @@ Singleton {
       root.notchClose("");
     }
 
-    // jumps to the Home tab (Widgets/HomeView.qml's initialItem) -
-    // re-affirming FULLY_EXPANDED also pops any stacked tray menu
+    // Re-affirming FULLY_EXPANDED pops any stacked tray menu.
     function hello() {
       root.notchOpenTab("", root.tabIndexHome);
     }
@@ -187,8 +182,7 @@ Singleton {
     target: "notch"
   }
 
-  // true if any monitor matches the given state/swipe/tab combo - used
-  // to throttle background polling (Resources, Clock).
+  // Throttles Resources/Clock polling to visible outputs.
   function anyOutputAt(state, swipeIdx, tabIdx) {
     for (const output in root.notchStateByOutput) {
       if (root.notchStateByOutput[output] !== state)
@@ -202,8 +196,7 @@ Singleton {
     return false;
   }
 
-  // true if the net panel is open anywhere - lets Data/Network.qml
-  // stop polling nmcli when nobody's looking at the wifi list.
+  // Lets Network.qml stop nmcli polling when no panel is open.
   readonly property bool anyNetworkPanelOpen: {
     for (const output in root.networkPanelOpenByOutput) {
       if (root.networkPanelOpenByOutput[output])
@@ -220,7 +213,6 @@ Singleton {
     return false;
   }
 
-  // fix: bar started collapsed when reserved shell was turned on (thanks syncqtc)
   Component.onCompleted: {
     Dat.Config.data.reservedShellChanged.connect(() => {
       if (!Dat.Config.data.reservedShell)

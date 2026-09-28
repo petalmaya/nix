@@ -44,8 +44,7 @@ WlrLayershell {
     }
   }
 
-  // click-off catcher, same idea as NetPanel's - zero-sized unless
-  // fully expanded, otherwise it'd swallow every click in the top 65%
+  // Zero-sized unless fully expanded, or it would swallow top-area clicks.
   MouseArea {
     id: clickCatcher
 
@@ -78,8 +77,8 @@ WlrLayershell {
     property real notchScale: Dat.Globals.notchScale
 
     anchors.horizontalCenter: parent.horizontalCenter
-    bottomLeftRadius: 20
-    bottomRightRadius: 20
+    bottomLeftRadius: Dat.Radius.xl
+    bottomRightRadius: Dat.Radius.xl
     clip: true
     color: Dat.Colors.withAlpha(Dat.Colors.current.background, (Dat.Globals.actWinName == "desktop" && notch.curNotchState != "FULLY_EXPANDED") ? 0.79 : 0.89)
     state: notch.curNotchState
@@ -251,8 +250,6 @@ WlrLayershell {
           }
         }
       },
-      // sometimes this happens depending on how fast state flips
-      // so just make sure it isn't very jagged
       Transition {
         from: "COLLAPSED"
         reversible: true
@@ -267,7 +264,6 @@ WlrLayershell {
       }
     ]
 
-    // prolly make this a generic later
     MouseArea {
       id: notchArea
 
@@ -277,8 +273,7 @@ WlrLayershell {
       property real velocity: 0
 
       function revealOrCollapse() {
-        // issue #37: don't touch notchState while the FULLY_EXPANDED ->
-        // EXPANDED transition is running
+        // Guards issue #37: never touch notchState mid FULLY_EXPANDED->EXPANDED.
         if (fExpToExpTS.running) {
           return;
         }
@@ -309,14 +304,12 @@ WlrLayershell {
         notchArea.velocity = notchArea.prevY - mevent.y;
         notchArea.prevY = mevent.y;
 
-        // swipe down behaviour
         if (velocity < -notchArea.sensitivity) {
           Dat.Globals.setNotchState((notch.modelData?.name ?? ""), "FULLY_EXPANDED");
           notchArea.tracing = false;
           notchArea.velocity = 0;
         }
 
-        // swipe up behaviour
         if (velocity > notchArea.sensitivity) {
           Dat.Globals.setNotchState((notch.modelData?.name ?? ""), "EXPANDED");
           notchArea.tracing = false;
@@ -344,7 +337,6 @@ WlrLayershell {
           Layout.alignment: Qt.AlignTop
           Layout.fillWidth: true
           Layout.maximumHeight: notchRect.expandedHeight
-          // makes collapse animation look a tiny bit neater
           Layout.minimumHeight: notchRect.expandedHeight - 10
           outputName: (notch.modelData?.name ?? "")
         }
@@ -365,7 +357,6 @@ WlrLayershell {
 
     readonly property int baseHeight: 0
     readonly property int baseWidth: 0
-    // readonly property int fullHeight: 300
     readonly property int fullWidth: 500
     readonly property int popupHeight: 100
     readonly property int popupWidth: 430
@@ -533,7 +524,6 @@ WlrLayershell {
 
         ParallelAnimation {
           ColorAnimation {
-            // take a lil bit longer to animate this to smoothen the overal effect
             duration: Dat.MaterialEasing.emphasizedTime * 1.5
             easing.bezierCurve: Dat.MaterialEasing.emphasized
             property: "color"
