@@ -4,7 +4,7 @@ This file is the map for the reworked repository.
 
 ```text
 flake.nix
-├── chooses a host (wonderland / rabbit / garden)
+├── chooses a host (wonderland / rabbit / garden / pony)
 ├── imports that host's hardware file and default.nix + disko.nix
 ├── imports (import ./modules/default.nix).nixosModules  – system modules
 └── adds Home Manager and imports (import ./modules/default.nix).homeModules – HM modules
@@ -34,13 +34,17 @@ A file does nothing because it exists – it must be imported via `modules/defau
 
 ### `flake.nix`
 
-Pins external inputs (`nixpkgs` 26.05, `nixpkgs-unstable`, `home-manager`, `nix-flatpak`, `disko`, `sops-nix`, `noctalia-shell`, `emacs-overlay`, `firefox-addons`, `mango`), creates the three `nixosConfigurations`, passes `inputs`/`unstable-pkgs`/`self`, imports each host's `hardware-configuration.nix` + `default.nix` + `disko.nix`, imports `modules/default.nix`, and configures Home Manager (`useGlobalPkgs`, `users = hmUsers`, `sharedModules`).
+Pins external inputs (`nixpkgs` 26.05, `nixpkgs-unstable`, `home-manager`, `nix-flatpak`, `disko`, `nixos-hardware`, `sops-nix`, `noctalia-shell`, `emacs-overlay`, `firefox-addons`, `mango`), creates the four `nixosConfigurations`, passes `inputs`/`unstable-pkgs`/`self`, imports each host's optional `hardware-configuration.nix` + `default.nix` + `disko.nix`, imports `modules/default.nix`, and configures Home Manager (`useGlobalPkgs`, `users = hmUsers`, `sharedModules`).
 
 `garden` is a real host with a default btrfs `disko.nix` and `zswap` (not `zram`); its `hardware-configuration.nix` is a placeholder until the laptop is installed – `nix build .#garden` is expected to fail until then.
 
+`pony` is the Raspberry Pi 4 AArch64 media and Forgejo host. It uses the `nixos-hardware` Pi 4 profile, btrfs on the system disk, the existing exFAT media drive at `/srv/media`, native NixOS Jellyfin/qBittorrent/Forgejo services, and NetBird. Lewis imports the shared home profile plus `modules/user/lewis/pony.nix` for host-only package and desktop overrides. Replace the Disko device placeholder in `hosts/pony/disko.nix` with the chosen system disk before installation. The age key from `.sops.yaml` must be installed at `/var/lib/sops-nix/keys.txt` for Lewis's password secret.
+
+Service behavior is shared through `modules/services/`; hosts select Jellyfin, its Nginx proxy, NetBird, qBittorrent, Samba, and Forgejo with `nixtop.services.*.enable`. `modules/core/lan-firewall.nix` is the single owner of service-port admission: enabled services register ports there, which are accepted only from the configured LAN and NetBird address ranges.
+
 ### `hosts/<name>/`
 
-- `hardware-configuration.nix`: generated hardware facts (carried over for wonderland/rabbit, placeholder for garden).
+- `hardware-configuration.nix`: generated hardware facts (carried over for wonderland/rabbit, placeholder for garden; pony uses the Pi profile and Disko-defined filesystems).
 - `default.nix`: hostname, firmware, bluetooth, locale, `nixtop.desktop.enable`, host-specific sops/wifi, `zram`/`zswap` policy.
 - `disko.nix`: declarative disk layout (btrfs subvolumes). `rabbit` keeps an empty stub so `flake.nix` can import it uniformly.
 
@@ -77,7 +81,7 @@ Host → user matrix: `wonderland` = alice+lewis, `rabbit` = lewis, `garden` = r
 
 ```nix
 {
-  nixosModules = [ ./core ./core/apparmor.nix ./core/hardening.nix ./core/sddm.nix ./core/maintenance.nix ./ewm ./shell/quickshell/greeter.nix ];
+  nixosModules = [ ./core ./core/apparmor.nix ./core/hardening.nix ./core/lan-firewall.nix ./core/sddm.nix ./core/maintenance.nix ./services/jellyfin.nix ./services/jellyfin-proxy.nix ./services/netbird.nix ./services/qbittorrent.nix ./services/samba.nix ./services/forgejo.nix ./ewm ./shell/quickshell/greeter.nix ];
   homeModules  = [ ./core/zsh.nix ./core/tmux.nix ./browsers ./conf ./emacs ./ewm/home.nix ./mango ./matugen ./sway ./shell ];
 }
 ```

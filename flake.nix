@@ -28,6 +28,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -141,6 +146,14 @@
         };
         garden = mkHost "x86_64-linux" "garden" {
           rose = import ./modules/user/rose/home.nix;
+        };
+        pony = mkHost "aarch64-linux" "pony" {
+          lewis = {
+            imports = [
+              ./modules/user/lewis/home.nix
+              ./modules/user/lewis/pony.nix
+            ];
+          };
         };
       };
 
