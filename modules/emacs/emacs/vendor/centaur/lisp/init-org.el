@@ -210,10 +210,23 @@ prepended to the element after the #+HEADER: tag."
                                load-language-alist))
 
 ;; Prettify UI
+;; Same flower glyphs in GUI (org-modern) and terminal (superstar).
+(use-package org-superstar
+  :after org
+  :hook (org-mode . org-superstar-mode)
+  :custom
+  (org-superstar-headline-bullets-list '("✿" "❀" "✾" "❁" "✽" "❃" "✻" "❋"))
+  (org-superstar-leading-bullet ?\s)
+  (org-superstar-remove-leading-stars t)
+  (org-superstar-special-todo-items t))
+
 (when emacs/>=29p
   (use-package org-modern
     :diminish
     :autoload org-modern-mode org-modern-agenda
+    :custom
+    (org-modern-star '("✿" "❀" "✾" "❁" "✽" "❃" "✻" "❋"))
+    (org-modern-hide-stars 'leading)
     :hook ((org-mode . (lambda ()
                          "Display org modern looks in GUI."
                          (if (display-graphic-p)

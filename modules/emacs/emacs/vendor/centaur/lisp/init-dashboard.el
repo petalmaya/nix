@@ -43,6 +43,7 @@
     :functions icons-displayable-p nerd-icons-mdicon nerd-icons-octicon
     :custom-face
     (dashboard-heading ((t (:inherit (font-lock-string-face bold)))))
+    (dashboard-banner-logo-title ((t (:inherit (font-lock-string-face bold) :height 1.2))))
     (dashboard-items-face ((t (:weight normal))))
     (dashboard-no-items-face ((t (:weight normal))))
     :bind (("<f2>" . open-dashboard)
@@ -56,8 +57,11 @@
                               (setq-local frame-title-format nil
                                           global-hl-line-mode nil)))
     :init
-    (setq dashboard-banner-logo-title "Pinaceae Emacs"
-          dashboard-startup-banner 'official ; the Centaur logo was dropped with the branding
+    (setq dashboard-banner-logo-title "♡ Pinaceae Emacs ♡"
+          dashboard-startup-banner (let ((img (expand-file-name "kawaii.png" user-emacs-directory)))
+                                     (if (file-exists-p img) img 'official))
+          dashboard-image-banner-max-width 512
+          dashboard-image-banner-max-height 300
           dashboard-page-separator "\n\n"
           dashboard-projects-backend 'project-el
           dashboard-path-style 'truncate-middle

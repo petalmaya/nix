@@ -29,6 +29,7 @@ A file does nothing because it exists – it must be imported via `modules/defau
 | Theme files and shell config | `modules/mango`, `modules/matugen/templates`, `modules/shell/quickshell/shell` |
 | Flake inputs and pins | `flake.nix` and `flake.lock` |
 | Encrypted values | `secrets/` and `.sops.yaml` |
+| macOS Emacs without Nix | `darwin/` (standalone emacs-plus port, not a flake module) |
 
 ## System layers
 

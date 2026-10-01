@@ -116,6 +116,9 @@ dashboard's Cheatsheet button).
 | `M-g m` / `k` | mark / global mark (consult) |
 | `C-c r` | ripgrep project (consult) |
 | `C-x C-r` | recent files (recentf) |
+| `C-c l e` / `d` / `r` / `s` | eval buffer / defun / region / last sexp (works in *scratch*) |
+| `TAB` (dired) | toggle subtree |
+| `W` (dired) | open with external app |
 
 ## Notes
 

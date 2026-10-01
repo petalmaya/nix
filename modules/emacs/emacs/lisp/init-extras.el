@@ -74,10 +74,9 @@
   (elcord-display-buffer-details t)
   (elcord-use-major-mode-as-main-icon t))
 
-;; The media hydra follows the same lazy pretty-hydra pattern as init-hydra.el.
+;; Installed via elpaca in my-elpaca.el; :ensure nil keeps use-package from queuing it twice.
 (use-package pretty-hydra
   :ensure nil
-  :if (or (featurep 'pretty-hydra) (locate-library "pretty-hydra"))
   :bind ("C-c m" . pinaceae-media-hydra/body)
   :config
   (pretty-hydra-define pinaceae-media-hydra
@@ -113,6 +112,11 @@
               "  C-`      popterm toggle (project scope)\n"
               "  F9       popterm window toggle\n"
               "  project m / M  ghostel here / elsewhere\n\n"
+              "Eval (also in *scratch*, no M-x needed)\n"
+              "  C-c l e / d / r / s  buffer / defun / region / last sexp\n\n"
+              "Dired\n"
+              "  TAB      toggle subtree\n"
+              "  W        open with external app\n\n"
               "Hydras\n"
               "  F6       toggles hydra (theme, completion style, ...)\n"
               "  C-c m    media hydra (empv, elfeed, ement, elcord)\n"

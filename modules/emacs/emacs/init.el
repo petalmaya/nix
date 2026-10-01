@@ -88,6 +88,7 @@
 (require 'init-calendar)
 (require 'init-dashboard)
 (require 'init-dired)
+(require 'init-pinaceae-dired)
 (require 'init-highlight)
 (require 'init-ibuffer)
 (require 'init-kill-ring)
@@ -114,6 +115,7 @@
 
 (require 'init-prog)
 (require 'init-elisp)
+(require 'init-pinaceae-lisp)
 (require 'init-c)
 (require 'init-go)
 (require 'init-rust)

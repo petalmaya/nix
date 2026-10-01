@@ -12,7 +12,7 @@
 ;; A theme using Template SCSS variables with quality of life improvements:
 ;; - Better source block distinction
 ;; - Improved text visibility when selected
-;; - Refined org-mode styling with hidden asterisks
+;; - Refined org-mode styling with hidden asterisks and flower bullets
 ;; - Enhanced contrast and readability
 ;; - Seamless integration of source blocks with consistent styling
 
@@ -168,6 +168,13 @@
    `(org-date ((t (:foreground ,secondary-fixed :underline t))))
    `(org-special-keyword ((t (:foreground ,on-surface-variant :slant italic))))
    `(org-tag ((t (:foreground ,outline-color :weight normal))))
+   `(org-superstar-leading-bullet ((t (:foreground ,bg))))
+   `(org-superstar-item-bullet ((t (:foreground ,primary))))
+   `(org-modern-checkbox ((t (:foreground ,primary :weight bold))))
+   `(org-modern-tag ((t (:foreground ,outline-color))))
+   `(org-modern-date-active ((t (:foreground ,secondary-fixed :underline t))))
+   `(dashboard-banner-logo-title ((t (:foreground ,primary :weight bold :height 1.2))))
+   `(dashboard-heading ((t (:foreground ,secondary :weight bold))))
 
    ;; Magit
    `(magit-section-highlight ((t (:background ,surface-container-low))))
