@@ -1,6 +1,8 @@
 daemonize
 ignore-empty-password
 show-failed-attempts
+# Without color= or image= the background defaults to light gray.
+color=0b1519
 font=FiraCode Nerd Font
 font-size=24
 indicator-radius=110
@@ -24,5 +26,4 @@ text-clear-color=e7efedff
 text-caps-lock-color=e7efedff
 text-ver-color=e7efedff
 text-wrong-color=f2d8d4ff
-# No image= line on purpose: the path is per-user and swaylock fails when the
-# file is missing. The lock screen uses the solid inside-color above instead.
+# No image= line: swaylock fails when the file is missing.

@@ -87,6 +87,10 @@ in
       brightnessctl
       pamixer
       xwayland-satellite
+      # Elisp-spawned like pamixer above; must resolve in the daemon, not just shells.
+      swaylock
+      swaybg
+      mako
     ];
 
     environment.sessionVariables = {

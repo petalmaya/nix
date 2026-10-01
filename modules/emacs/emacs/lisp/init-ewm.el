@@ -27,7 +27,7 @@
 ;;; Commentary:
 ;;
 ;; EWM is configured only after `ewm' loads, keeping nested Emacs sessions plain.
-;; Screen locking uses EWM's idle protocol with foreground swaylock.
+;; Idle locking runs a detached swaylock; manual locking tracks a foreground one.
 
 ;;; Code:
 
@@ -135,7 +135,7 @@ Synced manually to ~/Pictures/Wallpapers; not tracked in this repo."
                             #'pinaceae-ewm--notif-sentinel))))
 
 (defconst pinaceae-ewm-lock-command "swaylock -f"
-  "Command used for manual and idle EWM screen locking.")
+  "Shell command the compositor runs after `pinaceae-ewm-idle-timeout'; -f keeps the lock past wakeups.")
 
 (defcustom pinaceae-ewm-output-config
   '(("HDMI-A-1" :width 1680 :height 1050 :x 0 :y 0)
@@ -169,9 +169,12 @@ Synced manually to ~/Pictures/Wallpapers; not tracked in this repo."
     (when (string-match-p "abnormal" event)
       (message "swaylock failed (%s); see *ewm-swaylock*" (string-trim event)))))
 
-(defun pinaceae-ewm-lock-session ()
-  "Lock the EWM session with foreground swaylock."
-  (interactive)
+(defvar pinaceae-ewm--lock-timer nil
+  "Deferred lock starter; lets transient maps (e.g. hydras) exit first.")
+
+(defun pinaceae-ewm--spawn-lock ()
+  "Start the foreground swaylock tracked by `pinaceae-ewm--lock-process'."
+  (setq pinaceae-ewm--lock-timer nil)
   (cond ((process-live-p pinaceae-ewm--lock-process)
          (message "Screen is already locked"))
         ((null (executable-find "swaylock"))
@@ -179,10 +182,25 @@ Synced manually to ~/Pictures/Wallpapers; not tracked in this repo."
         (t
          (setq pinaceae-ewm--lock-process
                (start-process "ewm-swaylock" (get-buffer-create "*ewm-swaylock*")
-                              "swaylock" "-f"))
+                              "swaylock"))
          (set-process-sentinel pinaceae-ewm--lock-process
                                #'pinaceae-ewm--lock-sentinel)
          pinaceae-ewm--lock-process)))
+
+(defun pinaceae-ewm-lock-session ()
+  "Lock the EWM session with foreground swaylock."
+  (interactive)
+  (cond ((process-live-p pinaceae-ewm--lock-process)
+         (message "Screen is already locked"))
+        (pinaceae-ewm--lock-timer
+         (message "Screen lock already requested"))
+        ((null (executable-find "swaylock"))
+         (user-error "swaylock not found in PATH"))
+        (t
+         ;; Let :exit t teardown finish before the compositor grabs input.
+         (setq pinaceae-ewm--lock-timer
+               (run-at-time 0 nil #'pinaceae-ewm--spawn-lock))
+         pinaceae-ewm--lock-timer)))
 
 (defun pinaceae-ewm--stop-process (process)
   "Stop PROCESS when it is still running."

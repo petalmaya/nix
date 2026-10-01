@@ -122,30 +122,30 @@
            ("C-c A"      . agent-shell-new-shell)
            :map agent-shell-mode-map
            ("C-h ?"      . agent-shell-help-menu)
-           ("C-<return>" . agent-shell-help-menu)
-           :map magit-mode-map
-           ("C-c C-g"    . pinaceae-generate-commit)
-           ("C-c C-r"    . pinaceae-review-commit))
+           ("C-<return>" . agent-shell-help-menu))
     :config
-    ;; Integrate into magit
-    (with-eval-after-load 'magit
-      (defun pinaceae-generate-commit ()
-        "Generate conventional commit message from staged changes."
-        (interactive)
-        (if (magit-staged-files)
-            (agent-shell-insert
-             :submit t
-             :text "Commit changes with conventional message")
-          (user-error "No staged changes")))
+    (defun pinaceae-generate-commit ()
+      "Generate conventional commit message from staged changes."
+      (interactive)
+      (if (magit-staged-files)
+          (agent-shell-insert
+           :submit t
+           :text "Commit changes with conventional message")
+        (user-error "No staged changes")))
 
-      (defun pinaceae-review-commit ()
-        "Send the commit at point to agent-shell for review."
-        (interactive)
-        (if-let* ((commit (magit-commit-p (magit-thing-at-point 'git-revision t))))
-            (agent-shell-insert
-             :submit t
-             :text (format "Review commit: %s" commit))
-          (user-error "No magit commit at point"))))))
+    (defun pinaceae-review-commit ()
+      "Send the commit at point to agent-shell for review."
+      (interactive)
+      (if-let* ((commit (magit-commit-p (magit-thing-at-point 'git-revision t))))
+          (agent-shell-insert
+           :submit t
+           :text (format "Review commit: %s" commit))
+        (user-error "No magit commit at point")))
+
+    ;; bind-key defers foreign maps on agent-shell load, where magit-mode-map is still void.
+    (with-eval-after-load 'magit
+      (define-key magit-mode-map (kbd "C-c C-g") #'pinaceae-generate-commit)
+      (define-key magit-mode-map (kbd "C-c C-r") #'pinaceae-review-commit))))
 
 (provide 'init-ai)
 
