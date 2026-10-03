@@ -61,8 +61,10 @@
   (tabspaces-session-auto-restore (not pinaceae-dashboard))
   (tabspaces-session-file (concat user-emacs-directory "tabspaces/tabsession.el"))
   (tabspaces-session-project-session-store (concat user-emacs-directory "tabspaces/"))
-  (tabspaces-session-auto-save-delay 300)  ; Save after 5 idle minutes
   :config
+  ;; MELPA mirror still ships tabspaces 1.8 without auto-save-delay.
+  (when (boundp 'tabspaces-session-auto-save-delay)
+    (setq tabspaces-session-auto-save-delay 300))
   (defun tabspaces-restore-session-alt ()
     "Select file to restore tabspaces session."
     (interactive)
@@ -125,7 +127,9 @@
 
       (and (fboundp 'posframe-delete-all)
            (posframe-delete-all)))
-    (advice-add #'tabspaces--save-session-smart :before #'tabspaces--prepare-save-session)
+    ;; Never advise a void internal; kill-emacs-hook would fail on exit.
+    (when (fboundp 'tabspaces--save-session-smart)
+      (advice-add #'tabspaces--save-session-smart :before #'tabspaces--prepare-save-session))
 
     (defun tabspaces--bury-messages (&rest _)
       "Bury *Messages* buffer."

@@ -168,10 +168,15 @@
         (unless (bound-and-true-p tabspaces-session)
           ;; Save workspace sessions
           (setq tabspaces-session t)
-          (add-hook 'kill-emacs-hook #'tabspaces--save-session-smart)
-          (tabspaces--setup-session-auto-save)
+          ;; Re-enabling lets tabspaces-mode own kill-emacs-hook across versions.
+          (when (fboundp 'tabspaces-mode)
+            (tabspaces-mode 1))
+          (when (fboundp 'tabspaces--setup-session-auto-save)
+            (tabspaces--setup-session-auto-save))
 
-          (tabspaces-switch-or-create-workspace tabspaces-default-tab))
+          (when (and (fboundp 'tabspaces-switch-or-create-workspace)
+                     (boundp 'tabspaces-default-tab))
+            (tabspaces-switch-or-create-workspace tabspaces-default-tab)))
 
         ;; Recover layout
         (pinaceae-recover-layout))))
