@@ -16,8 +16,3 @@ third-party subtrees below, which keep their own licenses:
   **LGPL-3.0** (from
   [rafzby/circular-progressbar](https://github.com/rafzby/circular-progressbar));
   its header stays verbatim.
-- `modules/shell/jes/{shell,config,go,jes-cli}` — vendored fork of
-  [just_enough_shell](https://github.com/ORFLEM/just_enough_shell)
-  (**BSD-3-Clause**, © 2026 ORFLEM), pinned at the commit in
-  `modules/shell/jes/UPSTREAM`. Upstream license text is vendored as
-  `modules/shell/jes/LICENSE.upstream`.

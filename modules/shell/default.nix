@@ -7,7 +7,6 @@
   imports = [
     ./noctalia
     ./quickshell
-    ./jes
   ];
 
   # Per-user shell selection. Defaults to the host value; a user may override.
@@ -16,7 +15,6 @@
     type = lib.types.enum [
       "noctalia"
       "quickshell"
-      "jes"
       "none"
     ];
     default = if osConfig != null then osConfig.nixtop.shell or "none" else "none";

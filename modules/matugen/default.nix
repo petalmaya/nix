@@ -16,10 +16,6 @@ let
       output_path = "~/.config/noctalia/palettes/nixtop.json";
       post_hook = "noctalia msg reload 2>&1 | systemd-cat -t matugen-noctalia || true";
     };
-    jes = {
-      input_path = "jes/colors.json";
-      output_path = "~/.local/state/JES_colors.json";
-    };
     mango = {
       input_path = "mango/mango.conf";
       output_path = "~/.local/state/nixtop/theme/mango.conf";

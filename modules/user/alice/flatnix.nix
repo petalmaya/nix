@@ -7,7 +7,6 @@ _: {
       "com.usebottles.bottles"
       "com.github.tchx84.Flatseal"
       "com.adamcake.Bolt"
-      "dev.vencord.Vesktop"
       "org.torproject.torbrowser-launcher"
     ];
   };

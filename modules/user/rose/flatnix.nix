@@ -5,7 +5,6 @@ _: {
     update.onActivation = true;
     packages = [
       "com.github.tchx84.Flatseal"
-      "dev.vencord.Vesktop"
     ];
   };
 }

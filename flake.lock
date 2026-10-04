@@ -57,28 +57,6 @@
         "url": "https://codeberg.org/ezemtsov/ewm/archive/master.tar.gz"
       }
     },
-    "firefox-addons": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "dir": "pkgs/firefox-addons",
-        "lastModified": 1789185767,
-        "narHash": "sha256-jaWL9beN3ifjNzNEBxo0abA+TSi0n7Q8LRQvZTxEqaM=",
-        "owner": "rycee",
-        "repo": "nur-expressions",
-        "rev": "811170bb74b11f3b9489618ce77487cc58c79067",
-        "type": "gitlab"
-      },
-      "original": {
-        "dir": "pkgs/firefox-addons",
-        "owner": "rycee",
-        "repo": "nur-expressions",
-        "type": "gitlab"
-      }
-    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -293,7 +271,6 @@
         "disko": "disko",
         "emacs-overlay": "emacs-overlay",
         "ewm": "ewm",
-        "firefox-addons": "firefox-addons",
         "home-manager": "home-manager",
         "mango": "mango",
         "nix-flatpak": "nix-flatpak",

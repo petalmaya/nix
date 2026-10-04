@@ -2,7 +2,6 @@
   pkgs,
   lib,
   config,
-  inputs,
   ...
 }:
 let
@@ -27,14 +26,26 @@ in
       package = pkgs.firefox;
       configPath = "${config.xdg.configHome}/mozilla/firefox";
       nativeMessagingHosts = [ pywalfox-manifest ];
+      policies.ExtensionSettings = {
+        "uBlock0@raymondhill.net" = {
+          installation_mode = "force_installed";
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi";
+        };
+        "addon@darkreader.org" = {
+          installation_mode = "force_installed";
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/darkreader/latest.xpi";
+        };
+        "{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
+          installation_mode = "force_installed";
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi";
+        };
+        "sponsorBlocker@ajay.app" = {
+          installation_mode = "force_installed";
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/sponsorblock/latest.xpi";
+        };
+      };
       profiles.${config.home.username} = {
         isDefault = true;
-        extensions.packages = with inputs.firefox-addons.packages.${pkgs.stdenv.hostPlatform.system}; [
-          ublock-origin
-          darkreader
-          bitwarden
-          sponsorblock
-        ];
         settings = {
           "extensions.autoDisableScopes" = 0;
           "extensions.enabledScopes" = 15;

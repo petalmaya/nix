@@ -47,8 +47,7 @@ let
   # Noctalia targets swayfx or mango; same HM config either way.
   noctaliaCompositor = config.nixtop.noctalia.compositor or "sway";
 
-  # Single source: modules/sway/variants/<name>.conf. Only the JES
-  # include path differs (store vs live) and is substituted per path.
+  # Single source: modules/sway/variants/<name>.conf.
   variantName =
     if shell == "noctalia" && noctaliaCompositor == "sway" then
       "noctalia-sway"
@@ -56,21 +55,13 @@ let
       "noctalia-mango"
     else if shell == "quickshell" then
       "quickshell"
-    else if shell == "jes" then
-      "jes"
     else
       "waybar";
-  variantSrc =
-    if shell == "jes" then
-      pkgs.replaceVars ./variants/jes.conf {
-        jesKeybinds = "~/.config/sway/jes-keybinds.conf";
-      }
-    else
-      ./variants/${variantName}.conf;
+  variantSrc = ./variants/${variantName}.conf;
   variantConf = pkgs.writeText "sway-variant.conf" (builtins.readFile variantSrc);
 
   autostartVariant =
-    if shell == "noctalia" || shell == "quickshell" || shell == "jes" then
+    if shell == "noctalia" || shell == "quickshell" then
       ''
         # Shell variant owns bar and notifications; swayidle + polkit still needed.
         exec_always --no-startup-id swayidle -w timeout 300 "$lock" timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' before-sleep "$lock"
@@ -78,9 +69,6 @@ let
       ''
     else
       builtins.readFile ./sway/autostart.conf;
-
-  # JES keybinds are included from variant.conf.
-  jesKeybinds = ../shell/jes/sway/keybinds.conf;
 
   swayConfig = pkgs.runCommand "sway-config" { } ''
     mkdir -p $out
@@ -97,7 +85,6 @@ let
     ${autostartVariant}
     AUTOSTART
     cat ${variantConf} > $out/variant.conf
-    cp ${jesKeybinds} $out/jes-keybinds.conf
     mkdir -p $out/scripts
     cp ${swaySrc}/scripts/* $out/scripts/
     chmod +x $out/scripts/*
@@ -199,11 +186,7 @@ in
               if [ -d "$HOME/.config/sway" ]; then
                 $DRY_RUN_CMD rm -f "$HOME/.config/sway/variant.conf" || true
                 if $DRY_RUN_CMD cp "${./variants}/${variantName}.conf" "$HOME/.config/sway/variant.conf"; then
-                  ${lib.optionalString (shell == "jes") ''
-                    # JES include differs by path only: store dir vs live checkout.
-                    $DRY_RUN_CMD sed -i "s|@jesKeybinds@|$HOME/nix/modules/shell/jes/sway/keybinds.conf|" "$HOME/.config/sway/variant.conf"
-                  ''}
-                  : # no-op: bash rejects an empty then-branch when the JES sed above is compiled out
+                  :
                 else
                   echo "WARNING: cannot write $HOME/.config/sway/variant.conf (dir owner: $(stat -c %U "$HOME/.config/sway"), you: $(whoami)); leaving the old one, sway keeps stale keybinds" >&2
                   echo "WARNING: fix with: sudo chown -R $(whoami) $HOME/.config/sway $HOME/nix  (then rebuild)" >&2

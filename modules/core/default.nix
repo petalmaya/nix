@@ -22,7 +22,6 @@
       type = lib.types.enum [
         "noctalia"
         "quickshell"
-        "jes"
         "none"
       ];
       default = "none";

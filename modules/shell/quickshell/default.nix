@@ -65,10 +65,6 @@ in
         message = "nixtop.shell selects one shell – cannot enable both noctalia and quickshell";
       }
       {
-        assertion = !(config.nixtop.jes.enable or false);
-        message = "nixtop.shell selects one shell – cannot enable both jes and quickshell";
-      }
-      {
         assertion = cfg.compositor == "sway" || cfg.compositor == "mango";
         message = "nixtop.quickshell.compositor must be mango or sway";
       }

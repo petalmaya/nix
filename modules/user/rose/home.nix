@@ -1,4 +1,4 @@
-_: {
+{ pkgs, ... }: {
   imports = [
     ./flatnix.nix
     ../base.nix
@@ -7,6 +7,10 @@ _: {
   home = {
     username = "rose";
     homeDirectory = "/home/rose";
+
+    packages = with pkgs; [
+      vesktop
+    ];
   };
 
   nixtop = {

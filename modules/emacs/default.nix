@@ -9,7 +9,8 @@ let
   cfg = config.nixtop.apps.emacs;
   ewmSysOn = if osConfig != null then osConfig.nixtop.ewm.enable or false else false;
   ewmOn = config.nixtop.ewm.enable or false;
-  emacsPkg = if ewmOn && ewmSysOn then osConfig.programs.ewm.emacsPackage else pkgs.emacs-pgtk;
+  useEwmEmacs = ewmOn && ewmSysOn;
+  emacsPkg = if useEwmEmacs then osConfig.programs.ewm.emacsPackage else pkgs.emacs-pgtk;
   externalTools = with pkgs; [
     ripgrep
     fd
@@ -56,6 +57,22 @@ in
     in
     {
       home.packages = [ emacsPkg ] ++ externalTools;
+
+      # services.emacs.defaultEditor only applies when the daemon is enabled,
+      # so set EDITOR explicitly for the EWM case (Emacs is the compositor).
+      home.sessionVariables = lib.mkIf useEwmEmacs {
+        EDITOR = "emacsclient -t -a ''";
+        VISUAL = "emacsclient -c -a emacs";
+      };
+
+      # Daemon for non-EWM sessions; EWM already runs Emacs as the compositor.
+      services.emacs = {
+        enable = !useEwmEmacs;
+        package = emacsPkg;
+        client.enable = true;
+        defaultEditor = true;
+        startWithUserSession = "graphical";
+      };
 
       # Live-editable directory; flag defaults on.
       xdg.configFile."emacs" =

@@ -13,6 +13,7 @@ in
     homeDirectory = "/home/alice";
 
     packages = with pkgs; [
+      vesktop
       links2
       transmission_4-gtk
       nicotine-plus
