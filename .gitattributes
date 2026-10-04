@@ -15,7 +15,7 @@
 *.rasi text eol=lf
 *.jsonc text eol=lf
 
-# Binaries vendored with the JES fork must not be normalized.
+# Binaries must not be normalized.
 *.png binary
 *.jpg binary
 *.jpeg binary
