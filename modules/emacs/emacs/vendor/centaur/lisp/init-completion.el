@@ -414,11 +414,16 @@ targets."
     (keymap-set corfu-map "M-m" #'corfu-move-to-minibuffer)
     (add-to-list 'corfu-continue-commands #'corfu-move-to-minibuffer))
 
-  (unless (childframe-workable-p)
-    ;; Not on MELPA/GNU ELPA — pull it from GitHub so terminal fallback
-    ;; works even though the GUI build (childframe completion) skips it.
+  ;; Terminal fallback for Corfu. Corfu renders via child frames, which
+  ;; works on terminal Emacs starting with Emacs 31, so no fallback is
+  ;; needed there. On older Emacsen without a workable childframe, use
+  ;; the overlay-based `corfu-terminal' package.
+  ;; NOTE: the old minad/corfu-terminal GitHub repo is gone (404) — its
+  ;; stale recipe made Elpaca's `git clone' hang forever on `emacs -nw'.
+  ;; The maintained source is Codeberg (mirrored on NonGNU ELPA).
+  (unless (or emacs/>=31p (childframe-workable-p))
     (use-package corfu-terminal
-      :ensure (:host github :repo "minad/corfu-terminal")
+      :ensure (:repo "https://codeberg.org/akib/emacs-corfu-terminal.git")
       :functions childframe-workable-p
       :hook (global-corfu-mode . corfu-terminal-mode)))
 
